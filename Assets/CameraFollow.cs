@@ -1,30 +1,39 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 public class CameraFollow : MonoBehaviour
 {
-    // Biến này để khai báo xem Camera sẽ đi theo ai
+    [Header("Nhân vật cần đi theo")]
     public Transform target;
 
-    // Khoảng cách từ Camera đến nhân vật (x, y, z)
-    // Y = 3 (Cao hơn đầu), Z = -5 (Lùi về sau lưng)
-    public Vector3 offset = new Vector3(0, 3f, -5f);
+    [Header("Khoảng cách: X(trái/phải), Y(cao), Z(xa sau lưng)")]
+    // Z là số âm (ví dụ: -4.5f) nghĩa là camera ở sau lưng nhân vật
+    public Vector3 offset = new Vector3(0f, 2.5f, -4.5f);
 
-    // Độ mượt mà khi Camera di chuyển
-    public float smoothSpeed = 5f;
+    [Header("Độ mượt mà")]
+    public float followSpeed = 6f;      // Tốc độ bám theo vị trí
+    public float rotationSpeed = 6f;    // Tốc độ xoay theo lưng nhân vật
 
-    // Dùng LateUpdate thay vì Update để Camera không bị giật lag khi đi theo
+    [Header("Điểm nhìn trên nhân vật")]
+    public float targetHeight = 1.3f;   // Nhìn vào ngang ngực/vai thay vì gan bàn chân
+
     void LateUpdate()
     {
-        if (target != null)
+        if (target == null) return;
+
+        // 1. Tính vị trí chính xác ở phía SAU LƯNG nhân vật dựa vào góc quay của nhân vật
+        Vector3 desiredPosition = target.position + target.rotation * offset;
+
+        // 2. Di chuyển camera mượt mà đến vị trí sau lưng đó
+        transform.position = Vector3.Lerp(transform.position, desiredPosition, followSpeed * Time.deltaTime);
+
+        // 3. Xoay camera mượt mà để luôn hướng thẳng vào lưng/vai nhân vật
+        Vector3 lookTarget = target.position + Vector3.up * targetHeight;
+        Vector3 directionToTarget = lookTarget - transform.position;
+
+        if (directionToTarget != Vector3.zero)
         {
-            // Tính toán vị trí Camera cần bay tới
-            Vector3 desiredPosition = target.position + offset;
-
-            // Di chuyển mượt mà từ vị trí hiện tại tới vị trí mới
-            transform.position = Vector3.Lerp(transform.position, desiredPosition, smoothSpeed * Time.deltaTime);
-
-            // Ép Camera luôn luôn nhìn chằm chằm vào lưng/đầu nhân vật (cộng thêm 1.5 mét để không nhìn vào chân)
-            transform.LookAt(target.position + Vector3.up * 1.5f);
+            Quaternion desiredRotation = Quaternion.LookRotation(directionToTarget);
+            transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, rotationSpeed * Time.deltaTime);
         }
     }
 }

@@ -1,11 +1,13 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
-    public float rotationSpeed = 10f; // Tốc độ xoay người mượt mà
-    public float gravity = -9.81f;    // Trọng lực để giữ nhân vật bám sát mặt đất
+    public float rotationSpeed = 15f; // Tốc độ xoay mặt nhân vật mượt hơn
+    public float gravity = -9.81f;
+    public float jumpForce = 5f;
 
     private CharacterController controller;
     private Animator anim;
@@ -18,62 +20,72 @@ public class PlayerMovement : MonoBehaviour
         anim = GetComponent<Animator>();
         mainCam = Camera.main;
 
-        // Tắt Root Motion để tránh animation đẩy nhân vật bay khỏi mặt đất
-        // Việc di chuyển sẽ do code (CharacterController) kiểm soát hoàn toàn
         if (anim != null)
             anim.applyRootMotion = false;
+
+        // KHÓA VÀ ẨN CON TRỎ CHUỘT (Giống PUBG)
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void Update()
     {
-        // 1. Nhận input di chuyển từ bàn phím (A/D hoặc mũi tên trái/phải, W/S)
-        float moveX = Input.GetAxis("Horizontal");
-        float moveZ = Input.GetAxis("Vertical");
+        // 1. Nhận input di chuyển chuẩn bằng WASD (Dùng New Input System)
+        float moveX = 0f;
+        float moveZ = 0f;
 
-        // 2. Tính hướng di chuyển theo góc nhìn của Camera
-        Vector3 move;
+        if (Keyboard.current != null)
+        {
+            if (Keyboard.current.aKey.isPressed) moveX = -1f;
+            if (Keyboard.current.dKey.isPressed) moveX = 1f;
+            if (Keyboard.current.sKey.isPressed) moveZ = -1f;
+            if (Keyboard.current.wKey.isPressed) moveZ = 1f;
+        }
+
+        // 2. Tính hướng di chuyển theo góc nhìn Camera
+        Vector3 move = Vector3.zero;
         if (mainCam != null)
         {
             Vector3 camForward = mainCam.transform.forward;
             Vector3 camRight = mainCam.transform.right;
-            camForward.y = 0f;
+            camForward.y = 0f; // Bỏ qua trục Y để không bay lên trời
             camRight.y = 0f;
             camForward.Normalize();
             camRight.Normalize();
 
+            // Hướng di chuyển cuối cùng
             move = (camForward * moveZ + camRight * moveX).normalized;
         }
+
+        // 3. Xử lý nhảy và trọng lực
+        if (controller.isGrounded)
+        {
+            if (velocity.y < 0) velocity.y = -2f;
+
+            if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+            {
+                velocity.y = jumpForce;
+                if (anim != null) anim.SetTrigger("JumpTrigger");
+            }
+        }
         else
         {
-            move = new Vector3(moveX, 0f, moveZ).normalized;
+            velocity.y += gravity * Time.deltaTime;
         }
 
-        // 3. Xử lý trọng lực bám mặt đất
-        if (controller.isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f; // Ép nhân vật bám sát mặt đất khi đang ở trên mặt đất
-        }
-        else
-        {
-            velocity.y += gravity * Time.deltaTime; // Rơi tự do nếu đang ở trên không
-        }
-
-        // 4. Tính toán hướng và di chuyển
-        Vector3 finalMovement = Vector3.zero;
-
+        // 4. Xoay mặt nhân vật về hướng đang chạy
         if (move.magnitude >= 0.1f)
         {
-            // Xoay mặt nhân vật mượt mà theo hướng di chuyển
             Quaternion targetRotation = Quaternion.LookRotation(move);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-            finalMovement = move * moveSpeed;
         }
 
+        // 5. Áp dụng di chuyển
+        Vector3 finalMovement = move * moveSpeed;
         finalMovement.y = velocity.y;
         controller.Move(finalMovement * Time.deltaTime);
 
-        // 5. Cập nhật Animator
+        // 6. Cập nhật Animator tốc độ chạy
         if (anim != null)
         {
             anim.SetFloat("Speed", move.magnitude);

@@ -12,13 +12,13 @@ Material:
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords:
-  - _WINDTYPE_STRONGWIND
+  - _WINDTYPE_WINDOFF
   m_InvalidKeywords:
   - _AO_ON
   - _DIRECTIONALWIND_ON
   - _MASKROOTS_ON
   - _NORMALMAPBASEDSNOW_ON
-  - _WINDTYPE_WINDOFF
+  - _WINDTYPE_STRONGWIND
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -108,6 +108,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _ADVANCEDSETTINGS: 0
+    - _AlphaClip: 0
     - _AlphaCutoff: 0.5
     - _Ao: 1
     - _Aointensity: 1

@@ -1314,6 +1314,10 @@ PrefabInstance:
       value: Player
       objectReference: {fileID: 0}
     - target: {fileID: 8259343149075243686, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
+      propertyPath: m_Mesh
+      value: 
+      objectReference: {fileID: -9037851627997230718, guid: 5bcab9359f51a204bb044ca727079aca, type: 3}
+    - target: {fileID: 8259343149075243686, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
       objectReference: {fileID: 2100000, guid: cb809852b62b2794689b65bd21ef4fc7, type: 2}
@@ -1465,7 +1469,7 @@ CharacterController:
   m_StepOffset: 0.3
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Center: {x: 0, y: -0.1, z: 0}
 --- !u!114 &1298406151
 MonoBehaviour:
   m_ObjectHideFlags: 0

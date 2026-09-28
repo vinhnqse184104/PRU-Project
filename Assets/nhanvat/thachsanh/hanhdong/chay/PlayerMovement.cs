@@ -90,5 +90,7 @@ public class PlayerMovement : MonoBehaviour
         {
             anim.SetFloat("Speed", move.magnitude);
         }
+
+        
     }
 }

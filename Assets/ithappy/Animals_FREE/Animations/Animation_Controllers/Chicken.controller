@@ -15,6 +15,9 @@ AnimatorStateMachine:
   - serializedVersion: 1
     m_State: {fileID: -869245267183757442}
     m_Position: {x: 450, y: 270, z: 0}
+  - serializedVersion: 1
+    m_State: {fileID: 2454044530645319450}
+    m_Position: {x: -433.4817, y: 1687.3826, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions: []
   m_EntryTransitions: []
@@ -176,6 +179,32 @@ AnimatorController:
     m_SyncedLayerAffectsTiming: 0
     m_Controller: {fileID: 9100000}
   m_EvaluateTransitionsOnStart: 0
+--- !u!1102 &2454044530645319450
+AnimatorState:
+  serializedVersion: 6
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Tiger_001_idle
+  m_Speed: 1
+  m_CycleOffset: 0
+  m_Transitions: []
+  m_StateMachineBehaviours: []
+  m_Position: {x: 50, y: 50, z: 0}
+  m_IKOnFeet: 0
+  m_WriteDefaultValues: 1
+  m_Mirror: 0
+  m_SpeedParameterActive: 0
+  m_MirrorParameterActive: 0
+  m_CycleOffsetParameterActive: 0
+  m_TimeParameterActive: 0
+  m_Motion: {fileID: 6924978364344556004, guid: 8739604ff156c91408e3f6352de03dbc, type: 3}
+  m_Tag: 
+  m_SpeedParameter: 
+  m_MirrorParameter: 
+  m_CycleOffsetParameter: 
+  m_TimeParameter: 
 --- !u!1101 &8690526066405126167
 AnimatorStateTransition:
   m_ObjectHideFlags: 1

@@ -1,13 +1,19 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
+using UnityEngine.InputSystem; // Đang dùng New Input System
 
 [RequireComponent(typeof(CharacterController))]
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("Movement Settings")]
     public float moveSpeed = 5f;
-    public float rotationSpeed = 15f; // Tốc độ xoay mặt nhân vật mượt hơn
+    public float rotationSpeed = 15f;
     public float gravity = -9.81f;
     public float jumpForce = 5f;
+
+    [Header("Combat Settings")]
+    public Transform attackPoint; // Kéo thả AttackPoint vào đây
+    public float attackRange = 1.5f; // Bán kính tầm đánh
+    public int attackDamage = 35; // Sát thương mỗi nhát chém
 
     private CharacterController controller;
     private Animator anim;
@@ -23,14 +29,14 @@ public class PlayerMovement : MonoBehaviour
         if (anim != null)
             anim.applyRootMotion = false;
 
-        // KHÓA VÀ ẨN CON TRỎ CHUỘT (Giống PUBG)
+        // KHÓA VÀ ẨN CON TRỎ CHUỘT
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
     void Update()
     {
-        // 1. Nhận input di chuyển chuẩn bằng WASD (Dùng New Input System)
+        // 1. Nhận input di chuyển
         float moveX = 0f;
         float moveZ = 0f;
 
@@ -48,12 +54,11 @@ public class PlayerMovement : MonoBehaviour
         {
             Vector3 camForward = mainCam.transform.forward;
             Vector3 camRight = mainCam.transform.right;
-            camForward.y = 0f; // Bỏ qua trục Y để không bay lên trời
+            camForward.y = 0f;
             camRight.y = 0f;
             camForward.Normalize();
             camRight.Normalize();
 
-            // Hướng di chuyển cuối cùng
             move = (camForward * moveZ + camRight * moveX).normalized;
         }
 
@@ -73,7 +78,7 @@ public class PlayerMovement : MonoBehaviour
             velocity.y += gravity * Time.deltaTime;
         }
 
-        // 4. Xoay mặt nhân vật về hướng đang chạy
+        // 4. Xoay mặt nhân vật
         if (move.magnitude >= 0.1f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(move);
@@ -91,6 +96,59 @@ public class PlayerMovement : MonoBehaviour
             anim.SetFloat("Speed", move.magnitude);
         }
 
-        
+        // (Đã xóa code nhận nút đánh ở đây để nhường lại cho file PlayerCut/PlayerKick và Animation Event)
+    }
+
+    // 7. HÀM TẤN CÔNG (Phải là public để Animation Event gọi được)
+    public void Attack()
+    {
+        // Nếu chưa gán Attack Point thì bỏ qua để tránh lỗi
+        if (attackPoint == null) return;
+
+        // Tạo vòng tròn phát hiện va chạm quét kẻ thù
+        Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange);
+
+        foreach (Collider enemy in hitEnemies)
+        {
+            if (enemy.CompareTag("Enemy"))
+            {
+                EnemyHealth animalHealth = enemy.GetComponent<EnemyHealth>();
+                if (animalHealth != null)
+                {
+                    animalHealth.TakeDamage(attackDamage);
+                }
+            }
+        }
+    }
+
+    // (Hỗ trợ) Vẽ vòng tròn tầm đánh màu đỏ trong màn hình Scene để dễ căn chỉnh
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null) return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
+    }
+
+    [Header("Kick Settings")]
+    public int kickDamage = 25
+        ; // Lực đá (sát thương thấp hơn chém)
+
+    // HÀM TẤN CÔNG BẰNG CHÂN (Gắn vào Animation Event của hoạt ảnh Đá)
+    public void KickAttack()
+    {
+        if (attackPoint == null) return;
+
+        Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange);
+        foreach (Collider enemy in hitEnemies)
+        {
+            if (enemy.CompareTag("Enemy"))
+            {
+                EnemyHealth animalHealth = enemy.GetComponent<EnemyHealth>();
+                if (animalHealth != null)
+                {
+                    animalHealth.TakeDamage(kickDamage); // Trừ máu bằng lực đá
+                }
+            }
+        }
     }
 }

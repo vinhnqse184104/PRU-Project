@@ -36,10 +36,20 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // 1. Nhận input di chuyển
+        // 1. KIỂM TRA TRẠNG THÁI TẤN CÔNG
+        bool isAttacking = false;
+        if (anim != null)
+        {
+            AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+            if (stateInfo.IsName("chém") || stateInfo.IsName("đá"))
+            {
+                isAttacking = true;
+            }
+        }
+
+        // 2. NHẬN NÚT DI CHUYỂN (Mở lại để có thể đuổi theo quái vật)
         float moveX = 0f;
         float moveZ = 0f;
-
         if (Keyboard.current != null)
         {
             if (Keyboard.current.aKey.isPressed) moveX = -1f;
@@ -48,7 +58,7 @@ public class PlayerMovement : MonoBehaviour
             if (Keyboard.current.wKey.isPressed) moveZ = 1f;
         }
 
-        // 2. Tính hướng di chuyển theo góc nhìn Camera
+        // 3. TÍNH HƯỚNG DI CHUYỂN
         Vector3 move = Vector3.zero;
         if (mainCam != null)
         {
@@ -58,16 +68,14 @@ public class PlayerMovement : MonoBehaviour
             camRight.y = 0f;
             camForward.Normalize();
             camRight.Normalize();
-
             move = (camForward * moveZ + camRight * moveX).normalized;
         }
 
-        // 3. Xử lý nhảy và trọng lực
+        // 4. TRỌNG LỰC VÀ NHẢY (Vẫn khóa nhảy khi đang đánh)
         if (controller.isGrounded)
         {
             if (velocity.y < 0) velocity.y = -2f;
-
-            if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+            if (!isAttacking && Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
             {
                 velocity.y = jumpForce;
                 if (anim != null) anim.SetTrigger("JumpTrigger");
@@ -78,25 +86,38 @@ public class PlayerMovement : MonoBehaviour
             velocity.y += gravity * Time.deltaTime;
         }
 
-        // 4. Xoay mặt nhân vật
+        // 5. ĐIỀU CHỈNH TỐC ĐỘ Combat (Chìa khóa nằm ở đây)
+        float currentSpeed = moveSpeed;
+        if (isAttacking)
+        {
+            // Cho phép lướt bám theo quái với 35% tốc độ (Bạn có thể tự tăng giảm số 0.35f này)
+            currentSpeed = moveSpeed * 0.35f;
+        }
+
+        // Vẫn cho phép bẻ lái (xoay mặt) để chém trúng quái vật đang chạy vòng quanh
         if (move.magnitude >= 0.1f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(move);
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
 
-        // 5. Áp dụng di chuyển
-        Vector3 finalMovement = move * moveSpeed;
+        // 6. ÁP DỤNG DI CHUYỂN
+        Vector3 finalMovement = move * currentSpeed;
         finalMovement.y = velocity.y;
         controller.Move(finalMovement * Time.deltaTime);
 
-        // 6. Cập nhật Animator tốc độ chạy
+        // 7. CẬP NHẬT ANIMATOR CHẠY
         if (anim != null)
         {
-            anim.SetFloat("Speed", move.magnitude);
+            if (!isAttacking)
+            {
+                anim.SetFloat("Speed", move.magnitude); // Chạy bình thường
+            }
+            else
+            {
+                anim.SetFloat("Speed", 0f); // Mẹo: Ép Animator hiểu là đang đứng im để không bị lỗi trượt hình ảnh
+            }
         }
-
-        // (Đã xóa code nhận nút đánh ở đây để nhường lại cho file PlayerCut/PlayerKick và Animation Event)
     }
 
     // 7. HÀM TẤN CÔNG (Phải là public để Animation Event gọi được)
@@ -110,12 +131,22 @@ public class PlayerMovement : MonoBehaviour
 
         foreach (Collider enemy in hitEnemies)
         {
+            // 1. Chém trúng Thú
             if (enemy.CompareTag("Enemy"))
             {
                 EnemyHealth animalHealth = enemy.GetComponent<EnemyHealth>();
                 if (animalHealth != null)
                 {
                     animalHealth.TakeDamage(attackDamage);
+                }
+            }
+            // 2. CHÉM TRÚNG CÂY
+            else if (enemy.CompareTag("Tree"))
+            {
+                TreeHealth tree = enemy.GetComponent<TreeHealth>();
+                if (tree != null)
+                {
+                    tree.TakeDamage(attackDamage);
                 }
             }
         }
@@ -130,8 +161,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     [Header("Kick Settings")]
-    public int kickDamage = 25
-        ; // Lực đá (sát thương thấp hơn chém)
+    public int kickDamage = 25; // Lực đá (sát thương thấp hơn chém)
 
     // HÀM TẤN CÔNG BẰNG CHÂN (Gắn vào Animation Event của hoạt ảnh Đá)
     public void KickAttack()

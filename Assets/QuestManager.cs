@@ -2,6 +2,7 @@
 using TMPro;
 using System.Collections;
 using UnityEngine.InputSystem; // Bắt buộc phải có dòng này để nhận phím
+using UnityEngine.SceneManagement; // THÊM: dùng để chuyển Scene
 
 public class QuestManager : MonoBehaviour
 {
@@ -35,27 +36,38 @@ public class QuestManager : MonoBehaviour
         {
             lyThongNPC.SetActive(false);
         }
+
         UpdateQuestUI();
     }
 
     public void AddKill(string animalName)
     {
-        if (animalName == "Chicken") chickenKilled++;
-        else if (animalName == "Deer") deerKilled++;
-        else if (animalName == "Horse") horseKilled++;
-        else if (animalName == "Tiger") tigerKilled++;
+        if (animalName == "Chicken")
+            chickenKilled++;
+
+        else if (animalName == "Deer")
+            deerKilled++;
+
+        else if (animalName == "Horse")
+            horseKilled++;
+
+        else if (animalName == "Tiger")
+            tigerKilled++;
+
         UpdateQuestUI();
     }
 
     public void CollectWood()
     {
         woodCollected++;
+
         UpdateQuestUI();
     }
 
     void UpdateQuestUI()
     {
-        if (questText == null || isTransitioning) return;
+        if (questText == null || isTransitioning)
+            return;
 
         if (currentQuest == 1)
         {
@@ -69,45 +81,49 @@ public class QuestManager : MonoBehaviour
             }
             else
             {
-                questText.text = "NHIỆM VỤ ĐẦU TIÊN:\n" +
-                                 "- Đốn củi: " + woodCollected + " / " + woodRequired + "\n" +
-                                 "- Tiêu diệt Gà: " + chickenKilled + " / " + chickenRequired + "\n" +
-                                 "- Tiêu diệt Hươu: " + deerKilled + " / " + deerRequired + "\n" +
-                                 "- Tiêu diệt Ngựa: " + horseKilled + " / " + horseRequired + "\n" +
-                                 "- Tiêu diệt Hổ: " + tigerKilled + " / " + tigerRequired;
+                questText.text =
+                    "NHIỆM VỤ ĐẦU TIÊN:\n" +
+                    "- Đốn củi: " + woodCollected + " / " + woodRequired + "\n" +
+                    "- Tiêu diệt Gà: " + chickenKilled + " / " + chickenRequired + "\n" +
+                    "- Tiêu diệt Hươu: " + deerKilled + " / " + deerRequired + "\n" +
+                    "- Tiêu diệt Ngựa: " + horseKilled + " / " + horseRequired + "\n" +
+                    "- Tiêu diệt Hổ: " + tigerKilled + " / " + tigerRequired;
+
                 questText.color = Color.white;
             }
         }
+
         else if (currentQuest == 2)
         {
-            // ĐÃ THAY ĐỔI CÂU CHỮ THEO ĐÚNG Ý BẠN
-            questText.text = "NHIỆM VỤ 2:\nĐi vòng quanh khu rừng cho đến khi thấy được Lý Thông";
-            questText.color = Color.yellow; // Đổi màu vàng cho nổi bật nhiệm vụ mới
+            questText.text =
+                "NHIỆM VỤ 2:\n" +
+                "Đi vòng quanh khu rừng cho đến khi thấy được Lý Thông";
+
+            questText.color = Color.yellow;
         }
     }
 
     IEnumerator CompleteQuestOne()
     {
-        isTransitioning = true; // Khóa UI không cho cập nhật số nữa
+        isTransitioning = true;
 
-        // Hiện thông báo hoàn thành
+        // Hiện thông báo hoàn thành nhiệm vụ đầu tiên
         questText.text = "ĐÃ HOÀN THÀNH XONG NHIỆM VỤ!";
         questText.color = Color.green;
 
-        // Chờ đúng 3 giây
+        // Chờ 3 giây
         yield return new WaitForSeconds(3f);
 
-        // Chuyển sang Nhiệm vụ 2 và mở khóa UI
+        // Chuyển sang Nhiệm vụ 2
         currentQuest = 2;
         isTransitioning = false;
 
-        // Cho Lý Thông xuất hiện ở gốc đa
+        // Cho Lý Thông xuất hiện
         if (lyThongNPC != null)
         {
             lyThongNPC.SetActive(true);
         }
 
-        // Gọi hàm update để in ra dòng chữ Nhiệm vụ 2
         UpdateQuestUI();
     }
 
@@ -116,66 +132,96 @@ public class QuestManager : MonoBehaviour
     {
         if (currentQuest == 2)
         {
-            currentQuest = 3; // Chốt chuyển sang nhiệm vụ 3
+            currentQuest = 3;
 
-            // Bắt đầu chạy kịch bản hội thoại theo thời gian
             StartCoroutine(KichBanHoiThoai());
         }
     }
 
-    // Bộ đếm thời gian cho hội thoại
-    // Bộ đếm thời gian cho kịch bản hội thoại dài
-    // HÀM MỚI: Chuyên dùng để chờ người chơi bấm nút
+    // Chờ người chơi bấm Enter hoặc Chuột trái
     IEnumerator WaitForKeyPress()
     {
-        // Vòng lặp này sẽ giữ game đứng đợi mãi mãi...
         while (true)
         {
-            // ...cho đến khi người chơi Bấm phím Enter hoặc Chuột trái thì mới phá vòng lặp đi tiếp
-            if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame)
+            if (Keyboard.current != null &&
+                Keyboard.current.enterKey.wasPressedThisFrame)
+            {
                 break;
-            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-                break;
+            }
 
-            yield return null; // Chờ khung hình (frame) tiếp theo
+            if (Mouse.current != null &&
+                Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                break;
+            }
+
+            yield return null;
         }
-        // Đợi 1 chút xíu (0.1s) để tránh lỗi bấm đúp (double-click) trôi 2 câu cùng lúc
+
+        // Tránh bấm một lần nhảy qua nhiều câu
         yield return new WaitForSeconds(0.1f);
     }
 
-    // Bộ đếm hội thoại đã được nâng cấp sang "Bấm nút chuyển câu"
+    // Hội thoại giữa Thạch Sanh và Lý Thông
     IEnumerator KichBanHoiThoai()
     {
-        // Câu hướng dẫn mờ mờ ở dưới cùng
-        string huongDan = "(Bấm Enter hoặc Chuột trái để tiếp tục cuộc hội thoại.)";
+        string huongDan =
+            "\n\n(Bấm Enter hoặc Chuột trái để tiếp tục cuộc hội thoại.)";
 
-        // ================= TRANG 1: HỎI HAN =================
-        string cau1 = "THẠCH SANH:\n\"Chào huynh! Sao huynh lại nằm ngủ giữa chốn rừng thiêng nước độc thế này?\"";
-        string cau2 = "\n\nLÝ THÔNG:\n\"Ây da... ta đi bán rượu ngang qua, mệt quá nên thiếp đi mất. Cảm ơn chú em đã đánh thức! Mà nhìn chú em sức vóc quả là hơn người!\"";
+        // ================= TRANG 1 =================
 
-        // In câu 1
+        string cau1 =
+            "THẠCH SANH:\n" +
+            "\"Chào huynh! Sao huynh lại nằm ngủ giữa chốn rừng thiêng nước độc thế này?\"";
+
+        string cau2 =
+            "\n\nLÝ THÔNG:\n" +
+            "\"Ây da... ta đi bán rượu ngang qua, mệt quá nên thiếp đi mất. " +
+            "Cảm ơn chú em đã đánh thức! Mà nhìn chú em sức vóc quả là hơn người!\"";
+
         questText.text = cau1 + huongDan;
         questText.color = Color.white;
-        yield return StartCoroutine(WaitForKeyPress()); // CHỜ BẤM NÚT MỚI ĐI TIẾP
 
-        // In câu 1 + 2
+        yield return StartCoroutine(WaitForKeyPress());
+
         questText.text = cau1 + cau2 + huongDan;
-        yield return StartCoroutine(WaitForKeyPress()); // CHỜ BẤM NÚT
 
+        yield return StartCoroutine(WaitForKeyPress());
 
-        // ================= TRANG 2: KẾT NGHĨA =================
-        string cau3 = "THẠCH SANH:\n\"Đệ mồ côi cha mẹ từ nhỏ, sống lủi thủi ở gốc đa này, ngày ngày đốn củi kiếm sống qua ngày thôi.\"";
-        string cau4 = "\n\nLÝ THÔNG:\n\"Ôi, hóa ra chú em cũng đơn độc. Hay là theo ta về nhà, anh em ta kết nghĩa huynh đệ, có rau ăn rau có cháo ăn cháo, chú em thấy sao?\"";
+        // ================= TRANG 2 =================
 
-        // Sang trang mới, xóa chữ cũ in câu 3
+        string cau3 =
+            "THẠCH SANH:\n" +
+            "\"Đệ mồ côi cha mẹ từ nhỏ, sống lủi thủi ở gốc đa này, " +
+            "ngày ngày đốn củi kiếm sống qua ngày thôi.\"";
+
+        string cau4 =
+            "\n\nLÝ THÔNG:\n" +
+            "\"Ôi, hóa ra chú em cũng đơn độc. Hay là theo ta về nhà, " +
+            "anh em ta kết nghĩa huynh đệ, có rau ăn rau có cháo ăn cháo, " +
+            "chú em thấy sao?\"";
+
         questText.text = cau3 + huongDan;
-        yield return StartCoroutine(WaitForKeyPress()); // CHỜ BẤM NÚT
 
-        // In câu 3 + 4
+        yield return StartCoroutine(WaitForKeyPress());
+
         questText.text = cau3 + cau4 + huongDan;
-        yield return StartCoroutine(WaitForKeyPress()); // CHỜ BẤM NÚT
 
+        yield return StartCoroutine(WaitForKeyPress());
 
-        
+        // ================= KẾT THÚC CHƯƠNG 1 =================
+
+        questText.text =
+            "HOÀN THÀNH CHƯƠNG 1!\n\n" +
+            "CHƯƠNG 2\n" +
+            "GẶP LÝ THÔNG";
+
+        questText.color = Color.green;
+
+        // Chờ 3 giây trước khi chuyển cảnh
+        yield return new WaitForSeconds(3f);
+
+        // Chuyển sang Scene chương 2
+        SceneManager.LoadScene("Chapter2_LyThong");
     }
 }

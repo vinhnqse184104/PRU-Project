@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI; // Cần dòng này để dùng giao diện (Slider)
 
 public class EnemyHealth : MonoBehaviour
@@ -64,7 +64,7 @@ public class EnemyHealth : MonoBehaviour
     // Giúp thanh máu luôn hướng mặt về phía Camera để người chơi nhìn rõ
     void LateUpdate()
     {
-        if (healthBar != null)
+        if (healthBar != null && Camera.main != null)
         {
             healthBar.transform.LookAt(healthBar.transform.position + Camera.main.transform.forward);
         }

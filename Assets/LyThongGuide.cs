@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class LyThongGuide : MonoBehaviour
@@ -584,13 +585,13 @@ public class LyThongGuide : MonoBehaviour
         currentState = CutsceneState.Finished;
         ClearUI();
 
-        // Trả quyền điều khiển lại cho người chơi
         if (playerMovement != null)
         {
             playerMovement.enabled = true;
         }
 
-        Debug.Log("Hoàn thành Cutscene Chapter 2! Cả 3 nhân vật đã vào nhà an toàn.");
+        Debug.Log("Hoàn thành Cutscene Chapter 2! Chuyển sang Chapter 3...");
+        SceneManager.LoadScene("Chapter3_MieuChanTinh");
     }
 
     private bool IsAdvancePressed()

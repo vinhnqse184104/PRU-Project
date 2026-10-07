@@ -24,6 +24,15 @@ public class PlayerMovement : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
 
+        GameObject spawnPoint = GameObject.Find("Chapter3SpawnPoint") ?? GameObject.Find("SpawnPoint");
+        if (spawnPoint != null)
+        {
+            if (controller != null) controller.enabled = false;
+            transform.position = spawnPoint.transform.position;
+            transform.rotation = spawnPoint.transform.rotation;
+            if (controller != null) controller.enabled = true;
+        }
+
         anim = GetComponent<Animator>();
         if (anim == null)
             anim = GetComponentInChildren<Animator>();

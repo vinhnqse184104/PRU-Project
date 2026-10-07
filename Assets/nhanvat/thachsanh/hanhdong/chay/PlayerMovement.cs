@@ -23,13 +23,16 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
+
         anim = GetComponent<Animator>();
+        if (anim == null)
+            anim = GetComponentInChildren<Animator>();
+
         mainCam = Camera.main;
 
         if (anim != null)
             anim.applyRootMotion = false;
 
-        // KHÓA VÀ ẨN CON TRỎ CHUỘT
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
@@ -47,18 +50,33 @@ public class PlayerMovement : MonoBehaviour
             }
         }
 
-        // 2. NHẬN NÚT DI CHUYỂN (Mở lại để có thể đuổi theo quái vật)
+        // 2. NHẬN NÚT DI CHUYỂN
         float moveX = 0f;
         float moveZ = 0f;
         if (Keyboard.current != null)
         {
-            if (Keyboard.current.aKey.isPressed) moveX = -1f;
-            if (Keyboard.current.dKey.isPressed) moveX = 1f;
-            if (Keyboard.current.sKey.isPressed) moveZ = -1f;
-            if (Keyboard.current.wKey.isPressed) moveZ = 1f;
+            if (Keyboard.current.aKey.isPressed || Keyboard.current.leftArrowKey.isPressed) moveX = -1f;
+            if (Keyboard.current.dKey.isPressed || Keyboard.current.rightArrowKey.isPressed) moveX = 1f;
+            if (Keyboard.current.sKey.isPressed || Keyboard.current.downArrowKey.isPressed) moveZ = -1f;
+            if (Keyboard.current.wKey.isPressed || Keyboard.current.upArrowKey.isPressed) moveZ = 1f;
+        }
+
+        if (moveX == 0f && moveZ == 0f)
+        {
+            try
+            {
+                moveX = Input.GetAxisRaw("Horizontal");
+                moveZ = Input.GetAxisRaw("Vertical");
+            }
+            catch { }
         }
 
         // 3. TÍNH HƯỚNG DI CHUYỂN
+        if (mainCam == null)
+        {
+            mainCam = Camera.main;
+        }
+
         Vector3 move = Vector3.zero;
         if (mainCam != null)
         {
@@ -70,12 +88,32 @@ public class PlayerMovement : MonoBehaviour
             camRight.Normalize();
             move = (camForward * moveZ + camRight * moveX).normalized;
         }
+        else
+        {
+            Vector3 fwd = transform.forward;
+            Vector3 rgt = transform.right;
+            fwd.y = 0f;
+            rgt.y = 0f;
+            fwd.Normalize();
+            rgt.Normalize();
+            move = (fwd * moveZ + rgt * moveX).normalized;
+        }
 
-        // 4. TRỌNG LỰC VÀ NHẢY (Vẫn khóa nhảy khi đang đánh)
+        // 4. TRỌNG LỰC VÀ NHẢY
+        bool spacePressed = false;
+        if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+        {
+            spacePressed = true;
+        }
+        if (!spacePressed)
+        {
+            try { spacePressed = Input.GetKeyDown(KeyCode.Space); } catch { }
+        }
+
         if (controller.isGrounded)
         {
             if (velocity.y < 0) velocity.y = -2f;
-            if (!isAttacking && Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
+            if (!isAttacking && spacePressed)
             {
                 velocity.y = jumpForce;
                 if (anim != null) anim.SetTrigger("JumpTrigger");
@@ -86,15 +124,13 @@ public class PlayerMovement : MonoBehaviour
             velocity.y += gravity * Time.deltaTime;
         }
 
-        // 5. ĐIỀU CHỈNH TỐC ĐỘ Combat (Chìa khóa nằm ở đây)
+        // 5. ĐIỀU CHỈNH TỐC ĐỘ Combat
         float currentSpeed = moveSpeed;
         if (isAttacking)
         {
-            // Cho phép lướt bám theo quái với 35% tốc độ (Bạn có thể tự tăng giảm số 0.35f này)
             currentSpeed = moveSpeed * 0.35f;
         }
 
-        // Vẫn cho phép bẻ lái (xoay mặt) để chém trúng quái vật đang chạy vòng quanh
         if (move.magnitude >= 0.1f)
         {
             Quaternion targetRotation = Quaternion.LookRotation(move);
@@ -111,11 +147,11 @@ public class PlayerMovement : MonoBehaviour
         {
             if (!isAttacking)
             {
-                anim.SetFloat("Speed", move.magnitude); // Chạy bình thường
+                anim.SetFloat("Speed", move.magnitude);
             }
             else
             {
-                anim.SetFloat("Speed", 0f); // Mẹo: Ép Animator hiểu là đang đứng im để không bị lỗi trượt hình ảnh
+                anim.SetFloat("Speed", 0f);
             }
         }
     }

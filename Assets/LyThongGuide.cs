@@ -75,7 +75,13 @@ public class LyThongGuide : MonoBehaviour
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
-        animator = GetComponentInChildren<Animator>();
+
+        animator = GetComponent<Animator>();
+        if (animator == null)
+            animator = GetComponentInChildren<Animator>();
+
+        if (animator != null)
+            animator.applyRootMotion = false;
 
         // Tự động tìm Thạch Sanh nếu chưa gán
         if (thachSanh == null)
@@ -175,6 +181,23 @@ public class LyThongGuide : MonoBehaviour
 
     void Update()
     {
+        // Cập nhật animator cho Lý Thông theo tốc độ thực tế của NavMeshAgent
+        if (animator == null)
+        {
+            animator = GetComponent<Animator>();
+            if (animator == null)
+                animator = GetComponentInChildren<Animator>();
+
+            if (animator != null)
+                animator.applyRootMotion = false;
+        }
+
+        if (animator != null && animator.runtimeAnimatorController != null && agent != null)
+        {
+            float currentSpeed = agent.velocity.magnitude;
+            animator.SetFloat("Speed", currentSpeed);
+        }
+
         switch (currentState)
         {
             case CutsceneState.WaitingForPlayer:
@@ -614,8 +637,12 @@ public class LyThongGuide : MonoBehaviour
     private void SetCharacterWalking(GameObject targetObj, bool walking)
     {
         if (targetObj == null) return;
-        Animator anim = targetObj.GetComponentInChildren<Animator>();
+        Animator anim = targetObj.GetComponent<Animator>();
+        if (anim == null)
+            anim = targetObj.GetComponentInChildren<Animator>();
         if (anim == null) return;
+
+        anim.applyRootMotion = false;
 
         foreach (AnimatorControllerParameter parameter in anim.parameters)
         {

@@ -195,6 +195,9 @@ public class CaveFadeTeleport : MonoBehaviour
         isTeleporting = true;
         playerInside = false;
 
+        PlayerMovement pMovement = playerObj != null ? playerObj.GetComponent<PlayerMovement>() : null;
+        if (pMovement != null) pMovement.enabled = false;
+
         if (countdownText != null)
         {
             countdownText.gameObject.SetActive(false);
@@ -209,10 +212,15 @@ public class CaveFadeTeleport : MonoBehaviour
             if (fadeCanvasGroup != null)
             {
                 fadeCanvasGroup.alpha = Mathf.Clamp01(elapsed / fadeDuration);
+                fadeCanvasGroup.blocksRaycasts = true;
             }
             yield return null;
         }
-        if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 1.0f;
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.alpha = 1.0f;
+            fadeCanvasGroup.blocksRaycasts = true;
+        }
 
         // 2. Perform Teleport while fully black
         if (playerObj != null && targetSpawnPoint != null)
@@ -224,11 +232,13 @@ public class CaveFadeTeleport : MonoBehaviour
 
             playerObj.transform.position = targetSpawnPoint.position;
             playerObj.transform.rotation = targetSpawnPoint.rotation;
+            Physics.SyncTransforms();
 
             if (rb != null)
             {
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
+                rb.isKinematic = false;
             }
 
             if (controller != null) controller.enabled = true;
@@ -245,10 +255,11 @@ public class CaveFadeTeleport : MonoBehaviour
 
             // Snap main camera if CameraFollow is present
             CameraFollow camFollow = Object.FindAnyObjectByType<CameraFollow>();
-            if (camFollow != null && camFollow.target != null)
+            if (camFollow != null)
             {
-                camFollow.transform.position = camFollow.target.position + camFollow.target.rotation * camFollow.offset;
-                camFollow.transform.LookAt(camFollow.target.position + Vector3.up * camFollow.targetHeight);
+                camFollow.target = playerObj.transform;
+                camFollow.transform.position = playerObj.transform.position + playerObj.transform.rotation * camFollow.offset;
+                camFollow.transform.LookAt(playerObj.transform.position + Vector3.up * camFollow.targetHeight);
             }
         }
         else
@@ -269,7 +280,14 @@ public class CaveFadeTeleport : MonoBehaviour
             }
             yield return null;
         }
-        if (fadeCanvasGroup != null) fadeCanvasGroup.alpha = 0f;
+
+        if (fadeCanvasGroup != null)
+        {
+            fadeCanvasGroup.alpha = 0f;
+            fadeCanvasGroup.blocksRaycasts = false;
+        }
+
+        if (pMovement != null) pMovement.enabled = true;
 
         isTeleporting = false;
         currentTimer = countdownTime;

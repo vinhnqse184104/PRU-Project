@@ -26,24 +26,37 @@ public class CaveSceneSetup : EditorWindow
             return; // Only run when Chapter3_MieuChanTinh is opened
         }
 
-        // 1. Ensure Outside Spawn Point near CaveTeleportTrigger
+        // 1. Ensure Outside Spawn Point and Chapter3_StartPoint at Sea Edge on terrain
+        Vector3 seaEdgePos = new Vector3(150.7683f, 0.5f, 116.6338f);
+        Quaternion seaEdgeRot = Quaternion.Euler(0, -88.852f, 0);
+
+        GameObject startPoint = GameObject.Find("Chapter3_StartPoint");
+        if (startPoint == null) startPoint = new GameObject("Chapter3_StartPoint");
+        startPoint.transform.position = seaEdgePos;
+        startPoint.transform.rotation = seaEdgeRot;
+
         GameObject outsideSpawn = GameObject.Find("OutsideSpawnPoint");
-        if (outsideSpawn == null)
+        if (outsideSpawn == null) outsideSpawn = new GameObject("OutsideSpawnPoint");
+        outsideSpawn.transform.position = seaEdgePos;
+        outsideSpawn.transform.rotation = seaEdgeRot;
+
+        GameObject playerObj = GameObject.FindWithTag("Player") ?? GameObject.Find("thachsan");
+        if (playerObj != null)
         {
-            outsideSpawn = new GameObject("OutsideSpawnPoint");
-            outsideSpawn.transform.position = new Vector3(100.5f, 8.0f, 88.0f);
-            outsideSpawn.transform.rotation = Quaternion.Euler(0, 45f, 0);
+            CharacterController controller = playerObj.GetComponent<CharacterController>();
+            if (controller != null) controller.enabled = false;
+            playerObj.transform.position = seaEdgePos;
+            playerObj.transform.rotation = seaEdgeRot;
+            Physics.SyncTransforms();
+            if (controller != null) controller.enabled = true;
         }
 
-        // 2. Root GameObject for the entire cave (Yêu cầu 10 & 11)
+        // 2. Root GameObject for the entire cave (ALWAYS ACTIVE)
         GameObject caveArea = GameObject.Find("ChanTinhCaveArea");
-        if (caveArea == null)
-        {
-            caveArea = new GameObject("ChanTinhCaveArea");
-        }
+        if (caveArea == null) caveArea = new GameObject("ChanTinhCaveArea");
         caveArea.transform.position = Vector3.zero;
 
-        // 3. Setup exact Hierarchy requested in Requirement 10:
+        // 3. Setup Hierarchy:
         // ChanTinhCaveArea
         //   - CaveStructure
         //   - CaveGround
@@ -58,22 +71,16 @@ public class CaveSceneSetup : EditorWindow
         Transform caveProps = GetOrCreateChild(caveArea.transform, "CaveProps");
         Transform caveLights = GetOrCreateChild(caveArea.transform, "CaveLights");
 
-        // 4. Cave Spawn Point
+        // 4. Cave Spawn Point inside cave
         GameObject caveSpawn = GameObject.Find("ChanTinhCaveSpawnPoint");
-        if (caveSpawn == null)
-        {
-            caveSpawn = new GameObject("ChanTinhCaveSpawnPoint");
-        }
+        if (caveSpawn == null) caveSpawn = new GameObject("ChanTinhCaveSpawnPoint");
         caveSpawn.transform.SetParent(caveArea.transform, true);
-        caveSpawn.transform.position = new Vector3(290.0f, 0.5f, 282.0f);
-        caveSpawn.transform.rotation = Quaternion.Euler(0, 0, 0);
+        caveSpawn.transform.position = new Vector3(289.0f, 0.5f, 286.0f);
+        caveSpawn.transform.rotation = Quaternion.Euler(0, 15f, 0);
 
         // 5. Cave Exit Trigger inside cave
         GameObject caveExitTrigger = GameObject.Find("CaveExitTrigger");
-        if (caveExitTrigger == null)
-        {
-            caveExitTrigger = new GameObject("CaveExitTrigger");
-        }
+        if (caveExitTrigger == null) caveExitTrigger = new GameObject("CaveExitTrigger");
         caveExitTrigger.transform.SetParent(caveArea.transform, true);
         caveExitTrigger.transform.position = new Vector3(288.0f, 1.5f, 276.0f);
         BoxCollider exitCol = caveExitTrigger.GetComponent<BoxCollider>();
@@ -88,17 +95,29 @@ public class CaveSceneSetup : EditorWindow
         exitTeleport.countdownTime = 5.0f;
         exitTeleport.fadeDuration = 2.0f;
 
-        // 6. Outside Teleport Trigger
+        // 6. Outside Teleport Trigger & Entrance Marker
+        GameObject caveMarker = GameObject.Find("CaveEntranceMarker");
+        if (caveMarker == null) caveMarker = new GameObject("CaveEntranceMarker");
+        caveMarker.transform.position = new Vector3(105.7401f, 2.530818f, 97.22861f);
+        caveMarker.transform.rotation = Quaternion.identity;
+
         GameObject outsideTrigger = GameObject.Find("CaveTeleportTrigger");
-        if (outsideTrigger != null)
-        {
-            CaveFadeTeleport enterTeleport = outsideTrigger.GetComponent<CaveFadeTeleport>();
-            if (enterTeleport == null) enterTeleport = outsideTrigger.AddComponent<CaveFadeTeleport>();
-            enterTeleport.isEnteringCave = true;
-            enterTeleport.targetSpawnPoint = caveSpawn.transform;
-            enterTeleport.countdownTime = 5.0f;
-            enterTeleport.fadeDuration = 2.0f;
-        }
+        if (outsideTrigger == null) outsideTrigger = new GameObject("CaveTeleportTrigger");
+        outsideTrigger.transform.position = caveMarker.transform.position;
+        outsideTrigger.transform.rotation = caveMarker.transform.rotation;
+
+        BoxCollider enterCol = outsideTrigger.GetComponent<BoxCollider>();
+        if (enterCol == null) enterCol = outsideTrigger.AddComponent<BoxCollider>();
+        enterCol.isTrigger = true;
+        enterCol.center = new Vector3(0f, 1.0f, 0f);
+        enterCol.size = new Vector3(3.5f, 3.5f, 2.5f);
+
+        CaveFadeTeleport enterTeleport = outsideTrigger.GetComponent<CaveFadeTeleport>();
+        if (enterTeleport == null) enterTeleport = outsideTrigger.AddComponent<CaveFadeTeleport>();
+        enterTeleport.isEnteringCave = true;
+        enterTeleport.targetSpawnPoint = caveSpawn.transform;
+        enterTeleport.countdownTime = 5.0f;
+        enterTeleport.fadeDuration = 2.0f;
 
         // 7. Ensure Lighting Controller
         CaveLightingController lightingCtrl = Object.FindAnyObjectByType<CaveLightingController>();
@@ -108,20 +127,23 @@ public class CaveSceneSetup : EditorWindow
             lightingCtrl = ctrlObj.AddComponent<CaveLightingController>();
         }
 
-        lightingCtrl.caveSunIntensity = 0.0f;
-        lightingCtrl.caveAmbientColor = new Color(0.008f, 0.012f, 0.025f);
-        lightingCtrl.caveCameraBackgroundColor = new Color(0.005f, 0.01f, 0.02f);
+        lightingCtrl.caveSunIntensity = 0.15f;
+        lightingCtrl.caveAmbientColor = new Color(0.20f, 0.22f, 0.28f);
+        lightingCtrl.caveCameraBackgroundColor = new Color(0.02f, 0.03f, 0.05f);
         lightingCtrl.enableCaveFog = true;
-        lightingCtrl.caveFogColor = new Color(0.01f, 0.03f, 0.06f);
-        lightingCtrl.caveFogDensity = 0.04f;
+        lightingCtrl.caveFogColor = new Color(0.08f, 0.10f, 0.16f);
+        lightingCtrl.caveFogDensity = 0.012f;
 
         // 8. Build 3D Cave using MinesAndCaveSet prefabs
         BuildCaveWithMinesAndCaveSet(caveStructure, caveGround, caveWalls, caveCeiling, caveProps, caveLights);
 
+        // Ensure caveArea is always active
+        caveArea.SetActive(true);
+
         // 9. Mark dirty & save scene
         EditorSceneManager.MarkSceneDirty(activeScene);
         EditorSceneManager.SaveScene(activeScene);
-        Debug.Log("[CaveSceneSetup] Hang Chan Tinh Cave assembled with MinesAndCaveSet prefabs!");
+        Debug.Log("[CaveSceneSetup] Hang Chan Tinh Cave assembled! Cave is ALWAYS ACTIVE.");
     }
 
     private static Transform GetOrCreateChild(Transform parent, string name)
@@ -360,7 +382,7 @@ public class CaveSceneSetup : EditorWindow
             pLight.color = new Color(1.0f, 0.55f, 0.12f); // Warm Torch Orange
             pLight.intensity = 3.5f;
             pLight.range = 10.0f;
-            pLight.shadows = LightShadows.Soft;
+            pLight.shadows = (i == 0) ? LightShadows.Soft : LightShadows.None; // Only main entrance torch casts shadows
 
             LightFlickerEffect flicker = lightObj.GetComponent<LightFlickerEffect>();
             if (flicker == null) flicker = lightObj.AddComponent<LightFlickerEffect>();

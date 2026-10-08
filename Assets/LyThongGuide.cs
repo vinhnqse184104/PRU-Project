@@ -563,9 +563,9 @@ public class LyThongGuide : MonoBehaviour
             yield return null;
         }
 
-        // 8. CHỈ KHI CẢ 3 ĐÃ VÀO NHÀ MỚI CHUYỂN SANG CÂU THOẠI CUỐI IN-HOUSE
+        // 8. CÂU THOẠI CUỐI CÙNG TRONG NHÀ
         currentState = CutsceneState.FinalInsideDialogue;
-        currentSpeech = "MẸ LÝ THÔNG:\n\"Đêm nay các con cứ nghỉ ở đây, có gì mai hãy tính.\"";
+        currentSpeech = "LÝ THÔNG:\n\"Thôi, đi ngủ thôi!\"";
         UpdateUI(currentSpeech);
     }
 
@@ -574,24 +574,86 @@ public class LyThongGuide : MonoBehaviour
     {
         if (IsAdvancePressed())
         {
-            // CHỈ KHI ĐÃ HẾT CÂU THOẠI TRONG NHÀ MỚI KẾT THÚC CUTSCENE!
+            // Người chơi đọc xong và bấm tiếp -> Kết thúc thoại & chuyển cảnh ngay!
             EndCutscene();
         }
     }
 
-    // STATE 7: END CUTSCENE
+    // STATE 7: END CUTSCENE -> FADE ĐEN 2S VÀ TỰ ĐỘNG CHUYỂN SANG CHAPTER 3
     void EndCutscene()
     {
         currentState = CutsceneState.Finished;
         ClearUI();
+        StartCoroutine(TransitionToChapter3());
+    }
 
-        if (playerMovement != null)
+    private IEnumerator TransitionToChapter3()
+    {
+        if (playerMovement != null) playerMovement.enabled = false;
+
+        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
+        CanvasGroup cg = null;
+        if (canvas != null)
         {
-            playerMovement.enabled = true;
+            Transform fadeObjTr = canvas.transform.Find("Chapter2FadeOverlay");
+            GameObject fadeObj;
+            if (fadeObjTr != null)
+            {
+                fadeObj = fadeObjTr.gameObject;
+            }
+            else
+            {
+                fadeObj = new GameObject("Chapter2FadeOverlay");
+                fadeObj.transform.SetParent(canvas.transform, false);
+                RectTransform rect = fadeObj.AddComponent<RectTransform>();
+                rect.anchorMin = Vector2.zero;
+                rect.anchorMax = Vector2.one;
+                rect.offsetMin = Vector2.zero;
+                rect.offsetMax = Vector2.one;
+                UnityEngine.UI.Image img = fadeObj.AddComponent<UnityEngine.UI.Image>();
+                img.color = Color.black;
+                img.raycastTarget = false;
+            }
+            cg = fadeObj.GetComponent<CanvasGroup>();
+            if (cg == null) cg = fadeObj.AddComponent<CanvasGroup>();
         }
 
-        Debug.Log("Hoàn thành Cutscene Chapter 2! Chuyển sang Chapter 3...");
+        float duration = 2.0f;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            if (cg != null) cg.alpha = Mathf.Clamp01(elapsed / duration);
+            yield return null;
+        }
+        if (cg != null) cg.alpha = 1.0f;
+
+        yield return new WaitForSeconds(0.3f);
+        Debug.Log("[LyThongGuide] Final dialogue line closed! Transitioning to Chapter3_MieuChanTinh...");
         SceneManager.LoadScene("Chapter3_MieuChanTinh");
+    }
+
+    private void EnsureBedSleepTrigger()
+    {
+        BedSleepTrigger sleepTrigger = Object.FindAnyObjectByType<BedSleepTrigger>();
+        if (sleepTrigger == null)
+        {
+            GameObject triggerObj = GameObject.Find("BedSleepTrigger") ?? GameObject.Find("Bed") ?? GameObject.Find("Giuong");
+            if (triggerObj == null)
+            {
+                triggerObj = new GameObject("BedSleepTrigger");
+                Vector3 bedPos = thachSanhInsidePoint != null ? thachSanhInsidePoint.position + Vector3.forward * 1.5f : transform.position + transform.forward * 2.0f;
+                triggerObj.transform.position = bedPos;
+            }
+
+            BoxCollider box = triggerObj.GetComponent<BoxCollider>();
+            if (box == null) box = triggerObj.AddComponent<BoxCollider>();
+            box.isTrigger = true;
+            box.size = new Vector3(4f, 3f, 4f);
+
+            sleepTrigger = triggerObj.GetComponent<BedSleepTrigger>();
+            if (sleepTrigger == null) sleepTrigger = triggerObj.AddComponent<BedSleepTrigger>();
+        }
     }
 
     private bool IsAdvancePressed()

@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
     public float moveSpeed = 5f;
+    public float runSpeed = 8f;  // [MỚI] tốc độ khi giữ Shift
     public float rotationSpeed = 15f; // Tốc độ xoay mặt nhân vật mượt hơn
     public float gravity = -9.81f;
     public float jumpForce = 5f;
@@ -26,6 +27,13 @@ public class PlayerMovement : MonoBehaviour
         // KHÓA VÀ ẨN CON TRỎ CHUỘT (Giống PUBG)
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+    }
+
+    // [MỚI] Khi script bị tắt (lúc nói chuyện), đưa animation về đứng yên
+    void OnDisable()
+    {
+        if (anim != null)
+            anim.SetFloat("Speed", 0f);
     }
 
     void Update()
@@ -80,6 +88,9 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
         }
 
+        bool running = Keyboard.current != null && Keyboard.current.leftShiftKey.isPressed;
+        float currentSpeed = running ? runSpeed : moveSpeed;
+
         // 5. Áp dụng di chuyển
         Vector3 finalMovement = move * moveSpeed;
         finalMovement.y = velocity.y;
@@ -91,6 +102,6 @@ public class PlayerMovement : MonoBehaviour
             anim.SetFloat("Speed", move.magnitude);
         }
 
-        
+
     }
 }

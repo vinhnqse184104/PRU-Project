@@ -9,14 +9,14 @@ using TMPro;
 public class LyThongGuide : MonoBehaviour
 {
     [Header("Các Object chính")]
-    public Transform homePoint; // LyThongHomePoint (Điểm trước cửa nhà)
-    public Transform thachSanh;  // Reference tới Thạch Sanh
-    public Transform motherNPC;  // Reference tới Mẹ Lý Thông
+    public Transform homePoint;
+    public Transform thachSanh;
+    public Transform motherNPC;
 
     [Header("3 Điểm đứng trong nhà (Deepest -> Outer)")]
-    public Transform motherInsidePoint;     // Sâu nhất trong nhà
-    public Transform lyThongInsidePoint;    // Phía sau / gần Mẹ
-    public Transform thachSanhInsidePoint;  // Phía sau Lý Thông
+    public Transform motherInsidePoint;
+    public Transform lyThongInsidePoint;
+    public Transform thachSanhInsidePoint;
 
     [Header("Cấu hình Cửa & UI")]
     public DoorInteraction doorInteraction;
@@ -29,13 +29,12 @@ public class LyThongGuide : MonoBehaviour
 
     public enum CutsceneState
     {
-        WaitingForPlayer,     // State 1: Chờ Thạch Sanh tới gần (<=4m)
-        FirstDialogue,        // State 2: 5 câu thoại đầu giữa Lý Thông & Thạch Sanh
-        GuideHome,            // State 3: Lý Thông dẫn Thạch Sanh về trước cửa nhà
-        MotherDialogue,       // State 4: 8 câu thoại ngoài nhà với Mẹ Lý Thông
-        MotherLeadsInside,    // State 5: Mẹ -> Lý Thông -> Thạch Sanh nối đuôi nhau vào nhà (Coroutine)
-        FinalInsideDialogue,  // State 6: Câu thoại cuối của Mẹ khi cả 3 đã đứng trong nhà
-        Finished              // State 7: Hoàn thành Cutscene, trả quyền điều khiển
+        WaitingForPlayer,
+        GuideHome,
+        MotherDialogue,
+        ThachSanhGoesInside,  // Thạch Sanh tự đi vào nhà
+        SecretDialogue,       // Đoạn thoại âm mưu của 2 mẹ con
+        Finished
     }
 
     [Header("Trạng thái hiện tại")]
@@ -44,33 +43,32 @@ public class LyThongGuide : MonoBehaviour
     private NavMeshAgent agent;
     private Animator animator;
     private PlayerMovement playerMovement;
-    private Animator thachSanhAnim;
     private CharacterController thachSanhController;
 
     private int currentDialogueIndex = 0;
     private string currentSpeech = "";
 
-    // 5 câu thoại đầu giữa Lý Thông & Thạch Sanh
-    private readonly string[] firstDialogueLines = new string[]
-    {
-        "LÝ THÔNG:\n\"Chú em đi đâu một mình giữa lúc trời sắp tối thế này?\"",
-        "THẠCH SANH:\n\"Tôi vốn sống một mình, nay đi đây đó, cũng chưa biết nghỉ chân nơi nào.\"",
-        "LÝ THÔNG:\n\"Trời sắp tối rồi. Nếu chú không chê, hãy theo ta về nhà nghỉ tạm.\"",
-        "THẠCH SANH:\n\"Nếu được vậy thì thật quý hóa. Tôi xin đa tạ huynh.\"",
-        "LÝ THÔNG:\n\"Nhà ta ở ngay phía trước. Chú cứ theo ta.\""
-    };
-
-    // 8 câu thoại với Mẹ Lý Thông ngoài nhà
+    // 8 câu thoại với Mẹ Lý Thông ngoài nhà (Giả vờ nhận người một nhà)
     private readonly string[] motherDialogueLines = new string[]
     {
-        "LÝ THÔNG:\n\"Mẹ, con về rồi!\"",
-        "MẸ LÝ THÔNG:\n\"Con về đấy à? Người đi cùng con là ai vậy?\"",
-        "LÝ THÔNG:\n\"Trên đường về, con gặp chú ấy đi một mình giữa lúc trời sắp tối nên con mời về nhà nghỉ tạm.\"",
-        "THẠCH SANH:\n\"Cháu chào bác. Cháu tên là Thạch Sanh. Cảm ơn bác đã cho cháu tá túc.\"",
-        "MẸ LÝ THÔNG:\n\"Ừ, đã đến nhà thì cứ tự nhiên. Cháu vào nghỉ đi.\"",
-        "LÝ THÔNG:\n\"Nếu chú không chê thì từ nay cứ ở lại đây với mẹ con ta.\"",
-        "THẠCH SANH:\n\"Tôi xin đa tạ huynh và bác.\"",
-        "MẸ LÝ THÔNG:\n\"Thôi, trời cũng tối rồi. Hai đứa theo ta vào nhà.\""
+        "LÝ THÔNG:\n\"Mẹ ơi, con đi bán rượu về rồi đây! Mẹ xem con dẫn ai về này.\"",
+        "MẸ LÝ THÔNG:\n\"Ai mà tướng tá to lớn, mặt mũi lạ hoắc thế này? Sao con lại dẫn về nhà?\"",
+        "LÝ THÔNG:\n\"Đây là Thạch Sanh, tiều phu mồ côi con vừa kết nghĩa anh em dưới gốc đa. Từ nay em ấy sẽ sống cùng mẹ con ta. Thạch Sanh, mau gọi mẹ đi em!\"",
+        "THẠCH SANH:\n\"Dạ... Con chào mẹ ạ. Con tứ cố vô thân, nay được anh Thông thương tình kết giao, xin mẹ cho con nương tựa.\"",
+        "MẸ LÝ THÔNG:\n\"Ối dào ôi... tội nghiệp thằng bé! Đã kết nghĩa anh em thì từ nay con cứ xem ta như mẹ ruột, xem đây như nhà của mình nhé.\"",
+        "LÝ THÔNG:\n\"Đúng đấy em trai, nhà ta có rau ăn rau, có cháo ăn cháo, em đừng ngại ngùng gì cả.\"",
+        "THẠCH SANH:\n\"Ân tình của anh và mẹ, Thạch Sanh này xin khắc cốt ghi tâm.\"",
+        "MẸ LÝ THÔNG:\n\"Đường xa chắc con cũng mệt rồi. Thạch Sanh, con cứ vào buồng trong nghỉ ngơi trước đi.\""
+    };
+
+    // Hội thoại âm mưu của mẹ con Lý Thông (Lật mặt nhanh như chớp)
+    private readonly string[] secretDialogueLines = new string[]
+    {
+        "MẸ LÝ THÔNG:\n\"Trời đất ơi, mày rước cái thằng to lù lù này về làm gì cho tốn cơm tốn gạo hả con?\"",
+        "LÝ THÔNG:\n\"Mẹ bé cái mồm thôi! Mẹ quên là nay mai đến phiên con phải ra miếu nộp mạng cho Chằn Tinh rồi à?\"",
+        "MẸ LÝ THÔNG:\n\"Chết cha... mẹ quên béng mất! Thế ý mày rước nó về, bắt nó gọi tao bằng mẹ là để...\"",
+        "LÝ THÔNG:\n\"Đúng rồi đấy! Nó thật thà ngốc nghếch, lại đang mang ơn anh em ta. Đêm mai con sẽ lừa nó đi canh miếu, cho nó đi thế mạng thay con!\"",
+        "MẸ LÝ THÔNG:\n\"Ôi trời ơi, con trai mẹ thông minh tuyệt đỉnh! Khà khà... Mưu kế hay lắm, mẹ con ta yên tâm vào ngủ thôi!\""
     };
 
     void Start()
@@ -84,7 +82,6 @@ public class LyThongGuide : MonoBehaviour
         if (animator != null)
             animator.applyRootMotion = false;
 
-        // Tự động tìm Thạch Sanh nếu chưa gán
         if (thachSanh == null)
         {
             GameObject pObj = GameObject.FindWithTag("Player");
@@ -94,68 +91,24 @@ public class LyThongGuide : MonoBehaviour
         if (thachSanh != null)
         {
             playerMovement = thachSanh.GetComponent<PlayerMovement>();
-            thachSanhAnim = thachSanh.GetComponent<Animator>();
             thachSanhController = thachSanh.GetComponent<CharacterController>();
         }
 
-        // Tự động tìm Mẹ Lý Thông nếu chưa kéo vào Inspector
         if (motherNPC == null)
         {
             GameObject mObj = GameObject.Find("Mother") ?? GameObject.Find("MotherNPC") ?? GameObject.Find("MeLyThong") ?? GameObject.Find("Me_LyThong");
             if (mObj != null) motherNPC = mObj.transform;
         }
 
-        // Đảm bảo Mẹ Lý Thông có NavMeshAgent gắn ở Root Object
-        EnsureNavMeshAgentOnMother();
-
-        // Tự động tìm Cửa
-        if (doorInteraction == null)
-        {
-            doorInteraction = FindObjectOfType<DoorInteraction>();
-        }
-
-        // Tự động tìm Text UI
+        if (doorInteraction == null) doorInteraction = FindObjectOfType<DoorInteraction>();
         if (dialogueText == null)
         {
             QuestManager qm = FindObjectOfType<QuestManager>();
-            if (qm != null && qm.questText != null)
-            {
-                dialogueText = qm.questText;
-            }
-            else
-            {
-                dialogueText = FindObjectOfType<TextMeshProUGUI>();
-            }
+            if (qm != null && qm.questText != null) dialogueText = qm.questText;
+            else dialogueText = FindObjectOfType<TextMeshProUGUI>();
         }
 
-        // Chỉnh ánh sáng chiều muộn/hoàng hôn
         SetupSunsetLighting();
-    }
-
-    private void EnsureNavMeshAgentOnMother()
-    {
-        if (motherNPC == null) return;
-
-        // NavMeshAgent BẮT BUỘC nằm ở Root Object của Mẹ
-        NavMeshAgent mAgent = motherNPC.GetComponent<NavMeshAgent>();
-        if (mAgent == null)
-        {
-            mAgent = motherNPC.gameObject.AddComponent<NavMeshAgent>();
-            mAgent.speed = guideSpeed * 0.9f;
-            mAgent.stoppingDistance = 0.3f;
-            mAgent.radius = 0.4f;
-            mAgent.height = 1.8f;
-        }
-
-        // Snap Mẹ vào mặt sàn NavMesh nếu chưa ở trên NavMesh
-        if (!mAgent.isOnNavMesh)
-        {
-            NavMeshHit hit;
-            if (NavMesh.SamplePosition(motherNPC.position, out hit, 10.0f, NavMesh.AllAreas))
-            {
-                mAgent.Warp(hit.position);
-            }
-        }
     }
 
     void SetupSunsetLighting()
@@ -165,14 +118,9 @@ public class LyThongGuide : MonoBehaviour
             Light[] lights = FindObjectsOfType<Light>();
             foreach (Light l in lights)
             {
-                if (l.type == LightType.Directional)
-                {
-                    directionalLight = l;
-                    break;
-                }
+                if (l.type == LightType.Directional) { directionalLight = l; break; }
             }
         }
-
         if (directionalLight != null)
         {
             directionalLight.color = new Color(1.0f, 0.75f, 0.45f);
@@ -182,17 +130,6 @@ public class LyThongGuide : MonoBehaviour
 
     void Update()
     {
-        // Cập nhật animator cho Lý Thông theo tốc độ thực tế của NavMeshAgent
-        if (animator == null)
-        {
-            animator = GetComponent<Animator>();
-            if (animator == null)
-                animator = GetComponentInChildren<Animator>();
-
-            if (animator != null)
-                animator.applyRootMotion = false;
-        }
-
         if (animator != null && animator.runtimeAnimatorController != null && agent != null)
         {
             float currentSpeed = agent.velocity.magnitude;
@@ -204,109 +141,61 @@ public class LyThongGuide : MonoBehaviour
             case CutsceneState.WaitingForPlayer:
                 UpdateWaiting();
                 break;
-
-            case CutsceneState.FirstDialogue:
-                UpdateFirstDialogue();
-                break;
-
             case CutsceneState.GuideHome:
                 UpdateGuideHome();
                 break;
-
             case CutsceneState.MotherDialogue:
                 UpdateMotherDialogue();
                 break;
-
-            case CutsceneState.MotherLeadsInside:
-                // Được quản lý hoàn toàn bằng Coroutine EnterHouseSequence()
+            case CutsceneState.ThachSanhGoesInside:
+                // Xử lý bằng Coroutine
                 break;
-
-            case CutsceneState.FinalInsideDialogue:
-                UpdateFinalInsideDialogue();
-                break;
-
-            case CutsceneState.Finished:
+            case CutsceneState.SecretDialogue:
+                UpdateSecretDialogue();
                 break;
         }
     }
 
-    // STATE 1: WAITING
     void UpdateWaiting()
     {
         if (thachSanh == null) return;
-
         float dist = Vector3.Distance(transform.position, thachSanh.position);
         if (dist <= triggerDistance)
         {
-            currentState = CutsceneState.FirstDialogue;
-            currentDialogueIndex = 0;
-            currentSpeech = firstDialogueLines[0];
-            UpdateUI(currentSpeech);
-
+            currentState = CutsceneState.GuideHome;
+            ClearUI();
             if (playerMovement != null) playerMovement.enabled = false;
-            if (agent != null && agent.isOnNavMesh) agent.isStopped = true;
-            SetWalking(false);
-            RotateTowards(thachSanh.position);
-        }
-    }
-
-    // STATE 2: FIRST DIALOGUE
-    void UpdateFirstDialogue()
-    {
-        RotateTowards(thachSanh.position);
-
-        if (IsAdvancePressed())
-        {
-            currentDialogueIndex++;
-            if (currentDialogueIndex < firstDialogueLines.Length)
+            if (homePoint != null && agent != null && agent.isOnNavMesh)
             {
-                currentSpeech = firstDialogueLines[currentDialogueIndex];
-                UpdateUI(currentSpeech);
-            }
-            else
-            {
-                ClearUI();
-                currentState = CutsceneState.GuideHome;
-
-                if (homePoint != null && agent != null && agent.isOnNavMesh)
-                {
-                    agent.isStopped = false;
-                    agent.speed = guideSpeed;
-                    agent.SetDestination(homePoint.position);
-                }
+                agent.isStopped = false;
+                agent.speed = guideSpeed;
+                agent.SetDestination(homePoint.position);
             }
         }
     }
 
-    // STATE 3: GUIDE HOME (Về trước cửa nhà)
     void UpdateGuideHome()
     {
         bool isMoving = agent != null && agent.velocity.magnitude > 0.1f;
         SetWalking(isMoving);
 
-        // Thạch Sanh đi theo phía sau Lý Thông 2.2m
         if (thachSanh != null)
         {
-            Vector3 followTarget = transform.position - transform.forward * 2.2f;
+            Vector3 followTarget = transform.position - transform.forward * 2.2f + transform.right * 1.2f;
             followTarget.y = thachSanh.position.y;
-
             float distToTarget = Vector3.Distance(thachSanh.position, followTarget);
+
             if (distToTarget > 0.4f)
             {
                 Vector3 moveDir = (followTarget - thachSanh.position).normalized;
                 if (thachSanhController != null)
-                {
                     thachSanhController.Move((moveDir * guideSpeed + Vector3.down * 9.81f) * Time.deltaTime);
-                }
                 else
-                {
                     thachSanh.position = Vector3.MoveTowards(thachSanh.position, followTarget, guideSpeed * Time.deltaTime);
-                }
 
                 if (moveDir != Vector3.zero)
-                {
                     thachSanh.rotation = Quaternion.Slerp(thachSanh.rotation, Quaternion.LookRotation(moveDir), 8f * Time.deltaTime);
-                }
+
                 SetCharacterWalking(thachSanh.gameObject, true);
             }
             else
@@ -315,7 +204,6 @@ public class LyThongGuide : MonoBehaviour
             }
         }
 
-        // Khi Lý Thông tới gần homePoint (trước cửa)
         float distToHome = homePoint != null ? Vector3.Distance(transform.position, homePoint.position) : 999f;
         if (distToHome <= 1.8f || (agent != null && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.5f))
         {
@@ -323,8 +211,15 @@ public class LyThongGuide : MonoBehaviour
             SetWalking(false);
             if (thachSanh != null) SetCharacterWalking(thachSanh.gameObject, false);
 
-            // Mở cửa và bắt đầu thoại 8 câu ngoài nhà với Mẹ
             if (doorInteraction != null) doorInteraction.OpenDoor();
+
+            if (motherNPC != null)
+            {
+                transform.LookAt(new Vector3(motherNPC.position.x, transform.position.y, motherNPC.position.z));
+                motherNPC.LookAt(new Vector3(transform.position.x, motherNPC.position.y, transform.position.z));
+                if (thachSanh != null)
+                    thachSanh.LookAt(new Vector3(motherNPC.position.x, thachSanh.position.y, motherNPC.position.z));
+            }
 
             currentState = CutsceneState.MotherDialogue;
             currentDialogueIndex = 0;
@@ -333,7 +228,6 @@ public class LyThongGuide : MonoBehaviour
         }
     }
 
-    // STATE 4: MOTHER DIALOGUE (Hội thoại 8 câu ngoài nhà)
     void UpdateMotherDialogue()
     {
         if (IsAdvancePressed())
@@ -346,240 +240,117 @@ public class LyThongGuide : MonoBehaviour
             }
             else
             {
-                // KHÔNG GỌI EndCutscene() Ở ĐÂY!
-                // Bắt đầu Coroutine dẫn cả nhóm vào nhà
-                StartCoroutine(EnterHouseSequence());
+                // Thay vì mẹ dẫn vào, giờ chạy Coroutine Thạch Sanh đi vào nhà
+                StartCoroutine(ThachSanhGoesInsideSequence());
             }
         }
     }
 
-    // STATE 5: ENTER HOUSE SEQUENCE (Mẹ -> Lý Thông -> Thạch Sanh)
-    IEnumerator EnterHouseSequence()
+    // COROUTINE MỚI: Thạch Sanh lủi thủi đi vào nhà rồi biến mất
+    // COROUTINE MỚI: Thạch Sanh lủi thủi đi vào nhà rồi biến mất
+    // COROUTINE MỚI: Thạch Sanh lủi thủi đi vào nhà rồi biến mất
+    IEnumerator ThachSanhGoesInsideSequence()
     {
-        currentState = CutsceneState.MotherLeadsInside;
+        currentState = CutsceneState.ThachSanhGoesInside;
         ClearUI();
 
-        // 1. MỞ CỬA TRƯỚC
-        if (doorInteraction != null)
+        if (doorInteraction != null) doorInteraction.OpenDoor();
+
+        // Mẹ và Lý Thông nhìn theo bóng lưng Thạch Sanh
+        if (motherNPC != null && thachSanh != null)
         {
-            doorInteraction.OpenDoor();
+            transform.LookAt(new Vector3(thachSanh.position.x, transform.position.y, thachSanh.position.z));
+            motherNPC.LookAt(new Vector3(thachSanh.position.x, motherNPC.position.y, thachSanh.position.z));
         }
 
-        // 2. LẤY NAV MESH AGENT TRÊN ROOT CỦA MẸ LÝ THÔNG
-        EnsureNavMeshAgentOnMother();
-
-        NavMeshAgent motherAgent = null;
-        if (motherNPC != null)
-        {
-            motherAgent = motherNPC.GetComponent<NavMeshAgent>();
-            if (motherAgent != null && !motherAgent.isOnNavMesh)
-            {
-                NavMeshHit hit;
-                if (NavMesh.SamplePosition(motherNPC.position, out hit, 10.0f, NavMesh.AllAreas))
-                {
-                    motherAgent.Warp(hit.position);
-                }
-            }
-
-            Debug.Log("Mother start moving inside");
-            Debug.Log("Mother isOnNavMesh: " + (motherAgent != null ? motherAgent.isOnNavMesh.ToString() : "false"));
-        }
-        else
-        {
-            Debug.LogWarning("Chưa gán MotherNPC trong Inspector của LyThongGuide!");
-        }
-
-        // 3. KIỂM TRA ĐIỂM ĐÍCH MOTHER INSIDE POINT
-        Vector3 motherTargetPos = transform.position;
-        if (motherInsidePoint != null)
-        {
-            motherTargetPos = motherInsidePoint.position;
-            Debug.Log("Mother destination: " + motherTargetPos);
-
-            NavMeshHit pointHit;
-            if (!NavMesh.SamplePosition(motherTargetPos, out pointHit, 3.0f, NavMesh.AllAreas))
-            {
-                Debug.LogError("MotherInsidePoint đang NẰM NGOÀI NavMesh! Vui lòng kéo MotherInsidePoint vào vùng NavMesh màu xanh trong Unity Editor.");
-            }
-        }
-        else
-        {
-            Debug.LogWarning("Chưa kéo MotherInsidePoint vào Inspector! Tự động tính điểm phía sau cửa.");
-            motherTargetPos = homePoint != null ? homePoint.position + homePoint.forward * 4.0f : transform.position;
-        }
-
-        // 4. MẸ BẮT ĐẦU ĐI TỚI MOTHER INSIDE POINT
-        bool motherArrived = false;
-        if (motherNPC != null && motherAgent != null && motherAgent.isOnNavMesh)
-        {
-            motherAgent.isStopped = false;
-            motherAgent.speed = guideSpeed * 0.9f;
-            motherAgent.SetDestination(motherTargetPos);
-            SetCharacterWalking(motherNPC.gameObject, true);
-        }
-        else
-        {
-            if (motherAgent != null && !motherAgent.isOnNavMesh)
-            {
-                Debug.LogError("Mother is NOT on NavMesh! Cannot use SetDestination.");
-            }
-            if (motherNPC == null) motherArrived = true; // Bỏ qua nếu không có Mẹ
-        }
-
-        // 5. CHỜ 0.7 GIÂY -> LÝ THÔNG BẮT ĐẦU ĐI
-        yield return new WaitForSeconds(0.7f);
-
-        Vector3 lyThongTargetPos = lyThongInsidePoint != null ? lyThongInsidePoint.position : (homePoint != null ? homePoint.position + homePoint.forward * 2.5f : transform.position);
-        if (agent != null && agent.isOnNavMesh)
-        {
-            agent.isStopped = false;
-            agent.speed = guideSpeed;
-            agent.SetDestination(lyThongTargetPos);
-            SetWalking(true);
-        }
-        bool lyThongArrived = false;
-
-        // 6. CHỜ THÊM 0.7 GIÂY -> THẠCH SANH BẮT ĐẦU ĐI
-        yield return new WaitForSeconds(0.7f);
-
-        Vector3 thachSanhTargetPos = thachSanhInsidePoint != null ? thachSanhInsidePoint.position : (homePoint != null ? homePoint.position + homePoint.forward * 1.3f : thachSanh.position);
+        // Lấy tọa độ điểm đích bạn vừa kéo vào
+        Vector3 targetPos = thachSanhInsidePoint != null ? thachSanhInsidePoint.position : thachSanh.position;
         bool thachSanhArrived = false;
 
-        // 7. VÒNG LẶP DI CHUYỂN & KIỂM TRA ĐIỀU KIỆN ĐẾN ĐÍCH CỦA CẢ 3
-        while (!motherArrived || !lyThongArrived || !thachSanhArrived)
+        if (thachSanhController != null) thachSanhController.enabled = false;
+
+        while (!thachSanhArrived && thachSanh != null)
         {
-            if (doorInteraction != null) doorInteraction.OpenDoor();
+            // BẢO HIỂM: Bỏ qua trục Y (độ cao) để Thạch Sanh không bị kẹt nếu sàn nhà cao
+            Vector3 currentPosNoY = new Vector3(thachSanh.position.x, 0, thachSanh.position.z);
+            Vector3 targetPosNoY = new Vector3(targetPos.x, 0, targetPos.z);
 
-            // --- KIỂM TRA MẸ ĐÃ TỚI CHƯA ---
-            if (!motherArrived && motherNPC != null && motherAgent != null)
+            float distTS = Vector3.Distance(currentPosNoY, targetPosNoY);
+
+            // Chỉ chạy khi khoảng cách còn xa và BẮT BUỘC phải có điểm đến
+            if (distTS > 0.3f && thachSanhInsidePoint != null)
             {
-                if (motherAgent.isOnNavMesh)
-                {
-                    if (!motherAgent.pathPending && motherAgent.remainingDistance <= motherAgent.stoppingDistance + 0.1f)
-                    {
-                        motherAgent.isStopped = true;
-                        SetCharacterWalking(motherNPC.gameObject, false);
-                        motherArrived = true;
-                        Debug.Log("Mother reached MotherInsidePoint");
-                    }
-                    else
-                    {
-                        SetCharacterWalking(motherNPC.gameObject, motherAgent.velocity.magnitude > 0.1f);
-                    }
-                }
-                else
-                {
-                    // Fallback di chuyển thủ công nếu chưa ở trên NavMesh
-                    motherNPC.position = Vector3.MoveTowards(motherNPC.position, motherTargetPos, guideSpeed * 0.9f * Time.deltaTime);
-                    Vector3 dir = (motherTargetPos - motherNPC.position).normalized;
-                    dir.y = 0;
-                    if (dir != Vector3.zero) motherNPC.rotation = Quaternion.Slerp(motherNPC.rotation, Quaternion.LookRotation(dir), 6f * Time.deltaTime);
+                thachSanh.position = Vector3.MoveTowards(thachSanh.position, targetPos, guideSpeed * Time.deltaTime);
 
-                    if (Vector3.Distance(motherNPC.position, motherTargetPos) <= 0.4f)
-                    {
-                        SetCharacterWalking(motherNPC.gameObject, false);
-                        motherArrived = true;
-                        Debug.Log("Mother reached MotherInsidePoint (Fallback)");
-                    }
-                    else
-                    {
-                        SetCharacterWalking(motherNPC.gameObject, true);
-                    }
-                }
-            }
-
-            // --- KIỂM TRA LÝ THÔNG ĐÃ TỚI CHƯA ---
-            if (!lyThongArrived)
-            {
-                if (agent != null && agent.isOnNavMesh)
+                Vector3 moveDir = (targetPosNoY - currentPosNoY).normalized;
+                if (moveDir != Vector3.zero)
                 {
-                    if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.1f)
-                    {
-                        agent.isStopped = true;
-                        SetWalking(false);
-                        lyThongArrived = true;
-                        Debug.Log("LyThong reached LyThongInsidePoint");
-                    }
-                    else
-                    {
-                        SetWalking(agent.velocity.magnitude > 0.1f);
-                    }
+                    thachSanh.rotation = Quaternion.Slerp(thachSanh.rotation, Quaternion.LookRotation(moveDir), 8f * Time.deltaTime);
                 }
-                else
-                {
-                    transform.position = Vector3.MoveTowards(transform.position, lyThongTargetPos, guideSpeed * Time.deltaTime);
-                    Vector3 dir = (lyThongTargetPos - transform.position).normalized;
-                    dir.y = 0;
-                    if (dir != Vector3.zero) transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 6f * Time.deltaTime);
-
-                    if (Vector3.Distance(transform.position, lyThongTargetPos) <= 0.4f)
-                    {
-                        SetWalking(false);
-                        lyThongArrived = true;
-                        Debug.Log("LyThong reached LyThongInsidePoint (Fallback)");
-                    }
-                    else
-                    {
-                        SetWalking(true);
-                    }
-                }
-            }
-
-            // --- KIỂM TRA THẠCH SANH ĐÃ TỚI CHƯA ---
-            if (!thachSanhArrived && thachSanh != null)
-            {
-                float distTS = Vector3.Distance(thachSanh.position, thachSanhTargetPos);
-                if (distTS > 0.4f)
-                {
-                    Vector3 moveDir = (thachSanhTargetPos - thachSanh.position).normalized;
-                    if (thachSanhController != null)
-                    {
-                        thachSanhController.Move((moveDir * guideSpeed + Vector3.down * 9.81f) * Time.deltaTime);
-                    }
-                    else
-                    {
-                        thachSanh.position = Vector3.MoveTowards(thachSanh.position, thachSanhTargetPos, guideSpeed * Time.deltaTime);
-                    }
-
-                    if (moveDir != Vector3.zero)
-                    {
-                        moveDir.y = 0;
-                        thachSanh.rotation = Quaternion.Slerp(thachSanh.rotation, Quaternion.LookRotation(moveDir), 8f * Time.deltaTime);
-                    }
-                    SetCharacterWalking(thachSanh.gameObject, true);
-                }
-                else
-                {
-                    SetCharacterWalking(thachSanh.gameObject, false);
-                    thachSanhArrived = true;
-                    Debug.Log("ThachSanh reached ThachSanhInsidePoint");
-                }
+                SetCharacterWalking(thachSanh.gameObject, true);
             }
             else
             {
-                thachSanhArrived = true;
+                SetCharacterWalking(thachSanh.gameObject, false);
+                thachSanhArrived = true; // Đã tới đích, thoát vòng lặp
             }
-
             yield return null;
         }
 
-        // 8. CÂU THOẠI CUỐI CÙNG TRONG NHÀ
-        currentState = CutsceneState.FinalInsideDialogue;
-        currentSpeech = "LÝ THÔNG:\n\"Thôi, đi ngủ thôi!\"";
+        // Tới đích -> Bật lại vật lý và Biến mất
+        if (thachSanhController != null) thachSanhController.enabled = true;
+        if (thachSanh != null) thachSanh.gameObject.SetActive(false);
+
+        if (Camera.main != null)
+        {
+            CameraFollow camFollow = Camera.main.GetComponent<CameraFollow>();
+            if (camFollow != null)
+            {
+                camFollow.target = transform; // Đổi mục tiêu theo dõi sang Lý Thông
+                camFollow.distance = 3.5f;    // Kéo máy quay gần lại một chút để đặc tả khuôn mặt
+                camFollow.heightOffset = 1.3f;
+            }
+        }
+        // ===================================================
+
+        // Hai mẹ con Lý Thông quay mặt lại nhìn nhau
+        if (motherNPC != null)
+            // Hai mẹ con Lý Thông quay mặt lại nhìn nhau
+            if (motherNPC != null)
+        {
+            transform.LookAt(new Vector3(motherNPC.position.x, transform.position.y, motherNPC.position.z));
+            motherNPC.LookAt(new Vector3(transform.position.x, motherNPC.position.y, transform.position.z));
+        }
+
+        // Chờ tĩnh lặng 3 giây tạo kịch tính
+        yield return new WaitForSeconds(3f);
+
+        // Hiện đoạn thoại âm mưu
+        currentState = CutsceneState.SecretDialogue;
+        currentDialogueIndex = 0;
+        currentSpeech = secretDialogueLines[0];
         UpdateUI(currentSpeech);
     }
 
-    // STATE 6: FINAL INSIDE DIALOGUE
-    void UpdateFinalInsideDialogue()
+    // STATE MỚI: Hội thoại âm mưu
+    void UpdateSecretDialogue()
     {
         if (IsAdvancePressed())
         {
-            // Người chơi đọc xong và bấm tiếp -> Kết thúc thoại & chuyển cảnh ngay!
-            EndCutscene();
+            currentDialogueIndex++;
+            if (currentDialogueIndex < secretDialogueLines.Length)
+            {
+                currentSpeech = secretDialogueLines[currentDialogueIndex];
+                UpdateUI(currentSpeech);
+            }
+            else
+            {
+                // Đọc xong âm mưu thì Fade đen chuyển chương
+                EndCutscene();
+            }
         }
     }
 
-    // STATE 7: END CUTSCENE -> FADE ĐEN 2S VÀ TỰ ĐỘNG CHUYỂN SANG CHAPTER 3
     void EndCutscene()
     {
         currentState = CutsceneState.Finished;
@@ -589,27 +360,20 @@ public class LyThongGuide : MonoBehaviour
 
     private IEnumerator TransitionToChapter3()
     {
-        if (playerMovement != null) playerMovement.enabled = false;
-
         Canvas canvas = Object.FindAnyObjectByType<Canvas>();
         CanvasGroup cg = null;
         if (canvas != null)
         {
             Transform fadeObjTr = canvas.transform.Find("Chapter2FadeOverlay");
             GameObject fadeObj;
-            if (fadeObjTr != null)
-            {
-                fadeObj = fadeObjTr.gameObject;
-            }
+            if (fadeObjTr != null) fadeObj = fadeObjTr.gameObject;
             else
             {
                 fadeObj = new GameObject("Chapter2FadeOverlay");
                 fadeObj.transform.SetParent(canvas.transform, false);
                 RectTransform rect = fadeObj.AddComponent<RectTransform>();
-                rect.anchorMin = Vector2.zero;
-                rect.anchorMax = Vector2.one;
-                rect.offsetMin = Vector2.zero;
-                rect.offsetMax = Vector2.one;
+                rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
+                rect.offsetMin = Vector2.zero; rect.offsetMax = Vector2.one;
                 UnityEngine.UI.Image img = fadeObj.AddComponent<UnityEngine.UI.Image>();
                 img.color = Color.black;
                 img.raycastTarget = false;
@@ -629,38 +393,13 @@ public class LyThongGuide : MonoBehaviour
         if (cg != null) cg.alpha = 1.0f;
 
         yield return new WaitForSeconds(0.3f);
-        Debug.Log("[LyThongGuide] Final dialogue line closed! Transitioning to Chapter3_MieuChanTinh...");
         SceneManager.LoadScene("Chapter3_MieuChanTinh");
-    }
-
-    private void EnsureBedSleepTrigger()
-    {
-        BedSleepTrigger sleepTrigger = Object.FindAnyObjectByType<BedSleepTrigger>();
-        if (sleepTrigger == null)
-        {
-            GameObject triggerObj = GameObject.Find("BedSleepTrigger") ?? GameObject.Find("Bed") ?? GameObject.Find("Giuong");
-            if (triggerObj == null)
-            {
-                triggerObj = new GameObject("BedSleepTrigger");
-                Vector3 bedPos = thachSanhInsidePoint != null ? thachSanhInsidePoint.position + Vector3.forward * 1.5f : transform.position + transform.forward * 2.0f;
-                triggerObj.transform.position = bedPos;
-            }
-
-            BoxCollider box = triggerObj.GetComponent<BoxCollider>();
-            if (box == null) box = triggerObj.AddComponent<BoxCollider>();
-            box.isTrigger = true;
-            box.size = new Vector3(4f, 3f, 4f);
-
-            sleepTrigger = triggerObj.GetComponent<BedSleepTrigger>();
-            if (sleepTrigger == null) sleepTrigger = triggerObj.AddComponent<BedSleepTrigger>();
-        }
     }
 
     private bool IsAdvancePressed()
     {
-        bool spacePressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
-        bool mousePressed = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
-        return spacePressed || mousePressed;
+        return (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame) ||
+               (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame);
     }
 
     private void UpdateUI(string text)
@@ -675,64 +414,36 @@ public class LyThongGuide : MonoBehaviour
 
     private void ClearUI()
     {
-        if (dialogueText != null)
-        {
-            dialogueText.text = "";
-        }
+        if (dialogueText != null) dialogueText.text = "";
         currentSpeech = "";
     }
 
-    private void RotateTowards(Vector3 targetPos)
-    {
-        Vector3 dir = targetPos - transform.position;
-        dir.y = 0;
-        if (dir != Vector3.zero)
-        {
-            transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(dir), 6f * Time.deltaTime);
-        }
-    }
-
-    private void SetWalking(bool walking)
-    {
-        SetCharacterWalking(gameObject, walking);
-    }
+    private void SetWalking(bool walking) { SetCharacterWalking(gameObject, walking); }
 
     private void SetCharacterWalking(GameObject targetObj, bool walking)
     {
         if (targetObj == null) return;
         Animator anim = targetObj.GetComponent<Animator>();
-        if (anim == null)
-            anim = targetObj.GetComponentInChildren<Animator>();
+        if (anim == null) anim = targetObj.GetComponentInChildren<Animator>();
         if (anim == null) return;
 
         anim.applyRootMotion = false;
-
         foreach (AnimatorControllerParameter parameter in anim.parameters)
         {
             if (parameter.type == AnimatorControllerParameterType.Bool)
             {
-                if (string.Equals(parameter.name, "IsWalking", System.StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(parameter.name, "Walk", System.StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(parameter.name, "isWalking", System.StringComparison.OrdinalIgnoreCase))
-                {
-                    anim.SetBool(parameter.name, walking);
-                }
+                if (parameter.name.ToLower().Contains("walk")) anim.SetBool(parameter.name, walking);
             }
-            else if (parameter.type == AnimatorControllerParameterType.Float)
+            else if (parameter.type == AnimatorControllerParameterType.Float && parameter.name.ToLower() == "speed")
             {
-                if (string.Equals(parameter.name, "Speed", System.StringComparison.OrdinalIgnoreCase))
-                {
-                    anim.SetFloat(parameter.name, walking ? 1f : 0f);
-                }
+                anim.SetFloat(parameter.name, walking ? 1f : 0f);
             }
         }
     }
 
     void OnGUI()
     {
-        if (currentState == CutsceneState.FirstDialogue || 
-            currentState == CutsceneState.MotherDialogue || 
-            currentState == CutsceneState.FinalInsideDialogue)
+        if (currentState == CutsceneState.MotherDialogue || currentState == CutsceneState.SecretDialogue)
         {
             if (dialogueText == null && !string.IsNullOrEmpty(currentSpeech))
             {
@@ -742,12 +453,9 @@ public class LyThongGuide : MonoBehaviour
                 boxStyle.alignment = TextAnchor.MiddleCenter;
                 boxStyle.normal.textColor = Color.white;
 
-                float width = Screen.width * 0.7f;
-                float height = 130f;
-                float left = (Screen.width - width) / 2f;
-                float top = Screen.height - height - 40f;
-
-                GUI.Box(new Rect(left, top, width, height), currentSpeech + "\n\n(Bấm Space hoặc Click chuột để tiếp tục)", boxStyle);
+                float width = Screen.width * 0.7f, height = 130f;
+                GUI.Box(new Rect((Screen.width - width) / 2f, Screen.height - height - 40f, width, height),
+                    currentSpeech + "\n\n(Bấm Space hoặc Click chuột để tiếp tục)", boxStyle);
             }
         }
     }

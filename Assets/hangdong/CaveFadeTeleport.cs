@@ -258,8 +258,8 @@ public class CaveFadeTeleport : MonoBehaviour
             if (camFollow != null)
             {
                 camFollow.target = playerObj.transform;
-                camFollow.transform.position = playerObj.transform.position + playerObj.transform.rotation * camFollow.offset;
-                camFollow.transform.LookAt(playerObj.transform.position + Vector3.up * camFollow.targetHeight);
+                camFollow.transform.position = playerObj.transform.position - (playerObj.transform.forward * camFollow.distance) + (Vector3.up * camFollow.heightOffset);
+                camFollow.transform.LookAt(playerObj.transform.position + Vector3.up * camFollow.heightOffset);
             }
         }
         else

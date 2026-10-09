@@ -1,39 +1,53 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class CameraFollow : MonoBehaviour
 {
-    [Header("Nhân vật cần đi theo")]
+    [Header("Kéo nhân vật thachsanh vào đây")]
     public Transform target;
 
-    [Header("Khoảng cách: X(trái/phải), Y(cao), Z(xa sau lưng)")]
-    // Z là số âm (ví dụ: -4.5f) nghĩa là camera ở sau lưng nhân vật
-    public Vector3 offset = new Vector3(0f, 2.5f, -4.5f);
+    [Header("Cài đặt Camera")]
+    public float distance = 4.5f; // Khoảng cách từ cam đến lưng nhân vật
+    public float heightOffset = 1.5f; // Nâng cam cao lên ngang vai
+    public float rotationSpeed = 1.5f; // Tốc độ xoay chuột
 
-    [Header("Độ mượt mà")]
-    public float followSpeed = 6f;      // Tốc độ bám theo vị trí
-    public float rotationSpeed = 6f;    // Tốc độ xoay theo lưng nhân vật
+    private float currentX = 0f;
+    private float currentY = 15f;
 
-    [Header("Điểm nhìn trên nhân vật")]
-    public float targetHeight = 1.3f;   // Nhìn vào ngang ngực/vai thay vì gan bàn chân
+    void Start()
+    {
+        // Khóa chuột vào giữa màn hình và ẩn con trỏ đi
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
 
     void LateUpdate()
     {
+        // Nếu chưa gán mục tiêu thì không làm gì cả để tránh lỗi
         if (target == null) return;
 
-        // 1. Tính vị trí chính xác ở phía SAU LƯNG nhân vật dựa vào góc quay của nhân vật
-        Vector3 desiredPosition = target.position + target.rotation * offset;
+        // 1. Nhận tín hiệu rê chuột (Tương thích New Input System)
+        float mouseX = 0;
+        float mouseY = 0;
 
-        // 2. Di chuyển camera mượt mà đến vị trí sau lưng đó
-        transform.position = Vector3.Lerp(transform.position, desiredPosition, followSpeed * Time.deltaTime);
-
-        // 3. Xoay camera mượt mà để luôn hướng thẳng vào lưng/vai nhân vật
-        Vector3 lookTarget = target.position + Vector3.up * targetHeight;
-        Vector3 directionToTarget = lookTarget - transform.position;
-
-        if (directionToTarget != Vector3.zero)
+        if (Mouse.current != null)
         {
-            Quaternion desiredRotation = Quaternion.LookRotation(directionToTarget);
-            transform.rotation = Quaternion.Slerp(transform.rotation, desiredRotation, rotationSpeed * Time.deltaTime);
+            mouseX = Mouse.current.delta.x.ReadValue() * 0.1f * rotationSpeed;
+            mouseY = Mouse.current.delta.y.ReadValue() * 0.1f * rotationSpeed;
         }
+
+        currentX += mouseX;
+        currentY -= mouseY;
+
+        // 2. Khóa góc nhìn lên/xuống để Camera không bị lật ngược lộn cổ
+        currentY = Mathf.Clamp(currentY, -15f, 60f);
+
+        // 3. Tính toán vòng quỹ đạo xoay quanh nhân vật
+        Quaternion rotation = Quaternion.Euler(currentY, currentX, 0);
+        Vector3 position = target.position - (rotation * Vector3.forward * distance) + (Vector3.up * heightOffset);
+
+        // 4. Áp dụng vị trí và góc quay cho Camera
+        transform.position = position;
+        transform.rotation = rotation;
     }
 }

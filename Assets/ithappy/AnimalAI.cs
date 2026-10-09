@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.AI;
 
 public class AnimalAI : MonoBehaviour
@@ -63,11 +63,8 @@ public class AnimalAI : MonoBehaviour
                 // Dừng di chuyển để đứng đối đầu đánh nhau
                 agent.isStopped = true; 
 
-                if (animator != null)
-                {
-                    animator.SetBool("isChasing", false);
-                    animator.SetBool("isWalking", false);
-                }
+                SetAnimatorBool("isChasing", false);
+                SetAnimatorBool("isWalking", false);
             }
             else
             {
@@ -76,21 +73,15 @@ public class AnimalAI : MonoBehaviour
                 agent.speed = chaseSpeed;
                 agent.SetDestination(player.position);
 
-                if (animator != null)
-                {
-                    animator.SetBool("isChasing", true);
-                    animator.SetBool("isWalking", false);
-                }
+                SetAnimatorBool("isChasing", true);
+                SetAnimatorBool("isWalking", false);
             }
         }
         else // Ngoài tầm phát hiện -> Đi lang thang
         {
             agent.isStopped = false;
 
-            if (animator != null)
-            {
-                animator.SetBool("isChasing", false);
-            }
+            SetAnimatorBool("isChasing", false);
 
             agent.speed = normalSpeed;
 
@@ -101,10 +92,22 @@ public class AnimalAI : MonoBehaviour
                 timer = 0;
             }
 
-            if (animator != null)
+            bool isWalking = agent.velocity.magnitude > 0.1f;
+            SetAnimatorBool("isWalking", isWalking);
+        }
+    }
+
+    private void SetAnimatorBool(string paramName, bool value)
+    {
+        if (animator == null) return;
+
+        foreach (AnimatorControllerParameter parameter in animator.parameters)
+        {
+            if (parameter.type == AnimatorControllerParameterType.Bool &&
+                string.Equals(parameter.name, paramName, System.StringComparison.OrdinalIgnoreCase))
             {
-                bool isWalking = agent.velocity.magnitude > 0.1f;
-                animator.SetBool("isWalking", isWalking);
+                animator.SetBool(parameter.name, value);
+                return;
             }
         }
     }

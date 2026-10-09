@@ -6,7 +6,13 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
-    guid: 99c9720ab356a0642a771bea13969a05
+    path: Assets/Scenes/RungThachSanh.unity
+    guid: f55ab8817ee8beb4482e0baed3697c66
+  - enabled: 1
+    path: Assets/Scenes/Chapter2_LyThong.unity
+    guid: 52fc21fb59ad1f94dbb9921db3026f65
+  - enabled: 1
+    path: Assets/Scenes/Chapter3_MieuChanTinh.unity
+    guid: a9a73b4a9c44fc8499e43b86264f14c0
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

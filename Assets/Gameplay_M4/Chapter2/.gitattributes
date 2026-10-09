@@ -1,0 +1,2 @@
+# Unity navigation data is binary; keep Git from rewriting its bytes.
+Navigation/*.asset binary

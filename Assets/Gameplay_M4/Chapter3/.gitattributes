@@ -1,0 +1,2 @@
+# Native navigation data must never be normalized as text.
+Navigation/*.asset binary

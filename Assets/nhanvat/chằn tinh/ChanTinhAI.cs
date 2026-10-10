@@ -5,17 +5,21 @@ using UnityEngine.AI;
 public class ChanTinhAI : MonoBehaviour
 {
     [Header("Mục tiêu & Tầm phát hiện")]
-    public Transform player;             // Reference tới Thạch Sanh
-    public float detectionRange = 7.0f;  // Khoảng cách phát hiện (mét)
-    public float loseRange = 12.0f;       // Khoảng cách mất dấu khi chạy xa
+    public Transform player;
+    public float detectionRange = 7.0f;
+    public float loseRange = 12.0f;
 
     [Header("Tốc độ di chuyển")]
-    public float patrolSpeed = 1.8f;     // Tốc độ đi dạo tuần tra
-    public float chaseSpeed = 4.0f;      // Tốc độ chạy đuổi theo
+    public float patrolSpeed = 1.8f;
+    public float chaseSpeed = 4.0f;
 
     [Header("Cài đặt tuần tra tự do")]
-    public float patrolRadius = 6.0f;    // Bán kính đi lòng vòng quanh vị trí ban đầu
-    public float waitTimeAtPoint = 2.0f; // Thời gian dừng ngó nghiêng trước khi đổi điểm
+    public float patrolRadius = 6.0f;
+    public float waitTimeAtPoint = 2.0f;
+
+    [Header("Chiến đấu")]
+    public float attackCooldown = 2.0f;
+    private float lastAttackTime = 0f;
 
     private NavMeshAgent agent;
     private Animator animator;
@@ -27,16 +31,11 @@ public class ChanTinhAI : MonoBehaviour
     {
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
-        if (animator == null)
-            animator = GetComponentInChildren<Animator>();
+        if (animator == null) animator = GetComponentInChildren<Animator>();
+        if (animator != null) animator.applyRootMotion = false;
 
-        if (animator != null)
-            animator.applyRootMotion = false;
-
-        // Lưu vị trí đứng ban đầu làm tâm vùng đi tuần
         spawnPoint = transform.position;
 
-        // Tự động tìm Thạch Sanh nếu chưa kéo vào Inspector
         if (player == null)
         {
             GameObject pObj = GameObject.FindWithTag("Player");
@@ -44,7 +43,6 @@ public class ChanTinhAI : MonoBehaviour
             if (pObj != null) player = pObj.transform;
         }
 
-        // Bắt đầu đi tìm điểm đầu tiên
         PickNewPatrolPoint();
     }
 
@@ -52,51 +50,71 @@ public class ChanTinhAI : MonoBehaviour
     {
         if (agent == null || !agent.isOnNavMesh) return;
 
-        // Gửi vận tốc thực tế vào Animator để đổi động tác Đứng -> Đi -> Chạy
-        if (animator != null)
-        {
-            animator.SetFloat("Speed", agent.velocity.magnitude);
-        }
-
-        // Tính khoảng cách tới Thạch Sanh
         float distToPlayer = player != null ? Vector3.Distance(transform.position, player.position) : 999f;
 
-        // Kiểm tra điều kiện thấy người chơi
-        if (distToPlayer <= detectionRange)
-        {
-            isChasing = true;
-        }
-        else if (distToPlayer > loseRange)
-        {
-            isChasing = false;
-        }
+        if (distToPlayer <= detectionRange) isChasing = true;
+        else if (distToPlayer > loseRange) isChasing = false;
 
-        // Thực thi trạng thái
         if (isChasing && player != null)
         {
-            ChasePlayer();
+            ChasePlayer(distToPlayer);
         }
         else
         {
             PatrolRoutine();
         }
+
+        if (animator != null)
+        {
+            float currentSpeed = agent.isStopped ? 0f : agent.desiredVelocity.magnitude;
+            animator.SetFloat("Speed", currentSpeed);
+        }
     }
 
-    // 1. TRẠNG THÁI: ĐUỔI THEO THẠCH SANH
-    void ChasePlayer()
+    void ChasePlayer(float distance)
     {
         isWaiting = false;
-        agent.speed = chaseSpeed;
-        agent.isStopped = false;
-        agent.SetDestination(player.position);
+
+        if (distance <= agent.stoppingDistance)
+        {
+            agent.isStopped = true;
+
+            // Xoay mặt nhìn Thạch Sanh
+            Vector3 lookDir = player.position - transform.position;
+            lookDir.y = 0;
+            if (lookDir != Vector3.zero)
+            {
+                transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookDir), 6f * Time.deltaTime);
+            }
+
+            // === HỆ THỐNG TUNG CHIÊU NGẪU NHIÊN ===
+            if (Time.time >= lastAttackTime + attackCooldown)
+            {
+                if (animator != null)
+                {
+                    // Trả về số nguyên ngẫu nhiên: 1, 2, hoặc 3 (số 4 ở đây nghĩa là cận dưới 4)
+                    int randomAttack = Random.Range(1, 4);
+
+                    if (randomAttack == 1) animator.SetTrigger("Attack_1");
+                    else if (randomAttack == 2) animator.SetTrigger("Attack_2");
+                    else if (randomAttack == 3) animator.SetTrigger("Attack_3");
+                }
+                lastAttackTime = Time.time;
+            }
+        }
+        else
+        {
+            agent.isStopped = false;
+            agent.speed = chaseSpeed;
+            agent.SetDestination(player.position);
+        }
     }
 
-    // 2. TRẠNG THÁI: ĐI LÒNG VÒNG TRONG MIẾU
     void PatrolRoutine()
     {
         agent.speed = patrolSpeed;
+        agent.isStopped = false;
 
-        // Đến gần điểm tuần tra và chưa trong trạng thái đứng chờ
         if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.3f && !isWaiting)
         {
             StartCoroutine(WaitBeforeNextPoint());
@@ -107,17 +125,14 @@ public class ChanTinhAI : MonoBehaviour
     {
         isWaiting = true;
         agent.isStopped = true;
-
         yield return new WaitForSeconds(waitTimeAtPoint);
 
         PickNewPatrolPoint();
-        agent.isStopped = false;
         isWaiting = false;
     }
 
     void PickNewPatrolPoint()
     {
-        // Lấy ngẫu nhiên một điểm trong bán kính quanh chỗ ban đầu
         Vector3 randomDirection = Random.insideUnitSphere * patrolRadius;
         randomDirection += spawnPoint;
 
@@ -128,14 +143,10 @@ public class ChanTinhAI : MonoBehaviour
         }
     }
 
-    // Hiển thị vòng tròn tầm nhìn trong Scene để dễ căn chỉnh
     void OnDrawGizmosSelected()
     {
-        Gizmos.color = Color.yellow;
-        Gizmos.DrawWireSphere(transform.position, detectionRange); // Vòng vàng: Tầm phát hiện
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, loseRange);       // Vòng đỏ: Tầm mất dấu
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(Application.isPlaying ? spawnPoint : transform.position, patrolRadius); // Vòng xanh: Vùng đi tuần
+        Gizmos.color = Color.yellow; Gizmos.DrawWireSphere(transform.position, detectionRange);
+        Gizmos.color = Color.red; Gizmos.DrawWireSphere(transform.position, loseRange);
+        Gizmos.color = Color.green; Gizmos.DrawWireSphere(Application.isPlaying ? spawnPoint : transform.position, patrolRadius);
     }
 }

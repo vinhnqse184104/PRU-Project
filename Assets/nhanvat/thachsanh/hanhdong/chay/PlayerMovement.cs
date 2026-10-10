@@ -164,6 +164,20 @@ public class PlayerMovement : MonoBehaviour
                 anim.SetFloat("Speed", 0f);
             }
         }
+
+        // --- ĐOẠN CODE BẮT PHÍM TẤN CÔNG (Dán vào trong hàm Update có sẵn) ---
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            // Dùng thẳng GetComponent để không sợ sai tên biến
+            Animator myAnim = GetComponent<Animator>();
+            if (myAnim != null) myAnim.SetTrigger("Attack_R");
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Animator myAnim = GetComponent<Animator>();
+            if (myAnim != null) myAnim.SetTrigger("Attack_T");
+        }
     }
 
     // 7. HÀM TẤN CÔNG (Phải là public để Animation Event gọi được)
@@ -227,4 +241,6 @@ public class PlayerMovement : MonoBehaviour
             }
         }
     }
+
+
 }

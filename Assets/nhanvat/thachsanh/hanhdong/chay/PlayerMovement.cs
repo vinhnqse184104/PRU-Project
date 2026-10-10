@@ -13,7 +13,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Combat Settings")]
     public Transform attackPoint; // Kéo thả AttackPoint vào đây
     public float attackRange = 1.5f; // Bán kính tầm đánh
-    public int attackDamage = 35; // Sát thương mỗi nhát chém
+    public int attackDamage = 35; // Sát thương mỗi nhát chém/đấm
+    public int kickDamage = 25;   // Lực đá (sát thương thấp hơn chém)
 
     private CharacterController controller;
     private Animator anim;
@@ -50,11 +51,13 @@ public class PlayerMovement : MonoBehaviour
     void Update()
     {
         // 1. KIỂM TRA TRẠNG THÁI TẤN CÔNG
+        // 1. KIỂM TRA TRẠNG THÁI TẤN CÔNG
         bool isAttacking = false;
         if (anim != null)
         {
             AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.IsName("chém") || stateInfo.IsName("đá"))
+            // ĐÃ THÊM TÊN CỦA 2 KHỐI R VÀ T VÀO ĐÂY ĐỂ TRÁNH TRƯỢT CHÂN
+            if (stateInfo.IsName("chém") || stateInfo.IsName("Attack_R") || stateInfo.IsName("Attack_T") || stateInfo.IsName("đá"))
             {
                 isAttacking = true;
             }
@@ -163,24 +166,36 @@ public class PlayerMovement : MonoBehaviour
             {
                 anim.SetFloat("Speed", 0f);
             }
-        }
 
-        // --- ĐOẠN CODE BẮT PHÍM TẤN CÔNG (Dán vào trong hàm Update có sẵn) ---
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            // Dùng thẳng GetComponent để không sợ sai tên biến
-            Animator myAnim = GetComponent<Animator>();
-            if (myAnim != null) myAnim.SetTrigger("Attack_R");
-        }
+            // === HỆ THỐNG ĐÁNH BẰNG PHÍM (E, R, T, F) ===
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            Animator myAnim = GetComponent<Animator>();
-            if (myAnim != null) myAnim.SetTrigger("Attack_T");
+            // Phím E - Tung đòn tay 1 (Chém)
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                anim.SetTrigger("CutTrigge");
+            }
+
+            // Phím R - Tung đòn tay 2
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                anim.SetTrigger("Attack_R");
+            }
+
+            // Phím T - Tung đòn tay 3
+            if (Input.GetKeyDown(KeyCode.T))
+            {
+                anim.SetTrigger("Attack_T");
+            }
+
+            // Phím F - Tung đòn đá chân
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                anim.SetTrigger("HighKickT");
+            }
         }
     }
 
-    // 7. HÀM TẤN CÔNG (Phải là public để Animation Event gọi được)
+    // 8. HÀM TẤN CÔNG BẰNG TAY (Gắn vào Animation Event của hoạt ảnh Chém/Đấm)
     public void Attack()
     {
         // Nếu chưa gán Attack Point thì bỏ qua để tránh lỗi
@@ -191,22 +206,45 @@ public class PlayerMovement : MonoBehaviour
 
         foreach (Collider enemy in hitEnemies)
         {
-            // 1. Chém trúng Thú
+            // 1. Chém trúng Thú/Quái
             if (enemy.CompareTag("Enemy"))
             {
-                EnemyHealth animalHealth = enemy.GetComponent<EnemyHealth>();
+                // ĐÃ ĐỔI TÊN CLASS THÀNH MauChanTinh
+                MauChanTinh animalHealth = enemy.GetComponent<MauChanTinh>();
                 if (animalHealth != null)
                 {
-                    animalHealth.TakeDamage(attackDamage);
+                    // ĐÃ THÊM transform.position ĐỂ TÍNH HƯỚNG VĂNG LÙI
+                    animalHealth.TakeDamage(attackDamage, transform.position);
                 }
             }
-            // 2. CHÉM TRÚNG CÂY
+            // 2. Chém trúng Cây (Giữ nguyên)
             else if (enemy.CompareTag("Tree"))
             {
                 TreeHealth tree = enemy.GetComponent<TreeHealth>();
                 if (tree != null)
                 {
                     tree.TakeDamage(attackDamage);
+                }
+            }
+        }
+    }
+
+    // 9. HÀM TẤN CÔNG BẰNG CHÂN (Gắn vào Animation Event của hoạt ảnh Đá)
+    public void KickAttack()
+    {
+        if (attackPoint == null) return;
+
+        Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange);
+        foreach (Collider enemy in hitEnemies)
+        {
+            if (enemy.CompareTag("Enemy"))
+            {
+                // ĐÃ ĐỔI TÊN CLASS THÀNH MauChanTinh
+                MauChanTinh animalHealth = enemy.GetComponent<MauChanTinh>();
+                if (animalHealth != null)
+                {
+                    // ĐÃ THÊM transform.position ĐỂ TÍNH HƯỚNG VĂNG LÙI
+                    animalHealth.TakeDamage(kickDamage, transform.position);
                 }
             }
         }
@@ -219,28 +257,4 @@ public class PlayerMovement : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
-
-    [Header("Kick Settings")]
-    public int kickDamage = 25; // Lực đá (sát thương thấp hơn chém)
-
-    // HÀM TẤN CÔNG BẰNG CHÂN (Gắn vào Animation Event của hoạt ảnh Đá)
-    public void KickAttack()
-    {
-        if (attackPoint == null) return;
-
-        Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange);
-        foreach (Collider enemy in hitEnemies)
-        {
-            if (enemy.CompareTag("Enemy"))
-            {
-                EnemyHealth animalHealth = enemy.GetComponent<EnemyHealth>();
-                if (animalHealth != null)
-                {
-                    animalHealth.TakeDamage(kickDamage); // Trừ máu bằng lực đá
-                }
-            }
-        }
-    }
-
-
 }

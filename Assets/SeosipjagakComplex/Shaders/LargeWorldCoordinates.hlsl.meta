@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 51de7b6ecaef271479b118608879e867
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/LargeWorldCoordinates.hlsl
+  uploadId: 715605

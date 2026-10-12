@@ -2837,15 +2837,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 96.46
+      value: 97.64
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.8
+      value: 0.33
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 92.28
+      value: 89.05
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
       propertyPath: m_LocalRotation.w
@@ -2940,9 +2940,6 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 813440216}
-    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 813440225}
   m_SourcePrefab: {fileID: 100100000, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
 --- !u!1 &813440214 stripped
 GameObject:
@@ -2993,6 +2990,9 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   healthBar: {fileID: 521662566}
+  bangGameOver: {fileID: 0}
+  knockbackForce: 1.5
+  knockbackDuration: 0.2
 --- !u!114 &813440218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3134,22 +3134,6 @@ MonoBehaviour:
   attackRange: 1.5
   attackDamage: 35
   kickDamage: 15
---- !u!114 &813440225
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 813440214}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 215fa21dffaeb9743b84aaa0f832ed02, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
-  target: {fileID: 0}
-  distance: 4.5
-  heightOffset: 1.5
-  rotationSpeed: 6
 --- !u!1 &817725063
 GameObject:
   m_ObjectHideFlags: 0

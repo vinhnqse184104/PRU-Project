@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c1c2ec731b889ff48a6fb4c11c1081aa
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_HG_RoofA.hlsl
+  uploadId: 715605

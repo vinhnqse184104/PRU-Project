@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: dd21442ed453498499a78bd6750d2642
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_Waterway.hlsl
+  uploadId: 715605

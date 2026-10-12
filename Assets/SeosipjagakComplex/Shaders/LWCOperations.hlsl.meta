@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 611c8106d5d56df4b81382b239a2e8c4
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/LWCOperations.hlsl
+  uploadId: 715605

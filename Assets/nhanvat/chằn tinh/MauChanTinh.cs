@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
 using System.Collections;
@@ -74,8 +74,18 @@ public class MauChanTinh : MonoBehaviour
         // 4. Ẩn thanh máu trên đầu đi cho đỡ vướng mắt
         if (thanhMauUI != null) thanhMauUI.gameObject.SetActive(false);
 
-        // 5. (Tùy chọn) Xóa hẳn xác quái vật sau 5 giây để nhẹ máy
-        // Destroy(gameObject, 5f); 
+        // 5. Kích hoạt chuỗi sự kiện tiêu diệt Chằn Tinh & trở về nhà Lý Thông
+        Chapter3BossBattleManager battleManager = Chapter3BossBattleManager.Instance;
+        if (battleManager == null)
+        {
+            battleManager = Object.FindAnyObjectByType<Chapter3BossBattleManager>();
+            if (battleManager == null)
+            {
+                GameObject managerObj = new GameObject("Chapter3BossBattleManager");
+                battleManager = managerObj.AddComponent<Chapter3BossBattleManager>();
+            }
+        }
+        battleManager.OnBossDefeated(gameObject);
     }
 
     private IEnumerator KnockbackRoutine(Vector3 attackerPosition)

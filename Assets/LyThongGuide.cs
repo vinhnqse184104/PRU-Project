@@ -73,6 +73,20 @@ public class LyThongGuide : MonoBehaviour
 
     void Start()
     {
+        string sceneName = SceneManager.GetActiveScene().name;
+        if (sceneName == "Chapter4_Lythongcuopcong" || sceneName.ToLower().Contains("chapter4"))
+        {
+            enabled = false;
+            return;
+        }
+
+        // Nếu Thạch Sanh đang quay về sau khi diệt Chằn Tinh, tắt kịch bản dẫn đường lần 1
+        if (StoryStateManager.IsChanTinhDefeated && StoryStateManager.IsReturningToChapter2)
+        {
+            enabled = false;
+            return;
+        }
+
         agent = GetComponent<NavMeshAgent>();
 
         animator = GetComponent<Animator>();
@@ -96,7 +110,8 @@ public class LyThongGuide : MonoBehaviour
 
         if (motherNPC == null)
         {
-            GameObject mObj = GameObject.Find("Mother") ?? GameObject.Find("MotherNPC") ?? GameObject.Find("MeLyThong") ?? GameObject.Find("Me_LyThong");
+            GameObject mObj = GameObject.Find("Meshy_AI_Elder_Master_Stance_biped_Animation_01a0d44b-3352-70aa-af88-28f245645f42_withSkin")
+                              ?? GameObject.Find("Mother") ?? GameObject.Find("MotherNPC") ?? GameObject.Find("MeLyThong") ?? GameObject.Find("Me_LyThong");
             if (mObj != null) motherNPC = mObj.transform;
         }
 

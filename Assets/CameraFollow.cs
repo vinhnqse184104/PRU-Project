@@ -14,17 +14,74 @@ public class CameraFollow : MonoBehaviour
     private float currentX = 0f;
     private float currentY = 15f;
 
+    void Awake()
+    {
+        if (GetComponent<Camera>() == null || CompareTag("Player") || GetComponent<PlayerMovement>() != null)
+        {
+            enabled = false;
+            return;
+        }
+    }
+
     void Start()
     {
+        if (GetComponent<Camera>() == null || CompareTag("Player") || GetComponent<PlayerMovement>() != null)
+        {
+            enabled = false;
+            return;
+        }
+
         // Khóa chuột vào giữa màn hình và ẩn con trỏ đi
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        ResolveTarget();
+    }
+
+    public void ResolveTarget()
+    {
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        if (sceneName == "Chapter4_Lythongcuopcong" || sceneName.ToLower().Contains("chapter4"))
+        {
+            // Trong Chapter 4, camera bám theo Lý Thông, tuyệt đối không bám Thạch Sanh
+            GameObject lt = GameObject.Find("LyThong") ?? GameObject.Find("lythong");
+            if (lt == null)
+            {
+                GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+                foreach (var p in players)
+                {
+                    if (p.name.ToLower().Contains("lythong") || p.name.ToLower().Contains("ly_thong"))
+                    {
+                        lt = p;
+                        break;
+                    }
+                }
+            }
+            if (lt != null && lt.transform != transform && !lt.transform.IsChildOf(transform))
+            {
+                target = lt.transform;
+            }
+        }
     }
 
     void LateUpdate()
     {
-        // Nếu chưa gán mục tiêu thì không làm gì cả để tránh lỗi
-        if (target == null) return;
+        if (GetComponent<Camera>() == null || CompareTag("Player") || GetComponent<PlayerMovement>() != null)
+        {
+            enabled = false;
+            return;
+        }
+
+        // Trong Chapter 4, nếu chưa có mục tiêu thì cập nhật mục tiêu sang Lý Thông
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name.ToLower().Contains("chapter4"))
+        {
+            if (target == null || !target.name.ToLower().Contains("lythong"))
+            {
+                ResolveTarget();
+            }
+        }
+
+        if (target == null || target == transform || target.IsChildOf(transform)) return;
 
         // 1. Nhận tín hiệu rê chuột (Tương thích New Input System)
         float mouseX = 0;
@@ -34,6 +91,15 @@ public class CameraFollow : MonoBehaviour
         {
             mouseX = Mouse.current.delta.x.ReadValue() * 0.1f * rotationSpeed;
             mouseY = Mouse.current.delta.y.ReadValue() * 0.1f * rotationSpeed;
+        }
+        else
+        {
+            try
+            {
+                mouseX = Input.GetAxis("Mouse X") * 2.0f * rotationSpeed;
+                mouseY = Input.GetAxis("Mouse Y") * 2.0f * rotationSpeed;
+            }
+            catch { }
         }
 
         currentX += mouseX;

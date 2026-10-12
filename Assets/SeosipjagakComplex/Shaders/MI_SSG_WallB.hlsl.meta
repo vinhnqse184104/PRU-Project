@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 93f232fa1fd42d54c8e5954fcba18bdd
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_WallB.hlsl
+  uploadId: 715605

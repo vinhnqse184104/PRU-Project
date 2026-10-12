@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.InputSystem; // Bắt buộc phải có dòng này để nhận phím
@@ -220,6 +220,9 @@ public class QuestManager : MonoBehaviour
 
         // Chờ 3 giây trước khi chuyển cảnh
         yield return new WaitForSeconds(3f);
+
+        // Đảm bảo khi đi từ Chapter 1 sang Chapter 2 là lần đầu gặp mẹ con Lý Thông
+        StoryStateManager.StartNewGame();
 
         // Chuyển sang Scene chương 2
         SceneManager.LoadScene("Chapter2_LyThong");

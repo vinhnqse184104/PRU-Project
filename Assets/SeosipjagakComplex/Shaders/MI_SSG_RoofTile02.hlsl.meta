@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: c15687e6ae9243742927183cfa675081
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_RoofTile02.hlsl
+  uploadId: 715605

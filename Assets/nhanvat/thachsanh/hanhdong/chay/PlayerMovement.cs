@@ -13,7 +13,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Combat Settings")]
     public Transform attackPoint; // Kéo thả AttackPoint vào đây
     public float attackRange = 1.5f; // Bán kính tầm đánh
-    public int attackDamage = 35; // Sát thương mỗi nhát chém
+    public int attackDamage = 35; // Sát thương mỗi nhát chém/đấm
+    public int kickDamage = 25;   // Lực đá (sát thương thấp hơn chém)
 
     private CharacterController controller;
     private Animator anim;
@@ -24,15 +25,119 @@ public class PlayerMovement : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
 
-        GameObject spawnPoint = GameObject.Find("Chapter3_StartPoint") ?? GameObject.Find("Chapter3StartPoint") ?? GameObject.Find("Chapter3SpawnPoint") ?? GameObject.Find("OutsideSpawnPoint") ?? GameObject.Find("SpawnPoint");
+        string currentScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
+        GameObject spawnPoint = null;
+
+        if (currentScene == "Chapter2_LyThong")
+        {
+            if (StoryStateManager.IsChanTinhDefeated && StoryStateManager.IsReturningToChapter2)
+            {
+                // GIAI ĐOẠN 2: QUAY VỀ NHÀ LÝ THÔNG SAU KHI TIÊU DIỆT CHẰN TINH
+                spawnPoint = GameObject.Find("Chapter2_ReturnSpawnPoint") ?? GameObject.Find("ReturnSpawnPoint");
+                if (spawnPoint == null)
+                {
+                    GameObject spObj = new GameObject("Chapter2_ReturnSpawnPoint");
+                    Vector3 outdoorPos = new Vector3(81.98f, 0.25f, 36.5f);
+                    if (Terrain.activeTerrain != null)
+                    {
+                        outdoorPos.y = Terrain.activeTerrain.SampleHeight(outdoorPos) + Terrain.activeTerrain.transform.position.y + 0.05f;
+                    }
+                    spObj.transform.position = outdoorPos;
+                    spObj.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
+                    spawnPoint = spObj;
+                }
+
+                if (Chapter2ReturnManager.Instance == null && Object.FindAnyObjectByType<Chapter2ReturnManager>() == null)
+                {
+                    GameObject retManagerObj = new GameObject("Chapter2ReturnManager");
+                    retManagerObj.AddComponent<Chapter2ReturnManager>();
+                }
+            }
+            else
+            {
+                // GIAI ĐOẠN 1: LẦN ĐẦU ĐẾN CHAPTER 2 (VỊ TRÍ THAM CHIẾU CHUẨN X=97.64, Y=0.33, Z=89.05)
+                Vector3 startPos = new Vector3(97.64f, 0.33f, 89.05f);
+                float groundHeight = startPos.y;
+                if (Terrain.activeTerrain != null)
+                {
+                    groundHeight = Terrain.activeTerrain.SampleHeight(startPos) + Terrain.activeTerrain.transform.position.y;
+                    if (groundHeight > startPos.y) startPos.y = groundHeight + 0.05f;
+                }
+                else if (Physics.Raycast(new Vector3(startPos.x, startPos.y + 2f, startPos.z), Vector3.down, out RaycastHit hit, 5f))
+                {
+                    groundHeight = hit.point.y;
+                    startPos.y = hit.point.y + 0.05f;
+                }
+
+                if (controller != null) controller.enabled = false;
+                transform.position = startPos;
+                transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+                Rigidbody rb = GetComponent<Rigidbody>();
+                if (rb != null && !rb.isKinematic)
+                {
+                    rb.position = startPos;
+                    rb.linearVelocity = Vector3.zero;
+                    rb.angularVelocity = Vector3.zero;
+                }
+                Physics.SyncTransforms();
+                if (controller != null) controller.enabled = true;
+
+                Debug.Log($"[Chapter2 Spawn Check] Scene: {currentScene} | Start WorldPos: {transform.position} | GroundHeight: {groundHeight:F3}");
+                StartCoroutine(LogPositionAfterOneSecond(currentScene));
+            }
+        }
+        else if (currentScene == "RungThachSanh")
+        {
+            if (Chapter1NewGameHandler.Instance == null && Object.FindAnyObjectByType<Chapter1NewGameHandler>() == null)
+            {
+                GameObject newGameObj = new GameObject("Chapter1NewGameHandler");
+                newGameObj.AddComponent<Chapter1NewGameHandler>();
+            }
+        }
+        else if (currentScene == "Chapter3_MieuChanTinh")
+        {
+            spawnPoint = GameObject.Find("Chapter3_StartPoint") ?? GameObject.Find("Chapter3StartPoint") ?? GameObject.Find("Chapter3SpawnPoint");
+        }
+
+        // Áp dụng spawnPoint nếu có (cho Chapter 2 quay về hoặc Chapter 3)
         if (spawnPoint != null)
         {
             if (controller != null) controller.enabled = false;
-            transform.position = spawnPoint.transform.position;
+            Vector3 pos = spawnPoint.transform.position;
+            float groundHeight = pos.y;
+            if (Terrain.activeTerrain != null)
+            {
+                groundHeight = Terrain.activeTerrain.SampleHeight(pos) + Terrain.activeTerrain.transform.position.y;
+                if (groundHeight > pos.y) pos.y = groundHeight + 0.05f;
+            }
+            else if (Physics.Raycast(new Vector3(pos.x, pos.y + 2f, pos.z), Vector3.down, out RaycastHit hit, 5f))
+            {
+                groundHeight = hit.point.y;
+                pos.y = hit.point.y + 0.05f;
+            }
+            transform.position = pos;
             transform.rotation = spawnPoint.transform.rotation;
+            Rigidbody rb = GetComponent<Rigidbody>();
+            if (rb != null && !rb.isKinematic)
+            {
+                rb.position = pos;
+                rb.linearVelocity = Vector3.zero;
+                rb.angularVelocity = Vector3.zero;
+            }
             Physics.SyncTransforms();
             if (controller != null) controller.enabled = true;
+
+            if (currentScene == "Chapter2_LyThong")
+            {
+                Debug.Log($"[Chapter2 Return Spawn Check] Scene: {currentScene} | Start WorldPos: {transform.position} | GroundHeight: {groundHeight:F3}");
+                StartCoroutine(LogPositionAfterOneSecond(currentScene));
+            }
         }
+
+        // Tự động gắn và cập nhật PlayerTrophyHolder
+        PlayerTrophyHolder trophyHolder = GetComponent<PlayerTrophyHolder>();
+        if (trophyHolder == null) trophyHolder = gameObject.AddComponent<PlayerTrophyHolder>();
+        trophyHolder.CheckAndApplyTrophy();
 
         anim = GetComponent<Animator>();
         if (anim == null)
@@ -47,14 +152,27 @@ public class PlayerMovement : MonoBehaviour
         Cursor.visible = false;
     }
 
+    private System.Collections.IEnumerator LogPositionAfterOneSecond(string sceneName)
+    {
+        yield return new WaitForSeconds(1f);
+        float groundHeight = transform.position.y;
+        if (Terrain.activeTerrain != null)
+        {
+            groundHeight = Terrain.activeTerrain.SampleHeight(transform.position) + Terrain.activeTerrain.transform.position.y;
+        }
+        Debug.Log($"[Chapter2 Spawn Check +1s] Scene: {sceneName} | WorldPos after 1s: {transform.position} | GroundHeight: {groundHeight:F3}");
+    }
+
     void Update()
     {
+        // 1. KIỂM TRA TRẠNG THÁI TẤN CÔNG
         // 1. KIỂM TRA TRẠNG THÁI TẤN CÔNG
         bool isAttacking = false;
         if (anim != null)
         {
             AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-            if (stateInfo.IsName("chém") || stateInfo.IsName("đá"))
+            // ĐÃ THÊM TÊN CỦA 2 KHỐI R VÀ T VÀO ĐÂY ĐỂ TRÁNH TRƯỢT CHÂN
+            if (stateInfo.IsName("chém") || stateInfo.IsName("Attack_R") || stateInfo.IsName("Attack_T") || stateInfo.IsName("đá"))
             {
                 isAttacking = true;
             }
@@ -163,10 +281,50 @@ public class PlayerMovement : MonoBehaviour
             {
                 anim.SetFloat("Speed", 0f);
             }
+
+            // === HỆ THỐNG ĐÁNH BẰNG PHÍM (E, R, T, F) ===
+            if (!isAttacking)
+            {
+                // Phím E - Tung đòn tay 1 (Chém / Chặt cây)
+                bool ePressed = false;
+                if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame) ePressed = true;
+                if (!ePressed) { try { ePressed = Input.GetKeyDown(KeyCode.E); } catch { } }
+                if (ePressed)
+                {
+                    anim.SetTrigger("CutTrigger");
+                }
+
+                // Phím R - Tung đòn tay 2
+                bool rPressed = false;
+                if (Keyboard.current != null && Keyboard.current.rKey.wasPressedThisFrame) rPressed = true;
+                if (!rPressed) { try { rPressed = Input.GetKeyDown(KeyCode.R); } catch { } }
+                if (rPressed)
+                {
+                    anim.SetTrigger("Attack_R");
+                }
+
+                // Phím T - Tung đòn tay 3
+                bool tPressed = false;
+                if (Keyboard.current != null && Keyboard.current.tKey.wasPressedThisFrame) tPressed = true;
+                if (!tPressed) { try { tPressed = Input.GetKeyDown(KeyCode.T); } catch { } }
+                if (tPressed)
+                {
+                    anim.SetTrigger("Attack_T");
+                }
+
+                // Phím F - Tung đòn đá chân
+                bool fPressed = false;
+                if (Keyboard.current != null && Keyboard.current.fKey.wasPressedThisFrame) fPressed = true;
+                if (!fPressed) { try { fPressed = Input.GetKeyDown(KeyCode.F); } catch { } }
+                if (fPressed)
+                {
+                    anim.SetTrigger("HighKickTrigger");
+                }
+            }
         }
     }
 
-    // 7. HÀM TẤN CÔNG (Phải là public để Animation Event gọi được)
+    // 8. HÀM TẤN CÔNG BẰNG TAY (Gắn vào Animation Event của hoạt ảnh Chém/Đấm)
     public void Attack()
     {
         // Nếu chưa gán Attack Point thì bỏ qua để tránh lỗi
@@ -177,16 +335,18 @@ public class PlayerMovement : MonoBehaviour
 
         foreach (Collider enemy in hitEnemies)
         {
-            // 1. Chém trúng Thú
+            // 1. Chém trúng Thú/Quái
             if (enemy.CompareTag("Enemy"))
             {
-                EnemyHealth animalHealth = enemy.GetComponent<EnemyHealth>();
+                // ĐÃ ĐỔI TÊN CLASS THÀNH MauChanTinh
+                MauChanTinh animalHealth = enemy.GetComponent<MauChanTinh>();
                 if (animalHealth != null)
                 {
-                    animalHealth.TakeDamage(attackDamage);
+                    // ĐÃ THÊM transform.position ĐỂ TÍNH HƯỚNG VĂNG LÙI
+                    animalHealth.TakeDamage(attackDamage, transform.position);
                 }
             }
-            // 2. CHÉM TRÚNG CÂY
+            // 2. Chém trúng Cây (Giữ nguyên)
             else if (enemy.CompareTag("Tree"))
             {
                 TreeHealth tree = enemy.GetComponent<TreeHealth>();
@@ -198,18 +358,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // (Hỗ trợ) Vẽ vòng tròn tầm đánh màu đỏ trong màn hình Scene để dễ căn chỉnh
-    private void OnDrawGizmosSelected()
-    {
-        if (attackPoint == null) return;
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
-    }
-
-    [Header("Kick Settings")]
-    public int kickDamage = 25; // Lực đá (sát thương thấp hơn chém)
-
-    // HÀM TẤN CÔNG BẰNG CHÂN (Gắn vào Animation Event của hoạt ảnh Đá)
+    // 9. HÀM TẤN CÔNG BẰNG CHÂN (Gắn vào Animation Event của hoạt ảnh Đá)
     public void KickAttack()
     {
         if (attackPoint == null) return;
@@ -219,12 +368,22 @@ public class PlayerMovement : MonoBehaviour
         {
             if (enemy.CompareTag("Enemy"))
             {
-                EnemyHealth animalHealth = enemy.GetComponent<EnemyHealth>();
+                // ĐÃ ĐỔI TÊN CLASS THÀNH MauChanTinh
+                MauChanTinh animalHealth = enemy.GetComponent<MauChanTinh>();
                 if (animalHealth != null)
                 {
-                    animalHealth.TakeDamage(kickDamage); // Trừ máu bằng lực đá
+                    // ĐÃ THÊM transform.position ĐỂ TÍNH HƯỚNG VĂNG LÙI
+                    animalHealth.TakeDamage(kickDamage, transform.position);
                 }
             }
         }
+    }
+
+    // (Hỗ trợ) Vẽ vòng tròn tầm đánh màu đỏ trong màn hình Scene để dễ căn chỉnh
+    private void OnDrawGizmosSelected()
+    {
+        if (attackPoint == null) return;
+        Gizmos.color = Color.red;
+        Gizmos.DrawWireSphere(attackPoint.position, attackRange);
     }
 }

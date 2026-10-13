@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 992e5e82f3dad0e47adbee488c40ab45
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_Pillar.hlsl
+  uploadId: 715605

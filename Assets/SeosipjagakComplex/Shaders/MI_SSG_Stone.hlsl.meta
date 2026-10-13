@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 4d283ed0f53e4164681cf70c71dfca67
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_Stone.hlsl
+  uploadId: 715605

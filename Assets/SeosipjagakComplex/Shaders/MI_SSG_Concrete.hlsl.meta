@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: efd3dcb0fbd4af9469aeb202a842cbda
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_Concrete.hlsl
+  uploadId: 715605

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0d52a09e0462d7b4783a177b510d55f8
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_RoofOrnament02.hlsl
+  uploadId: 715605

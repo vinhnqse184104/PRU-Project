@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 2d99d67e2f781ea4a8301f05e00fa536
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_Door_Iron.hlsl
+  uploadId: 715605

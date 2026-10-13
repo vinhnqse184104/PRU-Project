@@ -1,6 +1,4 @@
-using System.Collections;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Quản lý tổng thể Chapter 4 (Scene: Chapter4_Lythongcuopcong):
@@ -8,7 +6,7 @@ using UnityEngine.SceneManagement;
 /// 2. Khởi tạo / kích hoạt nhân vật Lý Thông làm nhân vật người chơi (điều khiển WASD).
 /// 3. Loại bỏ NavMeshAgent khỏi nhân vật Lý Thông để khắc phục triệt để lỗi "Failed to create agent because there is no valid NavMesh".
 /// 4. Đảm bảo Camera bám theo Lý Thông (không bám Thạch Sanh).
-/// 5. Đặt SpawnPoint và định vị Lý Thông đứng vững chắc trên mặt sàn cung điện.
+/// 5. Giữ vị trí Lý Thông được đặt trong Scene; chỉ dùng SpawnPoint khi bật tùy chọn rõ ràng.
 /// </summary>
 public class Chapter4PalaceManager : MonoBehaviour
 {
@@ -18,18 +16,16 @@ public class Chapter4PalaceManager : MonoBehaviour
     public GameObject lyThongObject;
     public Transform chapter4SpawnPoint;
     public CameraFollow cameraFollow;
-
-    private bool isInitialized = false;
+    [Tooltip("Mặc định giữ nguyên Transform trong Scene. Chỉ bật khi muốn dùng Chapter4_StartPoint.")]
+    public bool useSpawnPointOnStart = false;
 
     void Awake()
     {
-        string sceneName = SceneManager.GetActiveScene().name;
-        if (sceneName != "Chapter4_Lythongcuopcong" && !sceneName.ToLower().Contains("chapter4"))
+        if (!string.Equals(gameObject.scene.name, "Chapter4_LythongCuopCong", System.StringComparison.OrdinalIgnoreCase))
         {
             Destroy(gameObject);
             return;
         }
-
         if (Instance == null)
         {
             Instance = this;
@@ -41,11 +37,14 @@ public class Chapter4PalaceManager : MonoBehaviour
         }
 
         SetupPalaceEnvironment();
-    }
-
-    void Start()
-    {
-        StartCoroutine(InitializeChapter4Routine());
+        // Configure before the first movement frame, without a delayed teleport.
+        if (chapter4SpawnPoint == null)
+        {
+            GameObject startPoint = GameObject.Find("Chapter4_StartPoint");
+            if (startPoint != null) chapter4SpawnPoint = startPoint.transform;
+        }
+        SetupLyThongCharacter();
+        SetupCameraTarget();
     }
 
     /// <summary>
@@ -58,7 +57,7 @@ public class Chapter4PalaceManager : MonoBehaviour
         MeshFilter[] allMeshFilters = Object.FindObjectsByType<MeshFilter>(FindObjectsSortMode.None);
         foreach (MeshFilter mf in allMeshFilters)
         {
-            if (mf == null || mf.sharedMesh == null) continue;
+            if (mf == null || mf.sharedMesh == null || mf.gameObject.scene != gameObject.scene) continue;
 
             string objName = mf.gameObject.name.ToLower();
             // Nếu là sàn, đất, đường đi, đá, hoặc các bộ phận kiến trúc cung điện
@@ -69,52 +68,11 @@ public class Chapter4PalaceManager : MonoBehaviour
                 if (col == null)
                 {
                     MeshCollider mc = mf.gameObject.AddComponent<MeshCollider>();
+                    mc.sharedMesh = mf.sharedMesh;
                     mc.convex = false;
                 }
             }
         }
-
-        // Tạo lưới bảo vệ sàn phụ (Safety Net) ngay dưới mặt sàn cung điện đề phòng người chơi rơi ra ngoài
-        GameObject safetyFloor = GameObject.Find("PalaceSafetyFloorCollider");
-        if (safetyFloor == null)
-        {
-            safetyFloor = new GameObject("PalaceSafetyFloorCollider");
-            BoxCollider box = safetyFloor.AddComponent<BoxCollider>();
-            box.size = new Vector3(400f, 2f, 400f);
-            safetyFloor.transform.position = new Vector3(-64f, -11.5f, 0f);
-        }
-    }
-
-    private IEnumerator InitializeChapter4Routine()
-    {
-        yield return null; // Chờ 1 frame để các đối tượng trong Scene sẵn sàng
-
-        // 2. TÌM HOẶC TẠO SPAWNPOINT CỦA LÝ THÔNG TẠI CHAPTER 4
-        if (chapter4SpawnPoint == null)
-        {
-            GameObject spObj = GameObject.Find("Chapter4_StartPoint");
-            if (spObj == null)
-            {
-                spObj = new GameObject("Chapter4_StartPoint");
-                // Tọa độ ngoài cung điện nhìn thẳng về cổng chính (-134.5f, -10.5f, -70.0f)
-                Vector3 spawnPos = new Vector3(-134.5f, -10.5f, -70.0f);
-                if (Physics.Raycast(new Vector3(spawnPos.x, spawnPos.y + 10f, spawnPos.z), Vector3.down, out RaycastHit hit, 30f))
-                {
-                    spawnPos.y = hit.point.y + 0.05f;
-                }
-                spObj.transform.position = spawnPos;
-                spObj.transform.rotation = Quaternion.LookRotation(new Vector3(0f, 0f, 1f));
-            }
-            chapter4SpawnPoint = spObj.transform;
-        }
-
-        // 3. TÌM VÀ CẤU HÌNH NHÂN VẬT LÝ THÔNG
-        SetupLyThongCharacter();
-
-        // 4. CẤU HÌNH CAMERA THEO LÝ THÔNG
-        SetupCameraTarget();
-
-        isInitialized = true;
     }
 
     private void SetupLyThongCharacter()
@@ -159,6 +117,7 @@ public class Chapter4PalaceManager : MonoBehaviour
             UnityEngine.AI.NavMeshAgent agent = lyThongObject.GetComponent<UnityEngine.AI.NavMeshAgent>();
             if (agent != null)
             {
+                agent.enabled = false;
                 Destroy(agent);
             }
 
@@ -182,22 +141,18 @@ public class Chapter4PalaceManager : MonoBehaviour
                 controller = lyThongObject.AddComponent<LyThongPlayerController>();
             }
 
-            // Đặt vị trí Lý Thông tại SpawnPoint an toàn trên mặt đất
-            if (chapter4SpawnPoint != null)
+            // Only explicit opt-in may replace the authored Transform; no ground raycast.
+            if (useSpawnPointOnStart && chapter4SpawnPoint != null)
             {
+                bool wasEnabled = cc.enabled;
                 cc.enabled = false;
-                Vector3 targetPos = chapter4SpawnPoint.position;
-                if (Physics.Raycast(new Vector3(targetPos.x, targetPos.y + 10f, targetPos.z), Vector3.down, out RaycastHit hit, 30f))
-                {
-                    targetPos.y = hit.point.y + 0.05f;
-                }
-                lyThongObject.transform.position = targetPos;
+                lyThongObject.transform.position = chapter4SpawnPoint.position;
                 lyThongObject.transform.rotation = chapter4SpawnPoint.rotation;
                 Physics.SyncTransforms();
-                cc.enabled = true;
+                cc.enabled = wasEnabled;
             }
 
-            Debug.Log("[Chapter4PalaceManager] Đã cấu hình thành công nhân vật Lý Thông với bộ điều khiển WASD.");
+            Debug.Log($"[Chapter4PalaceManager] Lý Thông bắt đầu tại {lyThongObject.transform.position:F3}; dùng SpawnPoint: {useSpawnPointOnStart}.");
         }
     }
 
@@ -209,6 +164,7 @@ public class Chapter4PalaceManager : MonoBehaviour
         if (cam != null)
         {
             cameraFollow = cam.GetComponent<CameraFollow>();
+            bool addedFollow = cameraFollow == null;
             if (cameraFollow == null)
             {
                 cameraFollow = cam.gameObject.AddComponent<CameraFollow>();
@@ -217,9 +173,13 @@ public class Chapter4PalaceManager : MonoBehaviour
             if (lyThongObject != null)
             {
                 cameraFollow.target = lyThongObject.transform;
-                cameraFollow.distance = 4.5f;
-                cameraFollow.heightOffset = 1.6f;
-                cameraFollow.rotationSpeed = 1.5f;
+                cameraFollow.enabled = true;
+                if (addedFollow)
+                {
+                    cameraFollow.distance = 4.5f;
+                    cameraFollow.heightOffset = 1.6f;
+                    cameraFollow.rotationSpeed = 1.5f;
+                }
             }
         }
     }

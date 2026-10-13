@@ -18,6 +18,9 @@ public class PlayerHealth : MonoBehaviour
     public float knockbackDuration = 0.2f;
 
     private bool isDead = false;
+    private bool arenaKnockbackActive;
+    private Vector3 arenaPushDirection;
+    private float arenaPushRemaining;
 
     void Start()
     {
@@ -53,6 +56,30 @@ public class PlayerHealth : MonoBehaviour
 
     private IEnumerator KnockbackRoutine(Vector3 attackerPosition)
     {
+        if (gameObject.scene.name == "Chapter3_MieuChanTinh")
+        {
+            arenaPushDirection = Vector3.ProjectOnPlane(transform.position - attackerPosition, Vector3.up).normalized;
+            arenaPushRemaining = Mathf.Max(0.01f, knockbackDuration);
+            if (arenaKnockbackActive) yield break;
+            arenaKnockbackActive = true;
+            CharacterController arenaController = GetComponent<CharacterController>();
+            Collider arenaBody = GetComponent<CapsuleCollider>();
+            if (arenaBody == null) arenaBody = arenaController;
+            try
+            {
+                while (!isDead && arenaPushRemaining > 0f)
+                {
+                    float dt = Mathf.Min(Time.deltaTime, arenaPushRemaining);
+                    Vector3 motion = arenaPushDirection * Mathf.Max(0f, knockbackForce) * dt / Mathf.Max(0.01f, knockbackDuration);
+                    if (arenaController != null && arenaController.enabled)
+                        arenaController.Move(Chapter3BossBattleManager.LimitKnockback(arenaBody, motion));
+                    arenaPushRemaining -= dt;
+                    yield return null;
+                }
+            }
+            finally { arenaKnockbackActive = false; }
+            yield break;
+        }
         CharacterController controller = GetComponent<CharacterController>();
         PlayerMovement moveScript = GetComponent<PlayerMovement>();
 

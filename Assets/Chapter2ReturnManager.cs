@@ -497,7 +497,7 @@ public class Chapter2ReturnManager : MonoBehaviour
             float left = (Screen.width - width) / 2f;
             float top = Screen.height - 140f;
 
-            GUI.Box(new Rect(left, top, width, height), "<b><color=#00FF00>HOÀN THÀNH CHƯƠNG 2!</color></b>\n<size=16>Đang chuyển sang Chương 4...</size>", transStyle);
+            GUI.Box(new Rect(left, top, width, height), "<b><color=#00FF00>HOÀN THÀNH CHƯƠNG 3!</color></b>\n<size=16>Đang chuyển sang Chương 4...</size>", transStyle);
             return;
         }
 

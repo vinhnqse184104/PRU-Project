@@ -10320,6 +10320,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LyThongInteraction
   questManager: {fileID: 1298406154}
+  standingPrefab: {fileID: 919132149155446097, guid: 0f63902532c916d4280667fba4ca451d, type: 3}
+  standingController: {fileID: 9100000, guid: 0799b3b2729adf046b31c13e704d0001, type: 2}
+  lyThongMaterial: {fileID: 2100000, guid: 2537cfa7e26c4ce45819095150e92c7e, type: 2}
+  triggerDistance: 3
+  standUpDuration: 1.6
 --- !u!95 &1777358055
 Animator:
   serializedVersion: 7
@@ -10330,7 +10335,7 @@ Animator:
   m_GameObject: {fileID: 1777358051}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 0799b3b2729adf046b31c13e704dadb4, type: 2}
+  m_Controller: {fileID: 9100000, guid: 0799b3b2729adf046b31c13e704d0001, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

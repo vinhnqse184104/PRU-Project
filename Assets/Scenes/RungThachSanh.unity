@@ -4068,10 +4068,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraFollow
   target: {fileID: 1298406145}
-  offset: {x: 0, y: 2.5, z: -4.5}
-  followSpeed: 4
+  distance: 4.5
+  heightOffset: 1.5
   rotationSpeed: 4
-  targetHeight: 1.3
 --- !u!114 &607324896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7498,6 +7497,9 @@ MonoBehaviour:
   maxHealth: 100
   currentHealth: 0
   healthBar: {fileID: 1804742321}
+  bangGameOver: {fileID: 0}
+  knockbackForce: 1.5
+  knockbackDuration: 0.2
 --- !u!114 &1298406154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7512,16 +7514,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestManager
   questText: {fileID: 1825790671}
   lyThongNPC: {fileID: 1777358051}
+  lyThongAnimator: {fileID: 0}
   woodCollected: 0
   chickenKilled: 0
   deerKilled: 0
   horseKilled: 0
   tigerKilled: 0
-  woodRequired: 2
-  chickenRequired: 2
-  deerRequired: 1
-  horseRequired: 1
-  tigerRequired: 2
+  woodRequired: 1
+  chickenRequired: 0
+  deerRequired: 0
+  horseRequired: 0
+  tigerRequired: 0
 --- !u!1 &1304694955
 GameObject:
   m_ObjectHideFlags: 0

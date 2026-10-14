@@ -479,6 +479,19 @@ public class Chapter2ReturnManager : MonoBehaviour
         }
     }
 
+    private Texture2D boxBgTexture;
+
+    private Texture2D GetBoxBackground()
+    {
+        if (boxBgTexture == null)
+        {
+            boxBgTexture = new Texture2D(1, 1);
+            boxBgTexture.SetPixel(0, 0, new Color(0.06f, 0.08f, 0.12f, 0.72f));
+            boxBgTexture.Apply();
+        }
+        return boxBgTexture;
+    }
+
     void OnGUI()
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Chapter2_LyThong") return;
@@ -487,6 +500,7 @@ public class Chapter2ReturnManager : MonoBehaviour
         if (isTransitioningToChapter4)
         {
             GUIStyle transStyle = new GUIStyle(GUI.skin.box);
+            if (boxBgTexture != null || GetBoxBackground() != null) transStyle.normal.background = GetBoxBackground();
             transStyle.fontSize = 20;
             transStyle.alignment = TextAnchor.MiddleCenter;
             transStyle.normal.textColor = Color.green;
@@ -506,20 +520,23 @@ public class Chapter2ReturnManager : MonoBehaviour
             DialogueLine line = returnDialogues[currentDialogueStep];
 
             GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
-            boxStyle.fontSize = 20;
+            boxStyle.normal.background = GetBoxBackground();
             boxStyle.wordWrap = true;
             boxStyle.alignment = TextAnchor.UpperLeft;
-            boxStyle.padding = new RectOffset(30, 30, 20, 20);
+            boxStyle.padding = new RectOffset(35, 35, 18, 18);
             boxStyle.normal.textColor = Color.white;
             boxStyle.richText = true;
 
-            float width = Screen.width * 0.45f;
-            float height = 190f;
-            float left = Screen.width - width - 40f;
-            float top = Screen.height - height - 40f;
+            // Kích thước chuẩn thống nhất: bottom-center, ~75-80% màn hình (tối đa 1100px), cao 215px, cách đáy 30px
+            float width = Mathf.Min(Screen.width * 0.78f, 1100f);
+            float height = 215f;
+            float left = (Screen.width - width) / 2f;
+            float top = Screen.height - height - 30f;
 
             string colorHex = ColorUtility.ToHtmlStringRGB(line.speakerColor);
-            string fullMsg = $"<size=22><b><color=#{colorHex}>{line.speaker}</color></b></size>\n\n<size=19>\"{line.content}\"</size>\n\n<color=#FFD700><size=14>(Bấm E / Space / Chuột trái để tiếp tục)</size></color>";
+            string fullMsg = $"<size=34><b><color=#{colorHex}>{line.speaker}:</color></b></size>\n" +
+                             $"<size=28>\"{line.content}\"</size>\n\n" +
+                             $"<color=#FFD700><size=20><i>(Bấm Enter, Space hoặc Chuột trái để tiếp tục)</i></size></color>";
 
             GUI.Box(new Rect(left, top, width, height), fullMsg, boxStyle);
         }

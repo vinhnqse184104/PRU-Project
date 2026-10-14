@@ -325,11 +325,34 @@ public class LyThongGuide : MonoBehaviour
         yield return new WaitForSeconds(0.3f); SceneManager.LoadScene("Chapter3_MieuChanTinh");
     }
 
-    private bool IsAdvancePressed() { return (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame) || (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame); }
+    private bool IsAdvancePressed()
+    {
+        bool pressed = false;
+        if (Keyboard.current != null && (Keyboard.current.spaceKey.wasPressedThisFrame ||
+                                         Keyboard.current.enterKey.wasPressedThisFrame ||
+                                         Keyboard.current.numpadEnterKey.wasPressedThisFrame))
+        {
+            pressed = true;
+        }
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            pressed = true;
+        }
+        if (!pressed)
+        {
+            try
+            {
+                pressed = Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) ||
+                          Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetMouseButtonDown(0);
+            }
+            catch { }
+        }
+        return pressed;
+    }
 
     private void UpdateUI(string text)
     {
-        string fullText = text + "\n\n<size=80%><color=#FFD700>(Bấm Space hoặc Click chuột để tiếp tục)</color></size>";
+        string fullText = text + "\n\n<size=80%><color=#FFD700>(Bấm Enter hoặc Chuột trái để tiếp tục)</color></size>";
         if (dialogueText != null) { dialogueText.text = fullText; dialogueText.gameObject.SetActive(true); }
     }
     private void ClearUI() { if (dialogueText != null) dialogueText.text = ""; currentSpeech = ""; }
@@ -349,15 +372,80 @@ public class LyThongGuide : MonoBehaviour
         }
     }
 
+    private Texture2D boxBgTexture;
+
+    private Texture2D GetBoxBackground()
+    {
+        if (boxBgTexture == null)
+        {
+            boxBgTexture = new Texture2D(1, 1);
+            boxBgTexture.SetPixel(0, 0, new Color(0.06f, 0.08f, 0.12f, 0.72f));
+            boxBgTexture.Apply();
+        }
+        return boxBgTexture;
+    }
+
     void OnGUI()
     {
         if (currentState == CutsceneState.MotherDialogue || currentState == CutsceneState.SecretDialogue)
         {
             if (dialogueText == null && !string.IsNullOrEmpty(currentSpeech))
             {
-                GUIStyle boxStyle = new GUIStyle(GUI.skin.box); boxStyle.fontSize = 18; boxStyle.wordWrap = true; boxStyle.alignment = TextAnchor.MiddleCenter; boxStyle.normal.textColor = Color.white;
-                float width = Screen.width * 0.7f, height = 130f;
-                GUI.Box(new Rect((Screen.width - width) / 2f, Screen.height - height - 40f, width, height), currentSpeech + "\n\n(Bấm Space hoặc Click chuột để tiếp tục)", boxStyle);
+                GUI.depth = -100;
+                GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
+                boxStyle.normal.background = GetBoxBackground();
+                boxStyle.wordWrap = true;
+                boxStyle.alignment = TextAnchor.UpperLeft;
+                boxStyle.padding = new RectOffset(35, 35, 18, 18);
+                boxStyle.normal.textColor = Color.white;
+                boxStyle.richText = true;
+
+                // Kích thước chuẩn thống nhất: bottom-center, ~75-80% màn hình, cao 215px, cách đáy 30px
+                float width = Mathf.Min(Screen.width * 0.78f, 1100f);
+                float height = 215f;
+                float left = (Screen.width - width) / 2f;
+                float top = Screen.height - height - 30f;
+
+                // Tách tên người nói và lời thoại
+                string speaker = "";
+                string content = currentSpeech;
+                string speakerColor = "#FFD700";
+
+                int colonIdx = currentSpeech.IndexOf(':');
+                if (colonIdx > 0 && colonIdx < 30)
+                {
+                    speaker = currentSpeech.Substring(0, colonIdx).Trim();
+                    content = currentSpeech.Substring(colonIdx + 1).Trim();
+
+                    string speakerUpper = speaker.ToUpper();
+                    if (speakerUpper.Contains("LÝ THÔNG") || speakerUpper.Contains("LY THONG"))
+                    {
+                        speakerColor = "#FFB833";
+                    }
+                    else if (speakerUpper.Contains("MẸ") || speakerUpper.Contains("ME"))
+                    {
+                        speakerColor = "#FF8080";
+                    }
+                    else if (speakerUpper.Contains("THẠCH SANH") || speakerUpper.Contains("THACH SANH"))
+                    {
+                        speakerColor = "#4DC3FF";
+                    }
+                }
+
+                string formattedMsg;
+                if (!string.IsNullOrEmpty(speaker))
+                {
+                    formattedMsg = $"<size=34><b><color={speakerColor}>{speaker}:</color></b></size>\n" +
+                                   $"<size=28>{content}</size>\n\n" +
+                                   $"<color=#FFD700><size=20><i>(Bấm Enter hoặc Chuột trái để tiếp tục)</i></size></color>";
+                }
+                else
+                {
+                    formattedMsg = $"<size=28>{currentSpeech}</size>\n\n" +
+                                   $"<color=#FFD700><size=20><i>(Bấm Enter hoặc Chuột trái để tiếp tục)</i></size></color>";
+                }
+
+                GUI.Box(new Rect(left, top, width, height), formattedMsg, boxStyle);
             }
         }
     }

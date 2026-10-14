@@ -112,12 +112,49 @@ public class QuestManager : MonoBehaviour
         }
     }
 
+    private bool isDialogueActive = false;
+    private string currentDialogueSpeaker = "";
+    private string currentDialogueMessage = "";
+    private Color currentDialogueColor = Color.white;
+    private bool isChapter1Completed = false;
+    private Texture2D boxBgTexture;
+
+    private Texture2D GetBoxBackground()
+    {
+        if (boxBgTexture == null)
+        {
+            boxBgTexture = new Texture2D(1, 1);
+            boxBgTexture.SetPixel(0, 0, new Color(0.06f, 0.08f, 0.12f, 0.72f));
+            boxBgTexture.Apply();
+        }
+        return boxBgTexture;
+    }
+
     IEnumerator WaitForKeyPress()
     {
         while (true)
         {
-            if (Keyboard.current != null && Keyboard.current.enterKey.wasPressedThisFrame) break;
-            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) break;
+            bool pressed = false;
+            if (Keyboard.current != null && (Keyboard.current.enterKey.wasPressedThisFrame ||
+                                             Keyboard.current.numpadEnterKey.wasPressedThisFrame ||
+                                             Keyboard.current.spaceKey.wasPressedThisFrame))
+            {
+                pressed = true;
+            }
+            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+            {
+                pressed = true;
+            }
+            if (!pressed)
+            {
+                try
+                {
+                    pressed = Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) ||
+                              Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0);
+                }
+                catch { }
+            }
+            if (pressed) break;
             yield return null;
         }
         yield return new WaitForSeconds(0.1f);
@@ -140,7 +177,6 @@ public class QuestManager : MonoBehaviour
         if (lyThongAnimator != null)
         {
             lyThongAnimator.SetTrigger("StandUp");
-           
             Debug.Log("<color=cyan>ĐÃ TÌM THẤY ANIMATOR TRONG QUEST MANAGER VÀ ÉP LÝ THÔNG ĐỨNG DẬY!</color>");
         }
         else
@@ -148,35 +184,90 @@ public class QuestManager : MonoBehaviour
             Debug.LogError("<color=red>LỖI CHÍ MẠNG: QUEST MANAGER VẪN KHÔNG THỂ TÌM THẤY BỘ NÃO ANIMATOR CỦA LÝ THÔNG!</color>");
         }
 
-        string huongDan = "\n\n(Bấm Enter hoặc Chuột trái để tiếp tục cuộc hội thoại.)";
+        isDialogueActive = true;
+        if (questText != null) questText.text = "";
 
-        // ================= TRANG 1 =================
-        string cau1 = "THẠCH SANH:\n\"Chào huynh! Sao huynh lại nằm ngủ giữa chốn rừng thiêng nước độc thế này?\"";
-        string cau2 = "\n\nLÝ THÔNG:\n\"Ây da... ta đi bán rượu ngang qua, mệt quá nên thiếp đi mất. Cảm ơn chú em đã đánh thức! Mà nhìn chú em sức vóc quả là hơn người!\"";
-
-        questText.text = cau1 + huongDan;
-        questText.color = Color.white;
+        // ================= CÂU 1 =================
+        currentDialogueSpeaker = "THẠCH SANH";
+        currentDialogueColor = new Color(0.3f, 0.8f, 1.0f);
+        currentDialogueMessage = "Chào huynh! Sao huynh lại nằm ngủ giữa chốn rừng thiêng nước độc thế này?";
         yield return StartCoroutine(WaitForKeyPress());
 
-        questText.text = cau1 + cau2 + huongDan;
+        // ================= CÂU 2 =================
+        currentDialogueSpeaker = "LÝ THÔNG";
+        currentDialogueColor = new Color(1.0f, 0.72f, 0.2f);
+        currentDialogueMessage = "Ây da... ta đi bán rượu ngang qua, mệt quá nên thiếp đi mất. Cảm ơn chú em đã đánh thức! Mà nhìn chú em sức vóc quả là hơn người!";
         yield return StartCoroutine(WaitForKeyPress());
 
-        // ================= TRANG 2 =================
-        string cau3 = "THẠCH SANH:\n\"Đệ mồ côi cha mẹ từ nhỏ, sống lủi thủi ở gốc đa này, ngày ngày đốn củi kiếm sống qua ngày thôi.\"";
-        string cau4 = "\n\nLÝ THÔNG:\n\"Ôi, hóa ra chú em cũng đơn độc. Hay là theo ta về nhà, anh em ta kết nghĩa huynh đệ, có rau ăn rau có cháo ăn cháo, chú em thấy sao?\"";
-
-        questText.text = cau3 + huongDan;
+        // ================= CÂU 3 =================
+        currentDialogueSpeaker = "THẠCH SANH";
+        currentDialogueColor = new Color(0.3f, 0.8f, 1.0f);
+        currentDialogueMessage = "Đệ mồ côi cha mẹ từ nhỏ, sống lủi thủi ở gốc đa này, ngày ngày đốn củi kiếm sống qua ngày thôi.";
         yield return StartCoroutine(WaitForKeyPress());
 
-        questText.text = cau3 + cau4 + huongDan;
+        // ================= CÂU 4 =================
+        currentDialogueSpeaker = "LÝ THÔNG";
+        currentDialogueColor = new Color(1.0f, 0.72f, 0.2f);
+        currentDialogueMessage = "Ôi, hóa ra chú em cũng đơn độc. Hay là theo ta về nhà, anh em ta kết nghĩa huynh đệ, có rau ăn rau có cháo ăn cháo, chú em thấy sao?";
         yield return StartCoroutine(WaitForKeyPress());
 
         // ================= KẾT THÚC CHƯƠNG 1 =================
-        questText.text = "HOÀN THÀNH CHƯƠNG 1!\n\nCHƯƠNG 2\nGẶP LÝ THÔNG";
-        questText.color = Color.green;
+        isDialogueActive = false;
+        isChapter1Completed = true;
+        if (questText != null)
+        {
+            questText.text = "HOÀN THÀNH CHƯƠNG 1!\n\nCHƯƠNG 2: GẶP LÝ THÔNG";
+            questText.color = Color.green;
+        }
 
         yield return new WaitForSeconds(3f);
         StoryStateManager.StartNewGame();
         SceneManager.LoadScene("Chapter2_LyThong");
+    }
+
+    void OnGUI()
+    {
+        if (isDialogueActive && !string.IsNullOrEmpty(currentDialogueMessage))
+        {
+            GUI.depth = -100;
+            GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
+            boxStyle.normal.background = GetBoxBackground();
+            boxStyle.wordWrap = true;
+            boxStyle.alignment = TextAnchor.UpperLeft;
+            boxStyle.padding = new RectOffset(35, 35, 18, 18);
+            boxStyle.normal.textColor = Color.white;
+            boxStyle.richText = true;
+
+            // Kích thước chuẩn thống nhất: bottom-center, ~75-80% màn hình, cao 215px, cách đáy 30px
+            float width = Mathf.Min(Screen.width * 0.78f, 1100f);
+            float height = 215f;
+            float left = (Screen.width - width) / 2f;
+            float top = Screen.height - height - 30f;
+
+            string colorHex = ColorUtility.ToHtmlStringRGB(currentDialogueColor);
+            string fullMsg = $"<size=34><b><color=#{colorHex}>{currentDialogueSpeaker}:</color></b></size>\n" +
+                             $"<size=28>\"{currentDialogueMessage}\"</size>\n\n" +
+                             $"<color=#FFD700><size=20><i>(Bấm Enter hoặc Chuột trái để tiếp tục)</i></size></color>";
+
+            GUI.Box(new Rect(left, top, width, height), fullMsg, boxStyle);
+        }
+        else if (isChapter1Completed)
+        {
+            GUIStyle compStyle = new GUIStyle(GUI.skin.box);
+            compStyle.normal.background = GetBoxBackground();
+            compStyle.fontSize = 22;
+            compStyle.alignment = TextAnchor.MiddleCenter;
+            compStyle.normal.textColor = Color.green;
+            compStyle.richText = true;
+
+            float width = 520f;
+            float height = 75f;
+            float left = (Screen.width - width) / 2f;
+            float top = Screen.height - height - 40f;
+
+            GUI.Box(new Rect(left, top, width, height),
+                "<b><color=#00FF00>HOÀN THÀNH CHƯƠNG 1!</color></b>\n<size=18><color=#FFD700>Đang chuyển sang Chương 2: Gặp Lý Thông...</color></size>",
+                compStyle);
+        }
     }
 }

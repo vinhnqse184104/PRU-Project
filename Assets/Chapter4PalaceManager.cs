@@ -45,6 +45,7 @@ public class Chapter4PalaceManager : MonoBehaviour
         }
         SetupLyThongCharacter();
         SetupCameraTarget();
+        SetupSoldierEscort();
     }
 
     /// <summary>
@@ -134,11 +135,15 @@ public class Chapter4PalaceManager : MonoBehaviour
                 cc.stepOffset = 0.3f;
             }
 
-            // Gắn LyThongPlayerController để điều khiển WASD
+            // Gắn LyThongPlayerController nhưng vô hiệu hóa trong phân cảnh Lính hộ tống
             LyThongPlayerController controller = lyThongObject.GetComponent<LyThongPlayerController>();
             if (controller == null)
             {
                 controller = lyThongObject.AddComponent<LyThongPlayerController>();
+            }
+            if (controller != null)
+            {
+                controller.enabled = false;
             }
 
             // Only explicit opt-in may replace the authored Transform; no ground raycast.
@@ -182,6 +187,20 @@ public class Chapter4PalaceManager : MonoBehaviour
                 }
             }
         }
+    }
+
+    private void SetupSoldierEscort()
+    {
+        Chapter4SoldierEscort escort = GetComponent<Chapter4SoldierEscort>();
+        if (escort == null)
+        {
+            escort = gameObject.AddComponent<Chapter4SoldierEscort>();
+        }
+        if (lyThongObject != null)
+        {
+            escort.lyThong = lyThongObject.transform;
+        }
+        escort.FindReferences();
     }
 
     // OnGUI đã được loại bỏ hoàn toàn theo yêu cầu để màn hình Chapter 4 không hiển thị các dòng chữ tiêu đề và hướng dẫn

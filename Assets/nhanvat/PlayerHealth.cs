@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.SceneManagement;
@@ -52,6 +52,16 @@ public class PlayerHealth : MonoBehaviour
             // Thay vì gọi hàm Die() ngay lập tức, ta gọi Coroutine đếm thời gian
             StartCoroutine(DieRoutine());
         }
+    }
+
+    public void Heal(int amount)
+    {
+        if (isDead) return;
+
+        currentHealth += amount;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+
+        if (healthBar != null) healthBar.value = currentHealth;
     }
 
     private IEnumerator KnockbackRoutine(Vector3 attackerPosition)

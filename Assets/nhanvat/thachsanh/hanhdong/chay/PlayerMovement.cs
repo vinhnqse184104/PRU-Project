@@ -98,6 +98,10 @@ public class PlayerMovement : MonoBehaviour
         {
             spawnPoint = GameObject.Find("Chapter3_StartPoint") ?? GameObject.Find("Chapter3StartPoint") ?? GameObject.Find("Chapter3SpawnPoint");
         }
+        else if (currentScene == "Chapter6_HangDaiBang" || currentScene.ToLower().Contains("chapter6"))
+        {
+            spawnPoint = GameObject.Find("Chapter6_StartPoint") ?? GameObject.Find("Chapter6StartPoint") ?? GameObject.Find("ThachSanh_SpawnPoint");
+        }
 
         // Áp dụng spawnPoint nếu có (cho Chapter 2 quay về hoặc Chapter 3)
         if (spawnPoint != null)

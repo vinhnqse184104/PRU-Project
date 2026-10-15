@@ -14,11 +14,21 @@ public class SetupChapter4Escort
     private const string SOLDIER_FBX_PATH = "Assets/nhanvat/lính/lính1/Meshy_AI_Mongol_meelle_biped_Animation_01a0d464-3ba4-7709-b908-7ce4a2ae12f4_withSkin.fbx";
     private const string SOLDIER_CONTROLLER_PATH = "Assets/nhanvat/lính/LinhAnim.controller";
 
+    private const string ESCORT_SESSION_KEY = "PRU_Ch4Escort_Done_v1";
+
     static SetupChapter4Escort()
     {
         EditorApplication.delayCall += () =>
         {
-            ExecuteSetup(false);
+            if (!SessionState.GetBool(ESCORT_SESSION_KEY, false))
+            {
+                SessionState.SetBool(ESCORT_SESSION_KEY, true);
+                var activeScene = EditorSceneManager.GetActiveScene();
+                if (activeScene.name.Equals("Chapter4_LythongCuopCong", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    ExecuteSetup(false);
+                }
+            }
         };
     }
 

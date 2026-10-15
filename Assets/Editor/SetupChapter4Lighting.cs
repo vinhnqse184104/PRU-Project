@@ -10,11 +10,22 @@ public class SetupChapter4Lighting
 {
     private const string SCENE_PATH = "Assets/Scenes/Chapter4_LythongCuopCong.unity";
 
+    private const string LIGHTING_SESSION_KEY = "PRU_Ch4Lighting_Done_v1";
+
     static SetupChapter4Lighting()
     {
         EditorApplication.delayCall += () =>
         {
-            ApplyLightingSetup(false);
+            if (!SessionState.GetBool(LIGHTING_SESSION_KEY, false))
+            {
+                SessionState.SetBool(LIGHTING_SESSION_KEY, true);
+                // Only run automatically if Chapter 4 is already the active scene
+                var activeScene = EditorSceneManager.GetActiveScene();
+                if (activeScene.name.Equals("Chapter4_LythongCuopCong", System.StringComparison.OrdinalIgnoreCase))
+                {
+                    ApplyLightingSetup(false);
+                }
+            }
         };
     }
 

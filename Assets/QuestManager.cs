@@ -15,6 +15,20 @@ public class QuestManager : MonoBehaviour
     [Header("THÊM: Animator của Lý Thông")]
     public Animator lyThongAnimator; // Dùng để ép đứng dậy
 
+    [Header("UI Hội thoại Canvas uGUI (Chuẩn Chapter 4)")]
+    public GameObject dialoguePanel;
+    public TextMeshProUGUI speakerText;
+    public TextMeshProUGUI contentText;
+    public TextMeshProUGUI hintText;
+
+    public void EnsureDialogueUI()
+    {
+        if (dialoguePanel == null || speakerText == null || contentText == null || hintText == null)
+        {
+            dialoguePanel = ChapterDialogueUIHelper.EnsureDialogueUI("Chapter1_DialogueCanvas", out speakerText, out contentText, out hintText);
+        }
+    }
+
     [Header("Số lượng đã đạt được")]
     public int woodCollected = 0;
     public int chickenKilled = 0;
@@ -34,6 +48,14 @@ public class QuestManager : MonoBehaviour
 
     void Start()
     {
+        if (StoryStateManager.LyThongReturnedAsOfficial)
+        {
+            if (questText != null) questText.gameObject.SetActive(false);
+            if (lyThongNPC != null) lyThongNPC.SetActive(false);
+            enabled = false;
+            return;
+        }
+
         if (lyThongNPC != null)
         {
             lyThongNPC.SetActive(false);
@@ -188,31 +210,24 @@ public class QuestManager : MonoBehaviour
         if (questText != null) questText.text = "";
 
         // ================= CÂU 1 =================
-        currentDialogueSpeaker = "THẠCH SANH";
-        currentDialogueColor = new Color(0.3f, 0.8f, 1.0f);
-        currentDialogueMessage = "Chào huynh! Sao huynh lại nằm ngủ giữa chốn rừng thiêng nước độc thế này?";
+        ShowDialogueLine("THẠCH SANH", "Chào huynh! Sao huynh lại nằm ngủ giữa chốn rừng thiêng nước độc thế này?", new Color(0.3f, 0.8f, 1.0f));
         yield return StartCoroutine(WaitForKeyPress());
 
         // ================= CÂU 2 =================
-        currentDialogueSpeaker = "LÝ THÔNG";
-        currentDialogueColor = new Color(1.0f, 0.72f, 0.2f);
-        currentDialogueMessage = "Ây da... ta đi bán rượu ngang qua, mệt quá nên thiếp đi mất. Cảm ơn chú em đã đánh thức! Mà nhìn chú em sức vóc quả là hơn người!";
+        ShowDialogueLine("LÝ THÔNG", "Ây da... ta đi bán rượu ngang qua, mệt quá nên thiếp đi mất. Cảm ơn chú em đã đánh thức! Mà nhìn chú em sức vóc quả là hơn người!", new Color(1.0f, 0.72f, 0.2f));
         yield return StartCoroutine(WaitForKeyPress());
 
         // ================= CÂU 3 =================
-        currentDialogueSpeaker = "THẠCH SANH";
-        currentDialogueColor = new Color(0.3f, 0.8f, 1.0f);
-        currentDialogueMessage = "Đệ mồ côi cha mẹ từ nhỏ, sống lủi thủi ở gốc đa này, ngày ngày đốn củi kiếm sống qua ngày thôi.";
+        ShowDialogueLine("THẠCH SANH", "Đệ mồ côi cha mẹ từ nhỏ, sống lủi thủi ở gốc đa này, ngày ngày đốn củi kiếm sống qua ngày thôi.", new Color(0.3f, 0.8f, 1.0f));
         yield return StartCoroutine(WaitForKeyPress());
 
         // ================= CÂU 4 =================
-        currentDialogueSpeaker = "LÝ THÔNG";
-        currentDialogueColor = new Color(1.0f, 0.72f, 0.2f);
-        currentDialogueMessage = "Ôi, hóa ra chú em cũng đơn độc. Hay là theo ta về nhà, anh em ta kết nghĩa huynh đệ, có rau ăn rau có cháo ăn cháo, chú em thấy sao?";
+        ShowDialogueLine("LÝ THÔNG", "Ôi, hóa ra chú em cũng đơn độc. Hay là theo ta về nhà, anh em ta kết nghĩa huynh đệ, có rau ăn rau có cháo ăn cháo, chú em thấy sao?", new Color(1.0f, 0.72f, 0.2f));
         yield return StartCoroutine(WaitForKeyPress());
 
         // ================= KẾT THÚC CHƯƠNG 1 =================
         isDialogueActive = false;
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
         isChapter1Completed = true;
         if (questText != null)
         {
@@ -225,8 +240,40 @@ public class QuestManager : MonoBehaviour
         SceneManager.LoadScene("Chapter2_LyThong");
     }
 
+    private void ShowDialogueLine(string speaker, string message, Color speakerColor)
+    {
+        EnsureDialogueUI();
+        currentDialogueSpeaker = speaker;
+        currentDialogueMessage = message;
+        currentDialogueColor = speakerColor;
+
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(true);
+            if (speakerText != null)
+            {
+                speakerText.text = speaker + ":";
+                speakerText.color = speakerColor;
+            }
+            if (contentText != null)
+            {
+                contentText.text = $"\"{message}\"";
+            }
+            if (hintText != null)
+            {
+                hintText.text = "(Bấm Enter hoặc Chuột trái để tiếp tục)";
+            }
+        }
+    }
+
     void OnGUI()
     {
+        // Nếu đã có Canvas DialoguePanel đang hiển thị thì không vẽ OnGUI để tránh trùng lặp
+        if (dialoguePanel != null && dialoguePanel.activeInHierarchy)
+        {
+            return;
+        }
+
         if (isDialogueActive && !string.IsNullOrEmpty(currentDialogueMessage))
         {
             GUI.depth = -100;

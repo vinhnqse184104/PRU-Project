@@ -866,7 +866,24 @@ public class Chapter4SoldierEscort : MonoBehaviour
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (dialogueText != null) dialogueText.text = "";
 
-        Debug.Log("[Chapter4SoldierEscort] Cuộc hội thoại đã kết thúc thành công! Lý Thông được phong làm Quận công.");
+        Debug.Log("[Chapter4SoldierEscort] Cuộc hội thoại đã kết thúc thành công! Lý Thông được phong làm Quận công. Bắt đầu đếm ngược 5 giây chuyển sang Chapter 2...");
+        StartCoroutine(TransitionToChapter2OfficialRoutine());
+    }
+
+    private float officialTransitionTimer = 5.0f;
+
+    private IEnumerator TransitionToChapter2OfficialRoutine()
+    {
+        officialTransitionTimer = 5.0f;
+        while (officialTransitionTimer > 0f)
+        {
+            officialTransitionTimer -= Time.deltaTime;
+            yield return null;
+        }
+
+        StoryStateManager.LyThongReturnedAsOfficial = true;
+        Debug.Log("[Chapter4SoldierEscort] Đã hoàn thành 5 giây thông báo phong Quận công. Đang chuyển về Scene Chapter2_LyThong...");
+        UnityEngine.SceneManagement.SceneManager.LoadScene("Chapter2_LyThong");
     }
 
     private Texture2D boxBgTexture;
@@ -929,13 +946,14 @@ public class Chapter4SoldierEscort : MonoBehaviour
             completeStyle.normal.textColor = Color.yellow;
             completeStyle.richText = true;
 
-            float width = 460f;
-            float height = 60f;
+            float width = 520f;
+            float height = 70f;
             float left = (Screen.width - width) / 2f;
-            float top = Screen.height - 100f;
+            float top = Screen.height - 110f;
 
+            int remainingSeconds = Mathf.CeilToInt(Mathf.Max(0f, officialTransitionTimer));
             GUI.Box(new Rect(left, top, width, height),
-                "<b><color=#00FF00>LÝ THÔNG ĐÃ ĐƯỢC PHONG LÀM QUẬN CÔNG!</color></b>\n<size=13>Hoàn thành phân cảnh bái kiến triều đình Chương 4</size>",
+                $"<b><color=#00FF00>LÝ THÔNG ĐÃ ĐƯỢC PHONG LÀM QUẬN CÔNG!</color></b>\n<size=13><color=#FFD700>Đang trở về nhà khoe với mẹ ({remainingSeconds}s)...</color></size>",
                 completeStyle);
         }
     }

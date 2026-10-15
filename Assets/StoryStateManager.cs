@@ -7,6 +7,17 @@ public static class StoryStateManager
     private const string KEY_CHAPTER2_RETURNED = "PRU_Chapter2Returned";
     private const string KEY_RETURN_DIALOGUE_DONE = "PRU_ReturnDialogueDone";
     private const string KEY_CHAPTER4_REACHED = "PRU_Chapter4Reached";
+    private const string KEY_LY_THONG_OFFICIAL_RETURNED = "PRU_LyThongReturnedAsOfficial";
+
+    public static bool LyThongReturnedAsOfficial
+    {
+        get => PlayerPrefs.GetInt(KEY_LY_THONG_OFFICIAL_RETURNED, 0) == 1;
+        set
+        {
+            PlayerPrefs.SetInt(KEY_LY_THONG_OFFICIAL_RETURNED, value ? 1 : 0);
+            PlayerPrefs.Save();
+        }
+    }
 
     public static bool IsChanTinhDefeated
     {
@@ -67,7 +78,8 @@ public static class StoryStateManager
                PlayerPrefs.HasKey(KEY_HAS_CHAN_TINH_HEAD) ||
                PlayerPrefs.HasKey(KEY_CHAPTER2_RETURNED) ||
                PlayerPrefs.HasKey(KEY_RETURN_DIALOGUE_DONE) ||
-               PlayerPrefs.HasKey(KEY_CHAPTER4_REACHED);
+               PlayerPrefs.HasKey(KEY_CHAPTER4_REACHED) ||
+               PlayerPrefs.HasKey(KEY_LY_THONG_OFFICIAL_RETURNED);
     }
 
     /// <summary>
@@ -81,6 +93,7 @@ public static class StoryStateManager
         PlayerPrefs.DeleteKey(KEY_CHAPTER2_RETURNED);
         PlayerPrefs.DeleteKey(KEY_RETURN_DIALOGUE_DONE);
         PlayerPrefs.DeleteKey(KEY_CHAPTER4_REACHED);
+        PlayerPrefs.DeleteKey(KEY_LY_THONG_OFFICIAL_RETURNED);
         PlayerPrefs.Save();
         Debug.Log("[StoryStateManager] BẮT ĐẦU LƯỢT CHƠI MỚI (New Game): Đã reset toàn bộ tiến trình cốt truyện về ban đầu.");
     }

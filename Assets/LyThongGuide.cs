@@ -26,6 +26,20 @@ public class LyThongGuide : MonoBehaviour
     public TextMeshProUGUI dialogueText;
     public Light directionalLight;
 
+    [Header("UI Hội thoại Canvas uGUI (Chuẩn Chapter 4)")]
+    public GameObject dialoguePanel;
+    public TextMeshProUGUI speakerText;
+    public TextMeshProUGUI contentText;
+    public TextMeshProUGUI hintText;
+
+    public void EnsureDialogueUI()
+    {
+        if (dialoguePanel == null || speakerText == null || contentText == null || hintText == null)
+        {
+            dialoguePanel = ChapterDialogueUIHelper.EnsureDialogueUI("Chapter2_DialogueCanvas", out speakerText, out contentText, out hintText);
+        }
+    }
+
     [Header("Cài đặt")]
     public float triggerDistance = 6.5f;
     public float guideSpeed = 2.5f;
@@ -66,7 +80,9 @@ public class LyThongGuide : MonoBehaviour
     void Start()
     {
         string sceneName = SceneManager.GetActiveScene().name;
-        if (sceneName == "Chapter4_Lythongcuopcong" || sceneName.ToLower().Contains("chapter4") || (StoryStateManager.IsChanTinhDefeated && StoryStateManager.IsReturningToChapter2))
+        if (sceneName == "Chapter4_Lythongcuopcong" || sceneName.ToLower().Contains("chapter4") ||
+            (StoryStateManager.IsChanTinhDefeated && StoryStateManager.IsReturningToChapter2) ||
+            StoryStateManager.LyThongReturnedAsOfficial)
         {
             enabled = false; return;
         }
@@ -92,12 +108,7 @@ public class LyThongGuide : MonoBehaviour
         }
 
         if (doorInteraction == null) doorInteraction = FindAnyObjectByType<DoorInteraction>();
-        if (dialogueText == null)
-        {
-            QuestManager qm = FindAnyObjectByType<QuestManager>();
-            if (qm != null && qm.questText != null) dialogueText = qm.questText;
-            else dialogueText = FindAnyObjectByType<TextMeshProUGUI>();
-        }
+        EnsureDialogueUI();
         SetupSunsetLighting();
     }
 
@@ -352,10 +363,73 @@ public class LyThongGuide : MonoBehaviour
 
     private void UpdateUI(string text)
     {
-        string fullText = text + "\n\n<size=80%><color=#FFD700>(Bấm Enter hoặc Chuột trái để tiếp tục)</color></size>";
-        if (dialogueText != null) { dialogueText.text = fullText; dialogueText.gameObject.SetActive(true); }
+        currentSpeech = text;
+        EnsureDialogueUI();
+
+        // Tách tên người nói và lời thoại
+        string speaker = "";
+        string content = text;
+        Color speakerColor = new Color(1.0f, 0.72f, 0.2f);
+
+        int colonIdx = text.IndexOf(':');
+        if (colonIdx > 0 && colonIdx < 30)
+        {
+            speaker = text.Substring(0, colonIdx).Trim();
+            content = text.Substring(colonIdx + 1).Trim();
+
+            string speakerUpper = speaker.ToUpper();
+            if (speakerUpper.Contains("LÝ THÔNG") || speakerUpper.Contains("LY THONG"))
+            {
+                speakerColor = new Color(1.0f, 0.72f, 0.2f);
+            }
+            else if (speakerUpper.Contains("MẸ") || speakerUpper.Contains("ME"))
+            {
+                speakerColor = new Color(1.0f, 0.5f, 0.5f);
+            }
+            else if (speakerUpper.Contains("THẠCH SANH") || speakerUpper.Contains("THACH SANH"))
+            {
+                speakerColor = new Color(0.3f, 0.8f, 1.0f);
+            }
+        }
+
+        string cleanContent = content.Trim();
+        if (cleanContent.StartsWith("\"") && cleanContent.EndsWith("\"") && cleanContent.Length >= 2)
+        {
+            cleanContent = cleanContent.Substring(1, cleanContent.Length - 2).Trim();
+        }
+
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(true);
+            if (speakerText != null)
+            {
+                speakerText.text = (!string.IsNullOrEmpty(speaker) ? speaker : "LÝ THÔNG") + ":";
+                speakerText.color = speakerColor;
+            }
+            if (contentText != null)
+            {
+                contentText.text = $"\"{cleanContent}\"";
+            }
+            if (hintText != null)
+            {
+                hintText.text = "(Bấm Enter hoặc Chuột trái để tiếp tục)";
+            }
+        }
+        else if (dialogueText != null)
+        {
+            string fullText = text + "\n\n<size=80%><color=#FFD700>(Bấm Enter hoặc Chuột trái để tiếp tục)</color></size>";
+            dialogueText.text = fullText;
+            dialogueText.gameObject.SetActive(true);
+        }
     }
-    private void ClearUI() { if (dialogueText != null) dialogueText.text = ""; currentSpeech = ""; }
+
+    private void ClearUI()
+    {
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
+        if (dialogueText != null) dialogueText.text = "";
+        currentSpeech = "";
+    }
+
     private void SetWalking(bool walking) { SetCharacterWalking(lyThongAnimator != null ? lyThongAnimator.gameObject : gameObject, walking); }
 
     private void SetCharacterWalking(GameObject targetObj, bool walking)
@@ -387,6 +461,12 @@ public class LyThongGuide : MonoBehaviour
 
     void OnGUI()
     {
+        // Nếu đã có Canvas DialoguePanel đang hiển thị thì không vẽ OnGUI để tránh trùng lặp
+        if (dialoguePanel != null && dialoguePanel.activeInHierarchy)
+        {
+            return;
+        }
+
         if (currentState == CutsceneState.MotherDialogue || currentState == CutsceneState.SecretDialogue)
         {
             if (dialogueText == null && !string.IsNullOrEmpty(currentSpeech))

@@ -1,11 +1,26 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class Chapter3Intro : MonoBehaviour
 {
     [Header("Nội dung dẫn truyện")]
     [TextArea(5, 10)]
     public string introText = "Đêm hôm đó, Lý Thông lấy cớ bận việc, nhờ Thạch Sanh đi canh miếu thờ thay mình.\n\nThạch Sanh thật thà mang búa ra đi mà không hề hay biết rằng... đây là miếu thờ của một con Chằn Tinh hung ác chuyên ăn thịt người.";
+
+    [Header("UI Hội thoại Canvas uGUI (Chuẩn Chapter 4)")]
+    public GameObject dialoguePanel;
+    public TextMeshProUGUI speakerText;
+    public TextMeshProUGUI contentText;
+    public TextMeshProUGUI hintText;
+
+    public void EnsureDialogueUI()
+    {
+        if (dialoguePanel == null || speakerText == null || contentText == null || hintText == null)
+        {
+            dialoguePanel = ChapterDialogueUIHelper.EnsureDialogueUI("Chapter3_DialogueCanvas", out speakerText, out contentText, out hintText);
+        }
+    }
 
     private bool isShowing = true;
     private PlayerMovement playerMovement;
@@ -20,6 +35,31 @@ public class Chapter3Intro : MonoBehaviour
         {
             playerMovement = player.GetComponent<PlayerMovement>();
             if (playerMovement != null) playerMovement.enabled = false;
+        }
+
+        EnsureDialogueUI();
+        ShowIntroUI();
+    }
+
+    private void ShowIntroUI()
+    {
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(true);
+            if (speakerText != null)
+            {
+                speakerText.text = "DẪN TRUYỆN:";
+                speakerText.color = new Color(1.0f, 0.84f, 0.0f);
+            }
+            if (contentText != null)
+            {
+                string cleanIntro = introText.Replace("\n\n", " ");
+                contentText.text = $"\"{cleanIntro}\"";
+            }
+            if (hintText != null)
+            {
+                hintText.text = "(Bấm Enter, Space hoặc Chuột trái để bắt đầu)";
+            }
         }
     }
 
@@ -65,6 +105,7 @@ public class Chapter3Intro : MonoBehaviour
         if (advancePressed)
         {
             isShowing = false;
+            if (dialoguePanel != null) dialoguePanel.SetActive(false);
 
             // 3. Ẩn chữ và mở khóa di chuyển cho Thạch Sanh
             if (playerMovement != null) playerMovement.enabled = true;
@@ -73,6 +114,12 @@ public class Chapter3Intro : MonoBehaviour
 
     void OnGUI()
     {
+        // Nếu đã có Canvas DialoguePanel đang hiển thị thì không vẽ OnGUI để tránh trùng lặp
+        if (dialoguePanel != null && dialoguePanel.activeInHierarchy)
+        {
+            return;
+        }
+
         if (isShowing)
         {
             GUI.depth = -100;

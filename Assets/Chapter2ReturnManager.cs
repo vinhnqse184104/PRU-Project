@@ -28,6 +28,20 @@ public class Chapter2ReturnManager : MonoBehaviour
     [Header("UI Text (Tùy chọn)")]
     public TextMeshProUGUI dialogueText;
 
+    [Header("UI Hội thoại Canvas uGUI (Chuẩn Chapter 4)")]
+    public GameObject dialoguePanel;
+    public TextMeshProUGUI speakerText;
+    public TextMeshProUGUI contentText;
+    public TextMeshProUGUI hintText;
+
+    public void EnsureDialogueUI()
+    {
+        if (dialoguePanel == null || speakerText == null || contentText == null || hintText == null)
+        {
+            dialoguePanel = ChapterDialogueUIHelper.EnsureDialogueUI("Chapter2_DialogueCanvas", out speakerText, out contentText, out hintText);
+        }
+    }
+
     private Transform playerTransform;
     private PlayerMovement playerMovement;
     private CharacterController playerController;
@@ -121,7 +135,7 @@ public class Chapter2ReturnManager : MonoBehaviour
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Chapter2_LyThong") return;
 
-        if (StoryStateManager.IsChanTinhDefeated && StoryStateManager.IsReturningToChapter2)
+        if (StoryStateManager.IsChanTinhDefeated && StoryStateManager.IsReturningToChapter2 && !StoryStateManager.LyThongReturnedAsOfficial)
         {
             SetupReturnScene();
             StartCoroutine(EnsureNPCsPositionedNextFrame());
@@ -327,6 +341,7 @@ public class Chapter2ReturnManager : MonoBehaviour
     void Update()
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Chapter2_LyThong") return;
+        if (StoryStateManager.LyThongReturnedAsOfficial) return;
         if (!StoryStateManager.IsChanTinhDefeated || !StoryStateManager.IsReturningToChapter2) return;
         if (isTransitioningToChapter4) return;
 
@@ -422,11 +437,35 @@ public class Chapter2ReturnManager : MonoBehaviour
 
     private void DisplayCurrentDialogue()
     {
+        EnsureDialogueUI();
         DialogueLine line = returnDialogues[currentDialogueStep];
-        string text = $"<b><color=#{ColorUtility.ToHtmlStringRGB(line.speakerColor)}>{line.speaker}:</color></b>\n\"{line.content}\"";
+
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(true);
+            if (speakerText != null)
+            {
+                speakerText.text = line.speaker + ":";
+                speakerText.color = line.speakerColor;
+            }
+            if (contentText != null)
+            {
+                string cleanContent = line.content.Trim();
+                if (cleanContent.StartsWith("\"") && cleanContent.EndsWith("\"") && cleanContent.Length >= 2)
+                {
+                    cleanContent = cleanContent.Substring(1, cleanContent.Length - 2).Trim();
+                }
+                contentText.text = $"\"{cleanContent}\"";
+            }
+            if (hintText != null)
+            {
+                hintText.text = "(Bấm Enter hoặc Chuột trái để tiếp tục)";
+            }
+        }
 
         if (dialogueText != null)
         {
+            string text = $"<b><color=#{ColorUtility.ToHtmlStringRGB(line.speakerColor)}>{line.speaker}:</color></b>\n\"{line.content}\"";
             dialogueText.text = text;
             dialogueText.gameObject.SetActive(true);
         }
@@ -439,6 +478,7 @@ public class Chapter2ReturnManager : MonoBehaviour
         isDialogueActive = false;
         StoryStateManager.IsReturnDialogueCompleted = true;
 
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (dialogueText != null) dialogueText.text = "";
 
         UpdateQuestBanner("<color=#00FF00>HOÀN THÀNH CHƯƠNG 2!</color>\nĐang chuyển sang Chương 4...");
@@ -495,6 +535,7 @@ public class Chapter2ReturnManager : MonoBehaviour
     void OnGUI()
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Chapter2_LyThong") return;
+        if (StoryStateManager.LyThongReturnedAsOfficial) return;
         if (!StoryStateManager.IsChanTinhDefeated || !StoryStateManager.IsReturningToChapter2) return;
 
         if (isTransitioningToChapter4)
@@ -512,6 +553,12 @@ public class Chapter2ReturnManager : MonoBehaviour
             float top = Screen.height - 140f;
 
             GUI.Box(new Rect(left, top, width, height), "<b><color=#00FF00>HOÀN THÀNH CHƯƠNG 3!</color></b>\n<size=16>Đang chuyển sang Chương 4...</size>", transStyle);
+            return;
+        }
+
+        // Nếu đã có Canvas DialoguePanel đang hiển thị thì không vẽ OnGUI để tránh trùng lặp
+        if (dialoguePanel != null && dialoguePanel.activeInHierarchy)
+        {
             return;
         }
 

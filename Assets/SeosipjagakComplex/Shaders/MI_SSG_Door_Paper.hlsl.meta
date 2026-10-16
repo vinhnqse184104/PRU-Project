@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 753b334bb0ec006449f87675dc592437
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_Door_Paper.hlsl
+  uploadId: 715605

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 30530e0a3855b674fab639928746c3a4
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_AngleRafter02.hlsl
+  uploadId: 715605

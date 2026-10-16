@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 0a555654019e9b14c899c07a81d5f268
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_BrickStone01B.hlsl
+  uploadId: 715605

@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: e6626e9409ef93545bbbfb922259286b
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/UnrealCommon.cginc
+  uploadId: 715605

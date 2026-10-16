@@ -7,6 +7,7 @@ public class NextChapterTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            StoryStateManager.StartNewGame();
             SceneManager.LoadScene("Chapter2_LyThong");
         }
     }

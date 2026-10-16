@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 473372eb3aa775e438aef5e2cba70ede
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_GateRoof.hlsl
+  uploadId: 715605

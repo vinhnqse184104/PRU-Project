@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 43f59f296a864064eb634d87305f1032
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_Handrail01.hlsl
+  uploadId: 715605

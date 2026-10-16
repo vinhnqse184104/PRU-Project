@@ -1,0 +1,14 @@
+fileFormatVersion: 2
+guid: 60ee491b23e8931439a0fea687c97cf8
+ShaderIncludeImporter:
+  externalObjects: {}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Shaders/MI_SSG_Wood.hlsl
+  uploadId: 715605

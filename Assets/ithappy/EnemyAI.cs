@@ -38,7 +38,7 @@ public class EnemyAI : MonoBehaviour
         PlayerHealth playerHealth = player.GetComponent<PlayerHealth>();
         if (playerHealth != null)
         {
-            playerHealth.TakeDamage(attackDamage);
+            playerHealth.TakeDamage(attackDamage, transform.position);
             Debug.Log("Á! Hổ cắn Thạch Sanh mất " + attackDamage + " máu!");
         }
     }

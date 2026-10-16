@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: dbd075031aad1c544af758a9a414b400
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 304783
+  packageName: KHS - Seosipjagak, Gyeongbokgung
+  packageVersion: 1.0
+  assetPath: Assets/SeosipjagakComplex/Settings/ForwardRenderer.asset
+  uploadId: 715605

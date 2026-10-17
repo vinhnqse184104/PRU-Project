@@ -7873,10 +7873,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 100
   currentHealth: 0
-  healthBar: {fileID: 1804742321}
-  bangGameOver: {fileID: 0}
   knockbackForce: 1.5
   knockbackDuration: 0.2
+  healthBar: {fileID: 1804742321}
+  satThuongCuaThachSanh: 25
+  tamChem: 3
 --- !u!114 &1298406154
 MonoBehaviour:
   m_ObjectHideFlags: 0

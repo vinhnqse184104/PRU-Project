@@ -32,6 +32,21 @@ public class MauChanTinh : MonoBehaviour
         }
     }
 
+    public void TakeDamage(int damageAmount)
+    {
+        Vector3 viTriNguoiDanh = transform.position;
+
+        // Tự động tìm vị trí Thạch Sanh để Chằn Tinh biết đường văng lùi
+        GameObject thachSanh = GameObject.Find("thachsanh");
+        if (thachSanh != null)
+        {
+            viTriNguoiDanh = thachSanh.transform.position;
+        }
+
+        // Truyền đủ 2 thông tin cho hàm TakeDamage gốc ở bên dưới xử lý
+        TakeDamage(damageAmount, viTriNguoiDanh);
+    }
+
     public void TakeDamage(int damageAmount, Vector3 attackerPosition)
     {
         // Nếu quái đã chết rồi thì chém không bị trừ máu hay văng lùi nữa
@@ -44,6 +59,11 @@ public class MauChanTinh : MonoBehaviour
 
         if (currentHealth > 0)
         {
+            // --- THÊM 2 DÒNG NÀY ĐỂ KÍCH HOẠT HOẠT ẢNH LÙI/BỊ ĐAU ---
+            Animator anim = GetComponent<Animator>();
+            if (anim != null) anim.SetTrigger("BiThuong");
+
+            // Gọi hiệu ứng văng lùi vật lý
             StartCoroutine(KnockbackRoutine(attackerPosition));
         }
         else

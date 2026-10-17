@@ -3209,7 +3209,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ChanTinhAttack
   attackOffset: 1
   attackRange: 1.5
-  attackDamage: 20
+  attackDamage: 10
 --- !u!114 &100511288
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3253,10 +3253,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerHealth
   maxHealth: 500
   currentHealth: 0
-  healthBar: {fileID: 2006086096}
-  bangGameOver: {fileID: 268007301}
-  knockbackForce: 1.5
+  knockbackForce: 3
   knockbackDuration: 0.2
+  healthBar: {fileID: 2006086096}
+  satThuongCuaThachSanh: 25
+  tamChem: 3
 --- !u!114 &100511290
 MonoBehaviour:
   m_ObjectHideFlags: 0

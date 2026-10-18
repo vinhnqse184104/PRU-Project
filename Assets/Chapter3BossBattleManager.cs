@@ -6,6 +6,57 @@ using UnityEngine.UI;
 
 public class Chapter3BossBattleManager : MonoBehaviour
 {
+    // Shared only by Chapter 3 damage handlers. Sweep the whole body, then
+    // require cave floor under the leading footprint (Terrain is not cave floor).
+    public static Vector3 LimitKnockback(Collider body, Vector3 motion)
+    {
+        if (body == null || motion.sqrMagnitude == 0f) return Vector3.zero;
+        Bounds bounds = body.bounds;
+        float radius = Mathf.Max(0.05f, Mathf.Min(bounds.extents.x, bounds.extents.z));
+        Vector3 center = bounds.center;
+        float halfLine = Mathf.Max(0f, bounds.extents.y - radius);
+        float distance = motion.magnitude;
+        Vector3 direction = motion / distance;
+        foreach (RaycastHit hit in Physics.CapsuleCastAll(center + Vector3.up * halfLine,
+                     center - Vector3.up * halfLine, radius, direction, distance + 0.03f,
+                     Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.collider.transform.root == body.transform.root || IsCaveFloor(hit.collider) || hit.normal.y > 0.5f) continue;
+            distance = Mathf.Min(distance, Mathf.Max(0f, hit.distance - 0.03f));
+        }
+        Vector3 accepted = Vector3.zero;
+        Vector3 side = Vector3.Cross(Vector3.up, direction) * radius * 0.7f;
+        for (float step = 0f; step < distance;)
+        {
+            step = Mathf.Min(distance, step + 0.1f);
+            Vector3 front = center + direction * (step + radius);
+            if (!HasCaveFloor(front, bounds.min.y) ||
+                !HasCaveFloor(front + side, bounds.min.y) ||
+                !HasCaveFloor(front - side, bounds.min.y)) break;
+            accepted = direction * step;
+        }
+        return accepted;
+    }
+
+    private static bool HasCaveFloor(Vector3 point, float feetY)
+    {
+        point.y = feetY + 0.5f;
+        foreach (RaycastHit hit in Physics.RaycastAll(point, Vector3.down, 10f,
+                     Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore))
+        {
+            if (hit.normal.y < 0.5f) continue;
+            if (IsCaveFloor(hit.collider)) return true;
+        }
+        return false;
+    }
+
+    private static bool IsCaveFloor(Collider collider)
+    {
+        for (Transform parent = collider.transform; parent != null; parent = parent.parent)
+            if (parent.name == "CaveFloor" || parent.name == "CaveGround") return true;
+        return false;
+    }
+
     public static Chapter3BossBattleManager Instance { get; private set; }
 
     [Header("Cài đặt")]

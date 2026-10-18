@@ -1,11 +1,26 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class Chapter3Intro : MonoBehaviour
 {
     [Header("Nội dung dẫn truyện")]
     [TextArea(5, 10)]
     public string introText = "Đêm hôm đó, Lý Thông lấy cớ bận việc, nhờ Thạch Sanh đi canh miếu thờ thay mình.\n\nThạch Sanh thật thà mang búa ra đi mà không hề hay biết rằng... đây là miếu thờ của một con Chằn Tinh hung ác chuyên ăn thịt người.";
+
+    [Header("UI Hội thoại Canvas uGUI (Chuẩn Chapter 4)")]
+    public GameObject dialoguePanel;
+    public TextMeshProUGUI speakerText;
+    public TextMeshProUGUI contentText;
+    public TextMeshProUGUI hintText;
+
+    public void EnsureDialogueUI()
+    {
+        if (dialoguePanel == null || speakerText == null || contentText == null || hintText == null)
+        {
+            dialoguePanel = ChapterDialogueUIHelper.EnsureDialogueUI("Chapter3_DialogueCanvas", out speakerText, out contentText, out hintText);
+        }
+    }
 
     private bool isShowing = true;
     private PlayerMovement playerMovement;
@@ -21,19 +36,76 @@ public class Chapter3Intro : MonoBehaviour
             playerMovement = player.GetComponent<PlayerMovement>();
             if (playerMovement != null) playerMovement.enabled = false;
         }
+
+        EnsureDialogueUI();
+        ShowIntroUI();
+    }
+
+    private void ShowIntroUI()
+    {
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(true);
+            if (speakerText != null)
+            {
+                speakerText.text = "DẪN TRUYỆN:";
+                speakerText.color = new Color(1.0f, 0.84f, 0.0f);
+            }
+            if (contentText != null)
+            {
+                string cleanIntro = introText.Replace("\n\n", " ");
+                contentText.text = $"\"{cleanIntro}\"";
+            }
+            if (hintText != null)
+            {
+                hintText.text = "(Bấm Enter, Space hoặc Chuột trái để bắt đầu)";
+            }
+        }
+    }
+
+    private Texture2D boxBgTexture;
+
+    private Texture2D GetBoxBackground()
+    {
+        if (boxBgTexture == null)
+        {
+            boxBgTexture = new Texture2D(1, 1);
+            boxBgTexture.SetPixel(0, 0, new Color(0.06f, 0.08f, 0.12f, 0.72f));
+            boxBgTexture.Apply();
+        }
+        return boxBgTexture;
     }
 
     void Update()
     {
         if (!isShowing) return;
 
-        // 2. Chờ người chơi bấm Space hoặc Click chuột
-        bool spacePressed = Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame;
-        bool mousePressed = Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame;
+        // 2. Chờ người chơi bấm Enter, Space hoặc Click chuột
+        bool advancePressed = false;
+        if (Keyboard.current != null && (Keyboard.current.enterKey.wasPressedThisFrame ||
+                                         Keyboard.current.numpadEnterKey.wasPressedThisFrame ||
+                                         Keyboard.current.spaceKey.wasPressedThisFrame))
+        {
+            advancePressed = true;
+        }
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            advancePressed = true;
+        }
+        if (!advancePressed)
+        {
+            try
+            {
+                advancePressed = Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter) ||
+                                 Input.GetKeyDown(KeyCode.Space) || Input.GetMouseButtonDown(0);
+            }
+            catch { }
+        }
 
-        if (spacePressed || mousePressed)
+        if (advancePressed)
         {
             isShowing = false;
+            if (dialoguePanel != null) dialoguePanel.SetActive(false);
 
             // 3. Ẩn chữ và mở khóa di chuyển cho Thạch Sanh
             if (playerMovement != null) playerMovement.enabled = true;
@@ -42,26 +114,34 @@ public class Chapter3Intro : MonoBehaviour
 
     void OnGUI()
     {
+        // Nếu đã có Canvas DialoguePanel đang hiển thị thì không vẽ OnGUI để tránh trùng lặp
+        if (dialoguePanel != null && dialoguePanel.activeInHierarchy)
+        {
+            return;
+        }
+
         if (isShowing)
         {
+            GUI.depth = -100;
             GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
-            boxStyle.fontSize = 20; // Giảm nhẹ từ 24 xuống 20 để chữ gọn gàng
+            boxStyle.normal.background = GetBoxBackground();
             boxStyle.wordWrap = true;
-            boxStyle.alignment = TextAnchor.MiddleCenter;
+            boxStyle.alignment = TextAnchor.UpperLeft;
+            boxStyle.padding = new RectOffset(35, 35, 18, 18);
             boxStyle.normal.textColor = Color.white;
-
-            // Tạo khoảng đệm cách mép viền để chữ không bị dính vào mép hộp
-            boxStyle.padding = new RectOffset(35, 35, 25, 25);
             boxStyle.richText = true;
 
-            float width = Screen.width * 0.8f;   // Độ rộng chiếm 80% màn hình
-            float height = 290f;                 // Tăng chiều cao lên 290 để chứa đủ các dòng
+            // Kích thước chuẩn thống nhất: bottom-center, ~75-80% màn hình, cao 215px, cách đáy 30px
+            float width = Mathf.Min(Screen.width * 0.78f, 1100f);
+            float height = 215f;
             float left = (Screen.width - width) / 2f;
-            float top = (Screen.height - height) / 2f; // Căn chính giữa màn hình
+            float top = Screen.height - height - 30f;
 
-            string fullText = introText + "\n\n<color=#FFD700><size=17>(Bấm Space hoặc Click chuột để bắt đầu)</size></color>";
+            string cleanIntro = introText.Replace("\n\n", " ");
+            string fullText = "<size=34><b><color=#FFD700>DẪN TRUYỆN:</color></b></size>\n" +
+                             $"<size=26>\"{cleanIntro}\"</size>\n\n" +
+                             "<color=#FFD700><size=20><i>(Bấm Enter, Space hoặc Chuột trái để bắt đầu)</i></size></color>";
 
-            GUI.skin.box.richText = true;
             GUI.Box(new Rect(left, top, width, height), fullText, boxStyle);
         }
     }

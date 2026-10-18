@@ -74,8 +74,8 @@ public class DoorInteraction : MonoBehaviour
         }
         
         // Tự động mở cửa khi Lý Thông hoặc NPC tới gần
-        if (other.GetComponent<LyThongGuide>() != null || 
-            other.GetComponentInParent<LyThongGuide>() != null || 
+        if (other.GetComponent<Component>() != null || 
+            other.GetComponentInParent<Component>() != null || 
             other.name.ToLower().Contains("lythong"))
         {
             OpenDoor();

@@ -8,12 +8,15 @@ using TMPro;
 
 public class LyThongGuide : MonoBehaviour
 {
+    [Header("KÉO MÔ HÌNH LÝ THÔNG VÀO ĐÂY:")]
+    public Animator lyThongAnimator; // <-- BIẾN MỚI QUAN TRỌNG NHẤT
+
     [Header("Các Object chính")]
     public Transform homePoint;
     public Transform thachSanh;
     public Transform motherNPC;
 
-    [Header("3 Điểm đứng trong nhà (Deepest -> Outer)")]
+    [Header("3 Điểm đứng trong nhà")]
     public Transform motherInsidePoint;
     public Transform lyThongInsidePoint;
     public Transform thachSanhInsidePoint;
@@ -23,32 +26,36 @@ public class LyThongGuide : MonoBehaviour
     public TextMeshProUGUI dialogueText;
     public Light directionalLight;
 
+    [Header("UI Hội thoại Canvas uGUI (Chuẩn Chapter 4)")]
+    public GameObject dialoguePanel;
+    public TextMeshProUGUI speakerText;
+    public TextMeshProUGUI contentText;
+    public TextMeshProUGUI hintText;
+
+    public void EnsureDialogueUI()
+    {
+        if (dialoguePanel == null || speakerText == null || contentText == null || hintText == null)
+        {
+            dialoguePanel = ChapterDialogueUIHelper.EnsureDialogueUI("Chapter2_DialogueCanvas", out speakerText, out contentText, out hintText);
+        }
+    }
+
     [Header("Cài đặt")]
-    public float triggerDistance = 4.0f;
+    public float triggerDistance = 6.5f;
     public float guideSpeed = 2.5f;
 
-    public enum CutsceneState
-    {
-        WaitingForPlayer,
-        GuideHome,
-        MotherDialogue,
-        ThachSanhGoesInside,  // Thạch Sanh tự đi vào nhà
-        SecretDialogue,       // Đoạn thoại âm mưu của 2 mẹ con
-        Finished
-    }
+    public enum CutsceneState { WaitingForPlayer, GuideHome, MotherDialogue, ThachSanhGoesInside, SecretDialogue, Finished }
 
     [Header("Trạng thái hiện tại")]
     public CutsceneState currentState = CutsceneState.WaitingForPlayer;
 
     private NavMeshAgent agent;
-    private Animator animator;
     private PlayerMovement playerMovement;
     private CharacterController thachSanhController;
 
     private int currentDialogueIndex = 0;
     private string currentSpeech = "";
 
-    // 8 câu thoại với Mẹ Lý Thông ngoài nhà (Giả vờ nhận người một nhà)
     private readonly string[] motherDialogueLines = new string[]
     {
         "LÝ THÔNG:\n\"Mẹ ơi, con đi bán rượu về rồi đây! Mẹ xem con dẫn ai về này.\"",
@@ -61,7 +68,6 @@ public class LyThongGuide : MonoBehaviour
         "MẸ LÝ THÔNG:\n\"Đường xa chắc con cũng mệt rồi. Thạch Sanh, con cứ vào buồng trong nghỉ ngơi trước đi.\""
     };
 
-    // Hội thoại âm mưu của mẹ con Lý Thông (Lật mặt nhanh như chớp)
     private readonly string[] secretDialogueLines = new string[]
     {
         "MẸ LÝ THÔNG:\n\"Trời đất ơi, mày rước cái thằng to lù lù này về làm gì cho tốn cơm tốn gạo hả con?\"",
@@ -74,31 +80,18 @@ public class LyThongGuide : MonoBehaviour
     void Start()
     {
         string sceneName = SceneManager.GetActiveScene().name;
-        if (sceneName == "Chapter4_Lythongcuopcong" || sceneName.ToLower().Contains("chapter4"))
+        if (sceneName == "Chapter4_Lythongcuopcong" || sceneName.ToLower().Contains("chapter4") ||
+            (StoryStateManager.IsChanTinhDefeated && StoryStateManager.IsReturningToChapter2) ||
+            StoryStateManager.LyThongReturnedAsOfficial)
         {
-            enabled = false;
-            return;
-        }
-
-        // Nếu Thạch Sanh đang quay về sau khi diệt Chằn Tinh, tắt kịch bản dẫn đường lần 1
-        if (StoryStateManager.IsChanTinhDefeated && StoryStateManager.IsReturningToChapter2)
-        {
-            enabled = false;
-            return;
+            enabled = false; return;
         }
 
         agent = GetComponent<NavMeshAgent>();
 
-        animator = GetComponent<Animator>();
-        if (animator == null)
-            animator = GetComponentInChildren<Animator>();
-
-        if (animator != null)
-            animator.applyRootMotion = false;
-
         if (thachSanh == null)
         {
-            GameObject pObj = GameObject.FindWithTag("Player");
+            GameObject pObj = GameObject.FindWithTag("Player") ?? GameObject.Find("thachsanh");
             if (pObj != null) thachSanh = pObj.transform;
         }
 
@@ -110,19 +103,12 @@ public class LyThongGuide : MonoBehaviour
 
         if (motherNPC == null)
         {
-            GameObject mObj = GameObject.Find("Meshy_AI_Elder_Master_Stance_biped_Animation_01a0d44b-3352-70aa-af88-28f245645f42_withSkin")
-                              ?? GameObject.Find("Mother") ?? GameObject.Find("MotherNPC") ?? GameObject.Find("MeLyThong") ?? GameObject.Find("Me_LyThong");
+            GameObject mObj = GameObject.Find("Meshy_AI_Elder_Master_Stance_biped_Animation_01a0d44b-3352-70aa-af88-28f245645f42_withSkin") ?? GameObject.Find("Mother") ?? GameObject.Find("MotherNPC") ?? GameObject.Find("MeLyThong") ?? GameObject.Find("Me_LyThong");
             if (mObj != null) motherNPC = mObj.transform;
         }
 
-        if (doorInteraction == null) doorInteraction = FindObjectOfType<DoorInteraction>();
-        if (dialogueText == null)
-        {
-            QuestManager qm = FindObjectOfType<QuestManager>();
-            if (qm != null && qm.questText != null) dialogueText = qm.questText;
-            else dialogueText = FindObjectOfType<TextMeshProUGUI>();
-        }
-
+        if (doorInteraction == null) doorInteraction = FindAnyObjectByType<DoorInteraction>();
+        EnsureDialogueUI();
         SetupSunsetLighting();
     }
 
@@ -130,116 +116,124 @@ public class LyThongGuide : MonoBehaviour
     {
         if (directionalLight == null)
         {
-            Light[] lights = FindObjectsOfType<Light>();
-            foreach (Light l in lights)
-            {
-                if (l.type == LightType.Directional) { directionalLight = l; break; }
-            }
+            Light[] lights = FindObjectsByType<Light>(FindObjectsSortMode.None);
+            foreach (Light l in lights) { if (l.type == LightType.Directional) { directionalLight = l; break; } }
         }
-        if (directionalLight != null)
-        {
-            directionalLight.color = new Color(1.0f, 0.75f, 0.45f);
-            directionalLight.intensity = Mathf.Min(directionalLight.intensity, 0.65f);
-        }
+        if (directionalLight != null) { directionalLight.color = new Color(1.0f, 0.75f, 0.45f); directionalLight.intensity = Mathf.Min(directionalLight.intensity, 0.65f); }
     }
 
     void Update()
     {
-        if (animator != null && animator.runtimeAnimatorController != null && agent != null)
+        if (lyThongAnimator != null && lyThongAnimator.runtimeAnimatorController != null && agent != null)
         {
             float currentSpeed = agent.velocity.magnitude;
-            animator.SetFloat("Speed", currentSpeed);
+            lyThongAnimator.SetFloat("Speed", currentSpeed);
         }
 
         switch (currentState)
         {
-            case CutsceneState.WaitingForPlayer:
-                UpdateWaiting();
-                break;
-            case CutsceneState.GuideHome:
-                UpdateGuideHome();
-                break;
-            case CutsceneState.MotherDialogue:
-                UpdateMotherDialogue();
-                break;
-            case CutsceneState.ThachSanhGoesInside:
-                // Xử lý bằng Coroutine
-                break;
-            case CutsceneState.SecretDialogue:
-                UpdateSecretDialogue();
-                break;
+            case CutsceneState.WaitingForPlayer: UpdateWaiting(); break;
+            case CutsceneState.GuideHome: UpdateGuideHome(); break;
+            case CutsceneState.MotherDialogue: UpdateMotherDialogue(); break;
+            case CutsceneState.ThachSanhGoesInside: break;
+            case CutsceneState.SecretDialogue: UpdateSecretDialogue(); break;
         }
     }
 
     void UpdateWaiting()
     {
         if (thachSanh == null) return;
-        float dist = Vector3.Distance(transform.position, thachSanh.position);
+
+        float dist = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(thachSanh.position.x, thachSanh.position.z));
+
         if (dist <= triggerDistance)
         {
             currentState = CutsceneState.GuideHome;
             ClearUI();
+
             if (playerMovement != null) playerMovement.enabled = false;
-            if (homePoint != null && agent != null && agent.isOnNavMesh)
+            if (thachSanhController != null) thachSanhController.enabled = false;
+
+            Vector3 frontPos = transform.position + transform.forward * 1.5f;
+            if (Terrain.activeTerrain != null)
             {
-                agent.isStopped = false;
-                agent.speed = guideSpeed;
-                agent.SetDestination(homePoint.position);
+                float groundY = Terrain.activeTerrain.SampleHeight(frontPos) + Terrain.activeTerrain.transform.position.y;
+                thachSanh.position = new Vector3(frontPos.x, groundY, frontPos.z);
             }
+            else { thachSanh.position = new Vector3(frontPos.x, thachSanh.position.y, frontPos.z); }
+
+            thachSanh.LookAt(new Vector3(transform.position.x, thachSanh.position.y, transform.position.z));
+
+            // Gọi Animator đã được gán bằng tay
+            if (lyThongAnimator != null)
+            {
+                lyThongAnimator.SetTrigger("StandUp");
+                Debug.Log("<color=green>ĐÃ GỬI LỆNH STANDUP THÀNH CÔNG TỚI: " + lyThongAnimator.gameObject.name + "</color>");
+            }
+            else
+            {
+                Debug.LogError("<color=red>LỖI: BẠN CHƯA KÉO MÔ HÌNH LÝ THÔNG VÀO Ô LY THONG ANIMATOR TRONG INSPECTOR!</color>");
+            }
+
+            if (agent != null && agent.isOnNavMesh) { agent.isStopped = true; }
+            StartCoroutine(WaitAndWalkRoutine());
+        }
+    }
+
+    IEnumerator WaitAndWalkRoutine()
+    {
+        yield return new WaitForSeconds(4.0f);
+        if (homePoint != null && agent != null && agent.isOnNavMesh)
+        {
+            agent.isStopped = false; agent.speed = guideSpeed; agent.SetDestination(homePoint.position);
         }
     }
 
     void UpdateGuideHome()
     {
-        bool isMoving = agent != null && agent.velocity.magnitude > 0.1f;
+        bool isMoving = agent != null && agent.velocity.magnitude > 0.1f && !agent.isStopped;
         SetWalking(isMoving);
 
         if (thachSanh != null)
         {
-            Vector3 followTarget = transform.position - transform.forward * 2.2f + transform.right * 1.2f;
-            followTarget.y = thachSanh.position.y;
-            float distToTarget = Vector3.Distance(thachSanh.position, followTarget);
-
-            if (distToTarget > 0.4f)
+            if (isMoving)
             {
-                Vector3 moveDir = (followTarget - thachSanh.position).normalized;
-                if (thachSanhController != null)
-                    thachSanhController.Move((moveDir * guideSpeed + Vector3.down * 9.81f) * Time.deltaTime);
-                else
-                    thachSanh.position = Vector3.MoveTowards(thachSanh.position, followTarget, guideSpeed * Time.deltaTime);
+                if (thachSanhController != null && !thachSanhController.enabled) thachSanhController.enabled = true;
+                Vector3 followTarget = transform.position - transform.forward * 2.0f + transform.right * 1.5f;
+                followTarget.y = thachSanh.position.y;
+                float distToTarget = Vector2.Distance(new Vector2(thachSanh.position.x, thachSanh.position.z), new Vector2(followTarget.x, followTarget.z));
 
-                if (moveDir != Vector3.zero)
-                    thachSanh.rotation = Quaternion.Slerp(thachSanh.rotation, Quaternion.LookRotation(moveDir), 8f * Time.deltaTime);
-
-                SetCharacterWalking(thachSanh.gameObject, true);
+                if (distToTarget > 0.8f)
+                {
+                    Vector3 moveDir = (new Vector3(followTarget.x, 0, followTarget.z) - new Vector3(thachSanh.position.x, 0, thachSanh.position.z)).normalized;
+                    if (thachSanhController != null) { thachSanhController.Move((moveDir * guideSpeed + Vector3.down * 15f) * Time.deltaTime); }
+                    else { thachSanh.position = Vector3.MoveTowards(thachSanh.position, followTarget, guideSpeed * Time.deltaTime); }
+                    if (moveDir != Vector3.zero) { Quaternion targetRot = Quaternion.LookRotation(moveDir); thachSanh.rotation = Quaternion.Slerp(thachSanh.rotation, targetRot, 8f * Time.deltaTime); }
+                    SetCharacterWalking(thachSanh.gameObject, true);
+                }
+                else { SetCharacterWalking(thachSanh.gameObject, false); }
             }
             else
             {
                 SetCharacterWalking(thachSanh.gameObject, false);
+                Vector3 lookPos = new Vector3(transform.position.x, thachSanh.position.y, transform.position.z); thachSanh.LookAt(lookPos);
             }
         }
 
         float distToHome = homePoint != null ? Vector3.Distance(transform.position, homePoint.position) : 999f;
-        if (distToHome <= 1.8f || (agent != null && !agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.5f))
+        if (homePoint != null && distToHome <= 2.0f)
         {
             if (agent != null && agent.isOnNavMesh) agent.isStopped = true;
             SetWalking(false);
             if (thachSanh != null) SetCharacterWalking(thachSanh.gameObject, false);
-
             if (doorInteraction != null) doorInteraction.OpenDoor();
-
             if (motherNPC != null)
             {
                 transform.LookAt(new Vector3(motherNPC.position.x, transform.position.y, motherNPC.position.z));
                 motherNPC.LookAt(new Vector3(transform.position.x, motherNPC.position.y, transform.position.z));
-                if (thachSanh != null)
-                    thachSanh.LookAt(new Vector3(motherNPC.position.x, thachSanh.position.y, motherNPC.position.z));
+                if (thachSanh != null) thachSanh.LookAt(new Vector3(motherNPC.position.x, thachSanh.position.y, motherNPC.position.z));
             }
-
-            currentState = CutsceneState.MotherDialogue;
-            currentDialogueIndex = 0;
-            currentSpeech = motherDialogueLines[0];
-            UpdateUI(currentSpeech);
+            currentState = CutsceneState.MotherDialogue; currentDialogueIndex = 0; currentSpeech = motherDialogueLines[0]; UpdateUI(currentSpeech);
         }
     }
 
@@ -248,134 +242,79 @@ public class LyThongGuide : MonoBehaviour
         if (IsAdvancePressed())
         {
             currentDialogueIndex++;
-            if (currentDialogueIndex < motherDialogueLines.Length)
-            {
-                currentSpeech = motherDialogueLines[currentDialogueIndex];
-                UpdateUI(currentSpeech);
-            }
-            else
-            {
-                // Thay vì mẹ dẫn vào, giờ chạy Coroutine Thạch Sanh đi vào nhà
-                StartCoroutine(ThachSanhGoesInsideSequence());
-            }
+            if (currentDialogueIndex < motherDialogueLines.Length) { currentSpeech = motherDialogueLines[currentDialogueIndex]; UpdateUI(currentSpeech); }
+            else { StartCoroutine(ThachSanhGoesInsideSequence()); }
         }
     }
 
-    // COROUTINE MỚI: Thạch Sanh lủi thủi đi vào nhà rồi biến mất
-    // COROUTINE MỚI: Thạch Sanh lủi thủi đi vào nhà rồi biến mất
-    // COROUTINE MỚI: Thạch Sanh lủi thủi đi vào nhà rồi biến mất
     IEnumerator ThachSanhGoesInsideSequence()
     {
-        currentState = CutsceneState.ThachSanhGoesInside;
-        ClearUI();
-
+        currentState = CutsceneState.ThachSanhGoesInside; ClearUI();
         if (doorInteraction != null) doorInteraction.OpenDoor();
-
-        // Mẹ và Lý Thông nhìn theo bóng lưng Thạch Sanh
         if (motherNPC != null && thachSanh != null)
         {
             transform.LookAt(new Vector3(thachSanh.position.x, transform.position.y, thachSanh.position.z));
             motherNPC.LookAt(new Vector3(thachSanh.position.x, motherNPC.position.y, thachSanh.position.z));
         }
 
-        // Lấy tọa độ điểm đích bạn vừa kéo vào
         Vector3 targetPos = thachSanhInsidePoint != null ? thachSanhInsidePoint.position : thachSanh.position;
         bool thachSanhArrived = false;
-
         if (thachSanhController != null) thachSanhController.enabled = false;
 
         while (!thachSanhArrived && thachSanh != null)
         {
-            // BẢO HIỂM: Bỏ qua trục Y (độ cao) để Thạch Sanh không bị kẹt nếu sàn nhà cao
             Vector3 currentPosNoY = new Vector3(thachSanh.position.x, 0, thachSanh.position.z);
             Vector3 targetPosNoY = new Vector3(targetPos.x, 0, targetPos.z);
-
             float distTS = Vector3.Distance(currentPosNoY, targetPosNoY);
 
-            // Chỉ chạy khi khoảng cách còn xa và BẮT BUỘC phải có điểm đến
             if (distTS > 0.3f && thachSanhInsidePoint != null)
             {
                 thachSanh.position = Vector3.MoveTowards(thachSanh.position, targetPos, guideSpeed * Time.deltaTime);
-
                 Vector3 moveDir = (targetPosNoY - currentPosNoY).normalized;
-                if (moveDir != Vector3.zero)
-                {
-                    thachSanh.rotation = Quaternion.Slerp(thachSanh.rotation, Quaternion.LookRotation(moveDir), 8f * Time.deltaTime);
-                }
+                if (moveDir != Vector3.zero) { thachSanh.rotation = Quaternion.Slerp(thachSanh.rotation, Quaternion.LookRotation(moveDir), 8f * Time.deltaTime); }
                 SetCharacterWalking(thachSanh.gameObject, true);
             }
-            else
-            {
-                SetCharacterWalking(thachSanh.gameObject, false);
-                thachSanhArrived = true; // Đã tới đích, thoát vòng lặp
-            }
+            else { SetCharacterWalking(thachSanh.gameObject, false); thachSanhArrived = true; }
             yield return null;
         }
 
-        // Tới đích -> Bật lại vật lý và Biến mất
         if (thachSanhController != null) thachSanhController.enabled = true;
         if (thachSanh != null) thachSanh.gameObject.SetActive(false);
 
         if (Camera.main != null)
         {
             CameraFollow camFollow = Camera.main.GetComponent<CameraFollow>();
-            if (camFollow != null)
-            {
-                camFollow.target = transform; // Đổi mục tiêu theo dõi sang Lý Thông
-                camFollow.distance = 3.5f;    // Kéo máy quay gần lại một chút để đặc tả khuôn mặt
-                camFollow.heightOffset = 1.3f;
-            }
+            if (camFollow != null) { camFollow.target = transform; camFollow.distance = 3.5f; camFollow.heightOffset = 1.3f; }
         }
-        // ===================================================
 
-        // Hai mẹ con Lý Thông quay mặt lại nhìn nhau
         if (motherNPC != null)
-            // Hai mẹ con Lý Thông quay mặt lại nhìn nhau
-            if (motherNPC != null)
         {
             transform.LookAt(new Vector3(motherNPC.position.x, transform.position.y, motherNPC.position.z));
             motherNPC.LookAt(new Vector3(transform.position.x, motherNPC.position.y, transform.position.z));
         }
 
-        // Chờ tĩnh lặng 3 giây tạo kịch tính
         yield return new WaitForSeconds(3f);
-
-        // Hiện đoạn thoại âm mưu
-        currentState = CutsceneState.SecretDialogue;
-        currentDialogueIndex = 0;
-        currentSpeech = secretDialogueLines[0];
-        UpdateUI(currentSpeech);
+        currentState = CutsceneState.SecretDialogue; currentDialogueIndex = 0; currentSpeech = secretDialogueLines[0]; UpdateUI(currentSpeech);
     }
 
-    // STATE MỚI: Hội thoại âm mưu
     void UpdateSecretDialogue()
     {
         if (IsAdvancePressed())
         {
             currentDialogueIndex++;
-            if (currentDialogueIndex < secretDialogueLines.Length)
-            {
-                currentSpeech = secretDialogueLines[currentDialogueIndex];
-                UpdateUI(currentSpeech);
-            }
-            else
-            {
-                // Đọc xong âm mưu thì Fade đen chuyển chương
-                EndCutscene();
-            }
+            if (currentDialogueIndex < secretDialogueLines.Length) { currentSpeech = secretDialogueLines[currentDialogueIndex]; UpdateUI(currentSpeech); }
+            else { EndCutscene(); }
         }
     }
 
     void EndCutscene()
     {
-        currentState = CutsceneState.Finished;
-        ClearUI();
-        StartCoroutine(TransitionToChapter3());
+        currentState = CutsceneState.Finished; ClearUI(); StartCoroutine(TransitionToChapter3());
     }
 
     private IEnumerator TransitionToChapter3()
     {
-        Canvas canvas = Object.FindAnyObjectByType<Canvas>();
+        Canvas canvas = FindAnyObjectByType<Canvas>();
         CanvasGroup cg = null;
         if (canvas != null)
         {
@@ -384,44 +323,101 @@ public class LyThongGuide : MonoBehaviour
             if (fadeObjTr != null) fadeObj = fadeObjTr.gameObject;
             else
             {
-                fadeObj = new GameObject("Chapter2FadeOverlay");
-                fadeObj.transform.SetParent(canvas.transform, false);
-                RectTransform rect = fadeObj.AddComponent<RectTransform>();
-                rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one;
-                rect.offsetMin = Vector2.zero; rect.offsetMax = Vector2.one;
-                UnityEngine.UI.Image img = fadeObj.AddComponent<UnityEngine.UI.Image>();
-                img.color = Color.black;
-                img.raycastTarget = false;
+                fadeObj = new GameObject("Chapter2FadeOverlay"); fadeObj.transform.SetParent(canvas.transform, false);
+                RectTransform rect = fadeObj.AddComponent<RectTransform>(); rect.anchorMin = Vector2.zero; rect.anchorMax = Vector2.one; rect.offsetMin = Vector2.zero; rect.offsetMax = Vector2.one;
+                UnityEngine.UI.Image img = fadeObj.AddComponent<UnityEngine.UI.Image>(); img.color = Color.black; img.raycastTarget = false;
             }
-            cg = fadeObj.GetComponent<CanvasGroup>();
-            if (cg == null) cg = fadeObj.AddComponent<CanvasGroup>();
+            cg = fadeObj.GetComponent<CanvasGroup>(); if (cg == null) cg = fadeObj.AddComponent<CanvasGroup>();
         }
 
-        float duration = 2.0f;
-        float elapsed = 0f;
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            if (cg != null) cg.alpha = Mathf.Clamp01(elapsed / duration);
-            yield return null;
-        }
+        float duration = 2.0f; float elapsed = 0f;
+        while (elapsed < duration) { elapsed += Time.deltaTime; if (cg != null) cg.alpha = Mathf.Clamp01(elapsed / duration); yield return null; }
         if (cg != null) cg.alpha = 1.0f;
-
-        yield return new WaitForSeconds(0.3f);
-        SceneManager.LoadScene("Chapter3_MieuChanTinh");
+        yield return new WaitForSeconds(0.3f); SceneManager.LoadScene("Chapter3_MieuChanTinh");
     }
 
     private bool IsAdvancePressed()
     {
-        return (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame) ||
-               (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame);
+        bool pressed = false;
+        if (Keyboard.current != null && (Keyboard.current.spaceKey.wasPressedThisFrame ||
+                                         Keyboard.current.enterKey.wasPressedThisFrame ||
+                                         Keyboard.current.numpadEnterKey.wasPressedThisFrame))
+        {
+            pressed = true;
+        }
+        if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            pressed = true;
+        }
+        if (!pressed)
+        {
+            try
+            {
+                pressed = Input.GetKeyDown(KeyCode.Space) || Input.GetKeyDown(KeyCode.Return) ||
+                          Input.GetKeyDown(KeyCode.KeypadEnter) || Input.GetMouseButtonDown(0);
+            }
+            catch { }
+        }
+        return pressed;
     }
 
     private void UpdateUI(string text)
     {
-        string fullText = text + "\n\n<size=80%><color=#FFD700>(Bấm Space hoặc Click chuột để tiếp tục)</color></size>";
-        if (dialogueText != null)
+        currentSpeech = text;
+        EnsureDialogueUI();
+
+        // Tách tên người nói và lời thoại
+        string speaker = "";
+        string content = text;
+        Color speakerColor = new Color(1.0f, 0.72f, 0.2f);
+
+        int colonIdx = text.IndexOf(':');
+        if (colonIdx > 0 && colonIdx < 30)
         {
+            speaker = text.Substring(0, colonIdx).Trim();
+            content = text.Substring(colonIdx + 1).Trim();
+
+            string speakerUpper = speaker.ToUpper();
+            if (speakerUpper.Contains("LÝ THÔNG") || speakerUpper.Contains("LY THONG"))
+            {
+                speakerColor = new Color(1.0f, 0.72f, 0.2f);
+            }
+            else if (speakerUpper.Contains("MẸ") || speakerUpper.Contains("ME"))
+            {
+                speakerColor = new Color(1.0f, 0.5f, 0.5f);
+            }
+            else if (speakerUpper.Contains("THẠCH SANH") || speakerUpper.Contains("THACH SANH"))
+            {
+                speakerColor = new Color(0.3f, 0.8f, 1.0f);
+            }
+        }
+
+        string cleanContent = content.Trim();
+        if (cleanContent.StartsWith("\"") && cleanContent.EndsWith("\"") && cleanContent.Length >= 2)
+        {
+            cleanContent = cleanContent.Substring(1, cleanContent.Length - 2).Trim();
+        }
+
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(true);
+            if (speakerText != null)
+            {
+                speakerText.text = (!string.IsNullOrEmpty(speaker) ? speaker : "LÝ THÔNG") + ":";
+                speakerText.color = speakerColor;
+            }
+            if (contentText != null)
+            {
+                contentText.text = $"\"{cleanContent}\"";
+            }
+            if (hintText != null)
+            {
+                hintText.text = "(Bấm Enter hoặc Chuột trái để tiếp tục)";
+            }
+        }
+        else if (dialogueText != null)
+        {
+            string fullText = text + "\n\n<size=80%><color=#FFD700>(Bấm Enter hoặc Chuột trái để tiếp tục)</color></size>";
             dialogueText.text = fullText;
             dialogueText.gameObject.SetActive(true);
         }
@@ -429,11 +425,12 @@ public class LyThongGuide : MonoBehaviour
 
     private void ClearUI()
     {
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (dialogueText != null) dialogueText.text = "";
         currentSpeech = "";
     }
 
-    private void SetWalking(bool walking) { SetCharacterWalking(gameObject, walking); }
+    private void SetWalking(bool walking) { SetCharacterWalking(lyThongAnimator != null ? lyThongAnimator.gameObject : gameObject, walking); }
 
     private void SetCharacterWalking(GameObject targetObj, bool walking)
     {
@@ -441,36 +438,94 @@ public class LyThongGuide : MonoBehaviour
         Animator anim = targetObj.GetComponent<Animator>();
         if (anim == null) anim = targetObj.GetComponentInChildren<Animator>();
         if (anim == null) return;
-
         anim.applyRootMotion = false;
         foreach (AnimatorControllerParameter parameter in anim.parameters)
         {
-            if (parameter.type == AnimatorControllerParameterType.Bool)
-            {
-                if (parameter.name.ToLower().Contains("walk")) anim.SetBool(parameter.name, walking);
-            }
-            else if (parameter.type == AnimatorControllerParameterType.Float && parameter.name.ToLower() == "speed")
-            {
-                anim.SetFloat(parameter.name, walking ? 1f : 0f);
-            }
+            if (parameter.type == AnimatorControllerParameterType.Bool) { if (parameter.name.ToLower().Contains("walk")) anim.SetBool(parameter.name, walking); }
+            else if (parameter.type == AnimatorControllerParameterType.Float && parameter.name.ToLower() == "speed") { anim.SetFloat(parameter.name, walking ? 1f : 0f); }
         }
+    }
+
+    private Texture2D boxBgTexture;
+
+    private Texture2D GetBoxBackground()
+    {
+        if (boxBgTexture == null)
+        {
+            boxBgTexture = new Texture2D(1, 1);
+            boxBgTexture.SetPixel(0, 0, new Color(0.06f, 0.08f, 0.12f, 0.72f));
+            boxBgTexture.Apply();
+        }
+        return boxBgTexture;
     }
 
     void OnGUI()
     {
+        // Nếu đã có Canvas DialoguePanel đang hiển thị thì không vẽ OnGUI để tránh trùng lặp
+        if (dialoguePanel != null && dialoguePanel.activeInHierarchy)
+        {
+            return;
+        }
+
         if (currentState == CutsceneState.MotherDialogue || currentState == CutsceneState.SecretDialogue)
         {
             if (dialogueText == null && !string.IsNullOrEmpty(currentSpeech))
             {
+                GUI.depth = -100;
                 GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
-                boxStyle.fontSize = 18;
+                boxStyle.normal.background = GetBoxBackground();
                 boxStyle.wordWrap = true;
-                boxStyle.alignment = TextAnchor.MiddleCenter;
+                boxStyle.alignment = TextAnchor.UpperLeft;
+                boxStyle.padding = new RectOffset(35, 35, 18, 18);
                 boxStyle.normal.textColor = Color.white;
+                boxStyle.richText = true;
 
-                float width = Screen.width * 0.7f, height = 130f;
-                GUI.Box(new Rect((Screen.width - width) / 2f, Screen.height - height - 40f, width, height),
-                    currentSpeech + "\n\n(Bấm Space hoặc Click chuột để tiếp tục)", boxStyle);
+                // Kích thước chuẩn thống nhất: bottom-center, ~75-80% màn hình, cao 215px, cách đáy 30px
+                float width = Mathf.Min(Screen.width * 0.78f, 1100f);
+                float height = 215f;
+                float left = (Screen.width - width) / 2f;
+                float top = Screen.height - height - 30f;
+
+                // Tách tên người nói và lời thoại
+                string speaker = "";
+                string content = currentSpeech;
+                string speakerColor = "#FFD700";
+
+                int colonIdx = currentSpeech.IndexOf(':');
+                if (colonIdx > 0 && colonIdx < 30)
+                {
+                    speaker = currentSpeech.Substring(0, colonIdx).Trim();
+                    content = currentSpeech.Substring(colonIdx + 1).Trim();
+
+                    string speakerUpper = speaker.ToUpper();
+                    if (speakerUpper.Contains("LÝ THÔNG") || speakerUpper.Contains("LY THONG"))
+                    {
+                        speakerColor = "#FFB833";
+                    }
+                    else if (speakerUpper.Contains("MẸ") || speakerUpper.Contains("ME"))
+                    {
+                        speakerColor = "#FF8080";
+                    }
+                    else if (speakerUpper.Contains("THẠCH SANH") || speakerUpper.Contains("THACH SANH"))
+                    {
+                        speakerColor = "#4DC3FF";
+                    }
+                }
+
+                string formattedMsg;
+                if (!string.IsNullOrEmpty(speaker))
+                {
+                    formattedMsg = $"<size=34><b><color={speakerColor}>{speaker}:</color></b></size>\n" +
+                                   $"<size=28>{content}</size>\n\n" +
+                                   $"<color=#FFD700><size=20><i>(Bấm Enter hoặc Chuột trái để tiếp tục)</i></size></color>";
+                }
+                else
+                {
+                    formattedMsg = $"<size=28>{currentSpeech}</size>\n\n" +
+                                   $"<color=#FFD700><size=20><i>(Bấm Enter hoặc Chuột trái để tiếp tục)</i></size></color>";
+                }
+
+                GUI.Box(new Rect(left, top, width, height), formattedMsg, boxStyle);
             }
         }
     }

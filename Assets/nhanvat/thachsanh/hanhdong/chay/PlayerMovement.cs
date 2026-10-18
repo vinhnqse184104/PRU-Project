@@ -98,6 +98,10 @@ public class PlayerMovement : MonoBehaviour
         {
             spawnPoint = GameObject.Find("Chapter3_StartPoint") ?? GameObject.Find("Chapter3StartPoint") ?? GameObject.Find("Chapter3SpawnPoint");
         }
+        else if (currentScene == "Chapter6_HangDaiBang" || currentScene.ToLower().Contains("chapter6"))
+        {
+            spawnPoint = GameObject.Find("Chapter6_StartPoint") ?? GameObject.Find("Chapter6StartPoint") ?? GameObject.Find("ThachSanh_SpawnPoint");
+        }
 
         // Áp dụng spawnPoint nếu có (cho Chapter 2 quay về hoặc Chapter 3)
         if (spawnPoint != null)
@@ -135,9 +139,8 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Tự động gắn và cập nhật PlayerTrophyHolder
-        PlayerTrophyHolder trophyHolder = GetComponent<PlayerTrophyHolder>();
-        if (trophyHolder == null) trophyHolder = gameObject.AddComponent<PlayerTrophyHolder>();
-        trophyHolder.CheckAndApplyTrophy();
+        ChanTinhHeadManager trophyHolder = GetComponent<ChanTinhHeadManager>();
+        if (trophyHolder != null) trophyHolder.CheckAndApplyTrophy();
 
         anim = GetComponent<Animator>();
         if (anim == null)
@@ -324,13 +327,10 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // 8. HÀM TẤN CÔNG BẰNG TAY (Gắn vào Animation Event của hoạt ảnh Chém/Đấm)
+    // 8. HÀM TẤN CÔNG BẰNG TAY
     public void Attack()
     {
-        // Nếu chưa gán Attack Point thì bỏ qua để tránh lỗi
         if (attackPoint == null) return;
-
-        // Tạo vòng tròn phát hiện va chạm quét kẻ thù
         Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange);
 
         foreach (Collider enemy in hitEnemies)
@@ -338,15 +338,26 @@ public class PlayerMovement : MonoBehaviour
             // 1. Chém trúng Thú/Quái
             if (enemy.CompareTag("Enemy"))
             {
-                // ĐÃ ĐỔI TÊN CLASS THÀNH MauChanTinh
-                MauChanTinh animalHealth = enemy.GetComponent<MauChanTinh>();
+                // Ưu tiên 1: Thử tìm máu của Boss Chằn Tinh
+                MauChanTinh bossHealth = enemy.GetComponent<MauChanTinh>();
+                if (bossHealth != null)
+                {
+                    bossHealth.TakeDamage(attackDamage, transform.position);
+                }
+
+                // Ưu tiên 2: Thử tìm máu của Gà, Hươu, Ngựa, Hổ (Thường dùng EnemyHealth)
+                EnemyHealth animalHealth = enemy.GetComponent<EnemyHealth>();
                 if (animalHealth != null)
                 {
-                    // ĐÃ THÊM transform.position ĐỂ TÍNH HƯỚNG VĂNG LÙI
-                    animalHealth.TakeDamage(attackDamage, transform.position);
+                    // Nếu EnemyHealth của bạn chưa có chức năng văng lùi, chỉ cần truyền sát thương:
+                    animalHealth.TakeDamage(attackDamage);
+
+                    // LƯU Ý: Nếu script EnemyHealth của bạn CÓ chức năng văng lùi giống Chằn Tinh,
+                    // hãy thêm dấu // tắt dòng trên và bật dòng dưới lên:
+                    // animalHealth.TakeDamage(attackDamage, transform.position);
                 }
             }
-            // 2. Chém trúng Cây (Giữ nguyên)
+            // 2. Chém trúng Cây
             else if (enemy.CompareTag("Tree"))
             {
                 TreeHealth tree = enemy.GetComponent<TreeHealth>();
@@ -358,23 +369,23 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // 9. HÀM TẤN CÔNG BẰNG CHÂN (Gắn vào Animation Event của hoạt ảnh Đá)
+    // 9. HÀM TẤN CÔNG BẰNG CHÂN
     public void KickAttack()
     {
         if (attackPoint == null) return;
-
         Collider[] hitEnemies = Physics.OverlapSphere(attackPoint.position, attackRange);
+
         foreach (Collider enemy in hitEnemies)
         {
             if (enemy.CompareTag("Enemy"))
             {
-                // ĐÃ ĐỔI TÊN CLASS THÀNH MauChanTinh
-                MauChanTinh animalHealth = enemy.GetComponent<MauChanTinh>();
-                if (animalHealth != null)
-                {
-                    // ĐÃ THÊM transform.position ĐỂ TÍNH HƯỚNG VĂNG LÙI
-                    animalHealth.TakeDamage(kickDamage, transform.position);
-                }
+                // Tìm máu Boss Chằn Tinh
+                MauChanTinh bossHealth = enemy.GetComponent<MauChanTinh>();
+                if (bossHealth != null) bossHealth.TakeDamage(kickDamage, transform.position);
+
+                // Tìm máu Thú rừng
+                EnemyHealth animalHealth = enemy.GetComponent<EnemyHealth>();
+                if (animalHealth != null) animalHealth.TakeDamage(kickDamage);
             }
         }
     }

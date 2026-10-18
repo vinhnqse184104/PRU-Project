@@ -334,7 +334,7 @@ public class Chapter4SceneSetup : MonoBehaviour
         lyThong.tag = "Player";
 
         // Vô hiệu hóa / gỡ bỏ script điều hướng AI cũ nếu có
-        LyThongGuide oldGuide = lyThong.GetComponent<LyThongGuide>();
+        Component oldGuide = lyThong.GetComponent<Component>();
         if (oldGuide != null) Undo.DestroyObjectImmediate(oldGuide);
 
         // YÊU CẦU 3: Gỡ bỏ NavMeshAgent trên người chơi để tránh lỗi "Failed to create agent because there is no valid NavMesh"

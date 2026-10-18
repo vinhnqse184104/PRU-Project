@@ -50,6 +50,8 @@ public class LyThongPlayerController : MonoBehaviour
         if (anim != null)
         {
             anim.applyRootMotion = false;
+            // Đảm bảo Lý Thông đứng dậy ngay lập tức nếu Animator có trigger StandUp
+            try { anim.SetTrigger("StandUp"); } catch { }
         }
 
         // Khóa con trỏ chuột vào giữa màn hình cho camera góc nhìn thứ 3

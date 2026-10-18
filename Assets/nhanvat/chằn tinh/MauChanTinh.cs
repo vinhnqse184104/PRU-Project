@@ -18,6 +18,9 @@ public class MauChanTinh : MonoBehaviour
 
     // Biến để ngăn quái chết nhiều lần
     private bool isDead = false;
+    private bool arenaKnockbackActive;
+    private Vector3 arenaPushDirection;
+    private float arenaPushRemaining;
 
     void Start()
     {
@@ -27,6 +30,21 @@ public class MauChanTinh : MonoBehaviour
             thanhMauUI.maxValue = maxHealth;
             thanhMauUI.value = currentHealth;
         }
+    }
+
+    public void TakeDamage(int damageAmount)
+    {
+        Vector3 viTriNguoiDanh = transform.position;
+
+        // Tự động tìm vị trí Thạch Sanh để Chằn Tinh biết đường văng lùi
+        GameObject thachSanh = GameObject.Find("thachsanh");
+        if (thachSanh != null)
+        {
+            viTriNguoiDanh = thachSanh.transform.position;
+        }
+
+        // Truyền đủ 2 thông tin cho hàm TakeDamage gốc ở bên dưới xử lý
+        TakeDamage(damageAmount, viTriNguoiDanh);
     }
 
     public void TakeDamage(int damageAmount, Vector3 attackerPosition)
@@ -41,6 +59,11 @@ public class MauChanTinh : MonoBehaviour
 
         if (currentHealth > 0)
         {
+            // --- THÊM 2 DÒNG NÀY ĐỂ KÍCH HOẠT HOẠT ẢNH LÙI/BỊ ĐAU ---
+            Animator anim = GetComponent<Animator>();
+            if (anim != null) anim.SetTrigger("BiThuong");
+
+            // Gọi hiệu ứng văng lùi vật lý
             StartCoroutine(KnockbackRoutine(attackerPosition));
         }
         else
@@ -90,6 +113,49 @@ public class MauChanTinh : MonoBehaviour
 
     private IEnumerator KnockbackRoutine(Vector3 attackerPosition)
     {
+        if (gameObject.scene.name == "Chapter3_MieuChanTinh")
+        {
+            arenaPushDirection = Vector3.ProjectOnPlane(transform.position - attackerPosition, Vector3.up).normalized;
+            arenaPushRemaining = Mathf.Max(0.01f, knockbackDuration);
+            if (arenaKnockbackActive) yield break;
+            arenaKnockbackActive = true;
+            NavMeshAgent arenaAgent = GetComponent<NavMeshAgent>();
+            ChanTinhAI ai = GetComponent<ChanTinhAI>();
+            bool restoreAI = ai != null && ai.enabled;
+            bool wasStopped = arenaAgent != null && arenaAgent.enabled && arenaAgent.isOnNavMesh && arenaAgent.isStopped;
+            if (restoreAI) ai.enabled = false;
+            try
+            {
+                if (arenaAgent == null || !arenaAgent.enabled || !arenaAgent.isOnNavMesh) yield break;
+                arenaAgent.isStopped = true;
+                arenaAgent.velocity = Vector3.zero;
+                Collider body = GetComponent<Collider>();
+                while (!isDead && arenaPushRemaining > 0f && arenaAgent.enabled && arenaAgent.isOnNavMesh)
+                {
+                    float dt = Mathf.Min(Time.deltaTime, arenaPushRemaining);
+                    Vector3 motion = arenaPushDirection * Mathf.Max(0f, knockbackForce) * dt / Mathf.Max(0.01f, knockbackDuration);
+                    motion = Chapter3BossBattleManager.LimitKnockback(body, motion);
+                    if (arenaAgent.Raycast(arenaAgent.nextPosition + motion, out NavMeshHit edge))
+                    {
+                        float safeDistance = Mathf.Max(0f, Vector3.Distance(arenaAgent.nextPosition, edge.position) - 0.05f);
+                        motion = Vector3.ClampMagnitude(motion, safeDistance);
+                    }
+                    arenaAgent.Move(motion);
+                    arenaPushRemaining -= dt;
+                    yield return null;
+                }
+            }
+            finally
+            {
+                arenaKnockbackActive = false;
+                if (!isDead)
+                {
+                    if (restoreAI && ai != null) ai.enabled = true;
+                    if (arenaAgent != null && arenaAgent.enabled && arenaAgent.isOnNavMesh) arenaAgent.isStopped = wasStopped;
+                }
+            }
+            yield break;
+        }
         NavMeshAgent agent = GetComponent<NavMeshAgent>();
         if (agent != null && agent.isOnNavMesh) agent.enabled = false;
 

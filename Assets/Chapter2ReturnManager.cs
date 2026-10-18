@@ -8,6 +8,12 @@ public class Chapter2ReturnManager : MonoBehaviour
 {
     public static Chapter2ReturnManager Instance { get; private set; }
 
+    [Header("Camera Góc Quay Phim")]
+    [Tooltip("Kéo Main Camera vào đây (Hoặc để trống code tự tìm)")]
+    public GameObject mainCamera;
+    [Tooltip("Kéo Camera đặt sẵn trong nhà vào đây")]
+    public GameObject dialogueCamera;
+
     [Header("Điểm xuất hiện ngoài nhà khi quay về")]
     [Tooltip("SpawnPoint riêng cho trường hợp quay về sau khi diệt Chằn Tinh")]
     public Transform returnSpawnPoint;
@@ -22,6 +28,20 @@ public class Chapter2ReturnManager : MonoBehaviour
     [Header("UI Text (Tùy chọn)")]
     public TextMeshProUGUI dialogueText;
 
+    [Header("UI Hội thoại Canvas uGUI (Chuẩn Chapter 4)")]
+    public GameObject dialoguePanel;
+    public TextMeshProUGUI speakerText;
+    public TextMeshProUGUI contentText;
+    public TextMeshProUGUI hintText;
+
+    public void EnsureDialogueUI()
+    {
+        if (dialoguePanel == null || speakerText == null || contentText == null || hintText == null)
+        {
+            dialoguePanel = ChapterDialogueUIHelper.EnsureDialogueUI("Chapter2_DialogueCanvas", out speakerText, out contentText, out hintText);
+        }
+    }
+
     private Transform playerTransform;
     private PlayerMovement playerMovement;
     private CharacterController playerController;
@@ -33,7 +53,6 @@ public class Chapter2ReturnManager : MonoBehaviour
     private bool isInInteractionRange = false;
     private bool isTransitioningToChapter4 = false;
 
-    // 12 câu thoại theo đúng kịch bản truyện Thạch Sanh
     private struct DialogueLine
     {
         public string speaker;
@@ -47,7 +66,6 @@ public class Chapter2ReturnManager : MonoBehaviour
             this.speakerColor = speakerColor;
         }
     }
-
 
     private readonly DialogueLine[] returnDialogues = new DialogueLine[]
     {
@@ -117,33 +135,29 @@ public class Chapter2ReturnManager : MonoBehaviour
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Chapter2_LyThong") return;
 
-        // Kiểm tra xem có phải đang ở trạng thái quay về từ Chapter 3 sau khi diệt Chằn Tinh không
-        if (StoryStateManager.IsChanTinhDefeated && StoryStateManager.IsReturningToChapter2)
+        if (StoryStateManager.IsChanTinhDefeated && StoryStateManager.IsReturningToChapter2 && !StoryStateManager.LyThongReturnedAsOfficial)
         {
             SetupReturnScene();
-            // Đảm bảo chạy thêm 1 nhịp ở frame tiếp theo để chắc chắn không bị ghi đè bởi Start của các script khác
             StartCoroutine(EnsureNPCsPositionedNextFrame());
         }
     }
 
     private IEnumerator EnsureNPCsPositionedNextFrame()
     {
-        yield return null; // Chờ 1 frame
+        yield return null;
         SetupNPCsInsideHouse();
     }
 
-    /// <summary>
-    /// Thiết lập Scene Chapter 2 khi Thạch Sanh mang đầu Chằn Tinh trở về.
-    /// </summary>
     public void SetupReturnScene()
     {
         Debug.Log("[Chapter2ReturnManager] Khởi tạo trạng thái trở về nhà Lý Thông sau khi giết Chằn Tinh.");
 
-        // 1. Vô hiệu hóa script hướng dẫn lần 1 (LyThongGuide) để không chạy cutscene kết nghĩa ngoài rừng
-        LyThongGuide guide = Object.FindAnyObjectByType<LyThongGuide>(FindObjectsInactive.Include);
-        if (guide != null)
+        // 1. Tắt script hướng dẫn lần 1 (Tắt gián tiếp để chống lỗi CS0246)
+        GameObject ltObj = FindLyThongGameObject();
+        if (ltObj != null)
         {
-            guide.enabled = false;
+            MonoBehaviour guideScript = ltObj.GetComponent("LyThongGuide") as MonoBehaviour;
+            if (guideScript != null) guideScript.enabled = false;
         }
 
         // 2. Tìm hoặc tạo SpawnPoint riêng ngoài nhà Lý Thông
@@ -153,18 +167,15 @@ public class Chapter2ReturnManager : MonoBehaviour
             if (spObj == null)
             {
                 spObj = new GameObject("Chapter2_ReturnSpawnPoint");
-                // Tận dụng vị trí cửa nhà để xác định sân trước nhà
                 Vector3 doorPos = new Vector3(81.98f, 0.23f, 31.29f);
-                if (guide != null && guide.homePoint != null) doorPos = guide.homePoint.position;
+                Vector3 outdoorPos = doorPos + new Vector3(0f, 0.1f, 4.5f);
 
-                Vector3 outdoorPos = doorPos + new Vector3(0f, 0.1f, 4.5f); // Khoảng sân trước cửa
-                // Bắn raycast tầm thấp từ trên mặt đất 2 mét (không bắn từ nóc trời để tránh mái nhà)
                 if (Physics.Raycast(new Vector3(outdoorPos.x, doorPos.y + 2f, outdoorPos.z), Vector3.down, out RaycastHit hit, 5f))
                 {
                     outdoorPos.y = hit.point.y + 0.05f;
                 }
                 spObj.transform.position = outdoorPos;
-                spObj.transform.rotation = Quaternion.Euler(0f, 180f, 0f); // Nhìn vào hướng cửa nhà
+                spObj.transform.rotation = Quaternion.Euler(0f, 180f, 0f);
             }
             returnSpawnPoint = spObj.transform;
         }
@@ -186,10 +197,8 @@ public class Chapter2ReturnManager : MonoBehaviour
             if (playerController != null) playerController.enabled = true;
             if (playerMovement != null) playerMovement.enabled = true;
 
-            // Đảm bảo Thạch Sanh đang mang đầu Chằn Tinh trên tay
-            PlayerTrophyHolder trophy = playerObj.GetComponent<PlayerTrophyHolder>();
-            if (trophy == null) trophy = playerObj.AddComponent<PlayerTrophyHolder>();
-            trophy.CheckAndApplyTrophy();
+            ChanTinhHeadManager trophy = playerObj.GetComponent<ChanTinhHeadManager>();
+            if (trophy != null) trophy.CheckAndApplyTrophy();
         }
 
         // 4. Bố trí Lý Thông và Mẹ Lý Thông ở trong nhà
@@ -208,10 +217,8 @@ public class Chapter2ReturnManager : MonoBehaviour
 
     private void SetupNPCsInsideHouse()
     {
-        LyThongGuide guide = Object.FindAnyObjectByType<LyThongGuide>(FindObjectsInactive.Include);
-
         // A. TÌM VÀ ĐỊNH VỊ LÝ THÔNG
-        GameObject ltObj = FindLyThongGameObject(guide);
+        GameObject ltObj = FindLyThongGameObject();
         if (ltObj != null)
         {
             ltObj.SetActive(true);
@@ -220,17 +227,14 @@ public class Chapter2ReturnManager : MonoBehaviour
             NavMeshAgent ltAgent = ltObj.GetComponent<NavMeshAgent>();
             if (ltAgent != null) ltAgent.enabled = false;
 
-            // Tận dụng Transform mốc trong nhà đã có trong Scene
             Vector3 targetLtPos = GetIndoorReferencePosition(true);
 
             lyThongTransform.position = targetLtPos;
-            lyThongTransform.rotation = Quaternion.Euler(0f, 0f, 0f); // Quay mặt ra cửa chính
+            lyThongTransform.rotation = Quaternion.Euler(0f, 0f, 0f);
 
-            // Đảm bảo MeshRenderer/SkinnedMeshRenderer bật để nhìn thấy NPC
             Renderer[] renderers = ltObj.GetComponentsInChildren<Renderer>(true);
             foreach (Renderer r in renderers) r.enabled = true;
 
-            // Đảm bảo Collider bật để Thạch Sanh có thể tương tác
             Collider[] colliders = ltObj.GetComponentsInChildren<Collider>(true);
             foreach (Collider c in colliders) c.enabled = true;
 
@@ -243,13 +247,9 @@ public class Chapter2ReturnManager : MonoBehaviour
 
             Debug.Log($"[Chapter2ReturnManager] Đã đặt Lý Thông vào trong nhà tại: {lyThongTransform.position}");
         }
-        else
-        {
-            Debug.LogWarning("[Chapter2ReturnManager] Không tìm thấy GameObject của Lý Thông trong Scene!");
-        }
 
         // B. TÌM VÀ ĐỊNH VỊ MẸ LÝ THÔNG
-        GameObject mObj = FindMotherGameObject(guide);
+        GameObject mObj = FindMotherGameObject();
         if (mObj != null)
         {
             mObj.SetActive(true);
@@ -261,7 +261,7 @@ public class Chapter2ReturnManager : MonoBehaviour
             Vector3 targetMPos = GetIndoorReferencePosition(false);
 
             motherTransform.position = targetMPos;
-            motherTransform.rotation = Quaternion.Euler(0f, 0f, 0f); // Quay mặt ra cửa chính
+            motherTransform.rotation = Quaternion.Euler(0f, 0f, 0f);
 
             Renderer[] renderers = mObj.GetComponentsInChildren<Renderer>(true);
             foreach (Renderer r in renderers) r.enabled = true;
@@ -278,38 +278,28 @@ public class Chapter2ReturnManager : MonoBehaviour
 
             Debug.Log($"[Chapter2ReturnManager] Đã đặt Mẹ Lý Thông vào trong nhà tại: {motherTransform.position}");
         }
-        else
-        {
-            Debug.LogWarning("[Chapter2ReturnManager] Không tìm thấy GameObject của Mẹ Lý Thông trong Scene!");
-        }
     }
 
     private Vector3 GetIndoorReferencePosition(bool isLyThong)
     {
-        // Ưu tiên 1: Lấy mốc Transform 'DiemThachSanhVaoNha' đã được đặt sẵn trong Scene
         Transform marker = GameObject.Find("DiemThachSanhVaoNha")?.transform;
         if (marker != null)
         {
-            // Điểm trong nhà có tọa độ chuẩn: Y = marker.position.y (không bị mái nhà cản trở)
             Vector3 basePos = marker.position;
             if (isLyThong)
-                return basePos + new Vector3(-0.75f, 0f, -0.6f); // Lý Thông đứng bên trái
+                return basePos + new Vector3(-0.25f, 0f, -0.4f);
             else
-                return basePos + new Vector3(0.75f, 0f, -0.6f);  // Mẹ Lý Thông đứng bên phải
+                return basePos + new Vector3(0.55f, 0f, -0.4f);
         }
 
-        // Fallback: Sử dụng tọa độ trong nhà chuẩn xác (Y = 1.03m là độ cao sàn nhà thực tế)
         if (isLyThong)
-            return new Vector3(81.0f, 1.03f, 24.8f);
+            return new Vector3(81.5f, 1.03f, 25.0f);
         else
-            return new Vector3(82.4f, 1.03f, 24.8f);
+            return new Vector3(82.2f, 1.03f, 25.0f);
     }
 
-    private GameObject FindLyThongGameObject(LyThongGuide guide)
+    private GameObject FindLyThongGameObject()
     {
-        if (guide != null) return guide.gameObject;
-
-        // Tìm tất cả GameObject kể cả inactive
         foreach (GameObject root in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
         {
             foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
@@ -328,16 +318,8 @@ public class Chapter2ReturnManager : MonoBehaviour
         return null;
     }
 
-    private GameObject FindMotherGameObject(LyThongGuide guide)
+    private GameObject FindMotherGameObject()
     {
-        if (guide != null)
-        {
-            if (guide.motherNPC != null) return guide.motherNPC.gameObject;
-            if (guide.homePoint != null && guide.homePoint.GetComponentInChildren<SkinnedMeshRenderer>() != null)
-                return guide.homePoint.gameObject;
-        }
-
-        // Tìm tất cả GameObject kể cả inactive
         foreach (GameObject root in UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects())
         {
             foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
@@ -359,6 +341,7 @@ public class Chapter2ReturnManager : MonoBehaviour
     void Update()
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Chapter2_LyThong") return;
+        if (StoryStateManager.LyThongReturnedAsOfficial) return;
         if (!StoryStateManager.IsChanTinhDefeated || !StoryStateManager.IsReturningToChapter2) return;
         if (isTransitioningToChapter4) return;
 
@@ -369,14 +352,12 @@ public class Chapter2ReturnManager : MonoBehaviour
             return;
         }
 
-        // Kiểm tra khoảng cách tới Lý Thông hoặc Mẹ Lý Thông
         float distToLyThong = lyThongTransform != null ? Vector3.Distance(playerTransform.position, lyThongTransform.position) : 999f;
         float distToMother = motherTransform != null ? Vector3.Distance(playerTransform.position, motherTransform.position) : 999f;
         float minDist = Mathf.Min(distToLyThong, distToMother);
 
         isInInteractionRange = (minDist <= interactionDistance);
 
-        // Nhận phím tương tác
         bool interactPressed = false;
         if (Keyboard.current != null && (Keyboard.current.eKey.wasPressedThisFrame || Keyboard.current.spaceKey.wasPressedThisFrame || Keyboard.current.enterKey.wasPressedThisFrame))
         {
@@ -400,7 +381,6 @@ public class Chapter2ReturnManager : MonoBehaviour
         }
         else
         {
-            // Nếu chưa hoàn thành hội thoại và đang đứng gần NPC -> Bấm phím để bắt đầu
             if (isInInteractionRange && !StoryStateManager.IsReturnDialogueCompleted && !isTransitioningToChapter4 && interactPressed)
             {
                 StartReturnDialogue();
@@ -413,8 +393,31 @@ public class Chapter2ReturnManager : MonoBehaviour
         isDialogueActive = true;
         currentDialogueStep = 0;
 
-        // Tạm khóa di chuyển của Thạch Sanh khi hội thoại
         if (playerMovement != null) playerMovement.enabled = false;
+
+        if (playerTransform != null && lyThongTransform != null)
+        {
+            if (playerController != null) playerController.enabled = false;
+
+            Vector3 targetPos = lyThongTransform.position + lyThongTransform.forward * 1.8f;
+            targetPos.y = playerTransform.position.y;
+
+            playerTransform.position = targetPos;
+            playerTransform.LookAt(new Vector3(lyThongTransform.position.x, playerTransform.position.y, lyThongTransform.position.z));
+
+            if (playerController != null) playerController.enabled = true;
+        }
+
+        if (mainCamera == null && Camera.main != null)
+        {
+            mainCamera = Camera.main.gameObject;
+        }
+
+        if (mainCamera != null && dialogueCamera != null)
+        {
+            mainCamera.SetActive(false);
+            dialogueCamera.SetActive(true);
+        }
 
         DisplayCurrentDialogue();
     }
@@ -434,11 +437,35 @@ public class Chapter2ReturnManager : MonoBehaviour
 
     private void DisplayCurrentDialogue()
     {
+        EnsureDialogueUI();
         DialogueLine line = returnDialogues[currentDialogueStep];
-        string text = $"<b><color=#{ColorUtility.ToHtmlStringRGB(line.speakerColor)}>{line.speaker}:</color></b>\n\"{line.content}\"";
+
+        if (dialoguePanel != null)
+        {
+            dialoguePanel.SetActive(true);
+            if (speakerText != null)
+            {
+                speakerText.text = line.speaker + ":";
+                speakerText.color = line.speakerColor;
+            }
+            if (contentText != null)
+            {
+                string cleanContent = line.content.Trim();
+                if (cleanContent.StartsWith("\"") && cleanContent.EndsWith("\"") && cleanContent.Length >= 2)
+                {
+                    cleanContent = cleanContent.Substring(1, cleanContent.Length - 2).Trim();
+                }
+                contentText.text = $"\"{cleanContent}\"";
+            }
+            if (hintText != null)
+            {
+                hintText.text = "(Bấm Enter hoặc Chuột trái để tiếp tục)";
+            }
+        }
 
         if (dialogueText != null)
         {
+            string text = $"<b><color=#{ColorUtility.ToHtmlStringRGB(line.speakerColor)}>{line.speaker}:</color></b>\n\"{line.content}\"";
             dialogueText.text = text;
             dialogueText.gameObject.SetActive(true);
         }
@@ -451,9 +478,9 @@ public class Chapter2ReturnManager : MonoBehaviour
         isDialogueActive = false;
         StoryStateManager.IsReturnDialogueCompleted = true;
 
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (dialogueText != null) dialogueText.text = "";
 
-        // Cập nhật thông báo hoàn thành Chương 2 và bắt đầu chuyển cảnh
         UpdateQuestBanner("<color=#00FF00>HOÀN THÀNH CHƯƠNG 2!</color>\nĐang chuyển sang Chương 4...");
         Debug.Log("[Chapter2ReturnManager] Đã xem hết tất cả câu thoại và đóng hộp thoại cuối cùng. Chờ 2 giây rồi chuyển sang Chapter 4...");
 
@@ -464,15 +491,12 @@ public class Chapter2ReturnManager : MonoBehaviour
     {
         isTransitioningToChapter4 = true;
 
-        // Tạm khóa di chuyển để tránh việc nhân vật di chuyển hoặc kích hoạt lại hội thoại trong 2 giây chờ chuyển cảnh
         if (playerMovement != null) playerMovement.enabled = false;
 
-        // Chờ đúng 2 giây sau khi đóng hộp thoại cuối cùng theo yêu cầu
         yield return new WaitForSeconds(2.0f);
 
-        // Lưu trạng thái trước khi chuyển sang Chapter 4
         StoryStateManager.IsChapter4Reached = true;
-        StoryStateManager.HasChanTinhHead = false; // Lý Thông đã lấy đầu Chằn Tinh đem nộp triều đình cướp công
+        StoryStateManager.HasChanTinhHead = false;
         StoryStateManager.IsReturningToChapter2 = false;
 
         Debug.Log("[Chapter2ReturnManager] Đang chuyển sang Scene Chapter4_Lythongcuopcong...");
@@ -495,15 +519,29 @@ public class Chapter2ReturnManager : MonoBehaviour
         }
     }
 
+    private Texture2D boxBgTexture;
+
+    private Texture2D GetBoxBackground()
+    {
+        if (boxBgTexture == null)
+        {
+            boxBgTexture = new Texture2D(1, 1);
+            boxBgTexture.SetPixel(0, 0, new Color(0.06f, 0.08f, 0.12f, 0.72f));
+            boxBgTexture.Apply();
+        }
+        return boxBgTexture;
+    }
+
     void OnGUI()
     {
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "Chapter2_LyThong") return;
+        if (StoryStateManager.LyThongReturnedAsOfficial) return;
         if (!StoryStateManager.IsChanTinhDefeated || !StoryStateManager.IsReturningToChapter2) return;
 
-        // 0. Hiển thị thông báo khi đang trong 2 giây chờ chuyển cảnh sang Chapter 4
         if (isTransitioningToChapter4)
         {
             GUIStyle transStyle = new GUIStyle(GUI.skin.box);
+            if (boxBgTexture != null || GetBoxBackground() != null) transStyle.normal.background = GetBoxBackground();
             transStyle.fontSize = 20;
             transStyle.alignment = TextAnchor.MiddleCenter;
             transStyle.normal.textColor = Color.green;
@@ -514,34 +552,41 @@ public class Chapter2ReturnManager : MonoBehaviour
             float left = (Screen.width - width) / 2f;
             float top = Screen.height - 140f;
 
-            GUI.Box(new Rect(left, top, width, height), "<b><color=#00FF00>HOÀN THÀNH CHƯƠNG 2!</color></b>\n<size=16>Đang chuyển sang Chương 4...</size>", transStyle);
+            GUI.Box(new Rect(left, top, width, height), "<b><color=#00FF00>HOÀN THÀNH CHƯƠNG 3!</color></b>\n<size=16>Đang chuyển sang Chương 4...</size>", transStyle);
             return;
         }
 
-        // 1. Hiển thị hộp thoại khi đang đối thoại
+        // Nếu đã có Canvas DialoguePanel đang hiển thị thì không vẽ OnGUI để tránh trùng lặp
+        if (dialoguePanel != null && dialoguePanel.activeInHierarchy)
+        {
+            return;
+        }
+
         if (isDialogueActive && currentDialogueStep < returnDialogues.Length)
         {
             DialogueLine line = returnDialogues[currentDialogueStep];
 
             GUIStyle boxStyle = new GUIStyle(GUI.skin.box);
-            boxStyle.fontSize = 20;
+            boxStyle.normal.background = GetBoxBackground();
             boxStyle.wordWrap = true;
             boxStyle.alignment = TextAnchor.UpperLeft;
-            boxStyle.padding = new RectOffset(30, 30, 20, 20);
+            boxStyle.padding = new RectOffset(35, 35, 18, 18);
             boxStyle.normal.textColor = Color.white;
             boxStyle.richText = true;
 
-            float width = Screen.width * 0.8f;
-            float height = 170f;
+            // Kích thước chuẩn thống nhất: bottom-center, ~75-80% màn hình (tối đa 1100px), cao 215px, cách đáy 30px
+            float width = Mathf.Min(Screen.width * 0.78f, 1100f);
+            float height = 215f;
             float left = (Screen.width - width) / 2f;
-            float top = Screen.height - height - 40f;
+            float top = Screen.height - height - 30f;
 
             string colorHex = ColorUtility.ToHtmlStringRGB(line.speakerColor);
-            string fullMsg = $"<size=22><b><color=#{colorHex}>{line.speaker}</color></b></size>\n\n<size=19>\"{line.content}\"</size>\n\n<color=#FFD700><size=14>(Bấm E / Space / Chuột trái để tiếp tục)</size></color>";
+            string fullMsg = $"<size=34><b><color=#{colorHex}>{line.speaker}:</color></b></size>\n" +
+                             $"<size=28>\"{line.content}\"</size>\n\n" +
+                             $"<color=#FFD700><size=20><i>(Bấm Enter, Space hoặc Chuột trái để tiếp tục)</i></size></color>";
 
             GUI.Box(new Rect(left, top, width, height), fullMsg, boxStyle);
         }
-        // 2. Hiển thị gợi ý phím bấm khi đứng gần hai mẹ con
         else if (isInInteractionRange)
         {
             GUIStyle hintStyle = new GUIStyle(GUI.skin.box);

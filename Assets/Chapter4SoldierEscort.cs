@@ -12,11 +12,19 @@ public class Chapter4SoldierEscort : MonoBehaviour
 
     public enum EscortState
     {
-        Initializing, Escorting, ArrivedAtKing, InDialogue, SteppingForward, Completed
+        Initializing, Escorting, ArrivedAtKing, InDialogue, SteppingForward, Completed, AwaitingInteraction
     }
 
     [Header("Trạng thái hiện tại")]
     public EscortState currentState = EscortState.Initializing;
+    [Header("M4 — Nhận nhiệm vụ")]
+    public bool requireStartInteraction = true;
+    public float interactionDistance = 3.5f;
+    public UnityEngine.Events.UnityEvent onEscortStarted = new UnityEngine.Events.UnityEvent();
+    public UnityEngine.Events.UnityEvent onReportCompleted = new UnityEngine.Events.UnityEvent();
+    public string transitionError { get; private set; }
+    public bool CanStartEscort => currentState == EscortState.AwaitingInteraction && lyThong != null &&
+        escortSoldier != null && Vector3.Distance(lyThong.position, escortSoldier.position) <= interactionDistance;
 
     [Header("Nhân vật tham chiếu")]
     public Transform lyThong;
@@ -300,11 +308,40 @@ public class Chapter4SoldierEscort : MonoBehaviour
             if (distToStart < 2.0f) currentWaypointIndex = 1;
         }
 
-        hasTriggeredArrival = false; currentState = EscortState.Escorting;
+        hasTriggeredArrival = false;
+        if (requireStartInteraction)
+        {
+            currentState = EscortState.AwaitingInteraction;
+            if (lyThongInputController != null) lyThongInputController.enabled = true;
+        }
+        else BeginEscort();
+    }
+
+    public bool BeginEscort()
+    {
+        if (currentState != EscortState.Initializing && !CanStartEscort) return false;
+        if (lyThong == null || escortSoldier == null || king == null || waypoints == null || waypoints.Length == 0) return false;
+        foreach (Transform waypoint in waypoints) if (waypoint == null) return false;
+        LockPlayerInput();
+        currentState = EscortState.Escorting;
+        onEscortStarted.Invoke();
+        return true;
     }
 
     void Update()
     {
+        if (currentState == EscortState.AwaitingInteraction)
+        {
+            bool interact = false;
+#if ENABLE_INPUT_SYSTEM
+            interact = Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame;
+#endif
+#if ENABLE_LEGACY_INPUT_MANAGER
+            interact |= Input.GetKeyDown(KeyCode.E);
+#endif
+            if (interact) BeginEscort();
+            return;
+        }
         if (lyThongInputController != null && lyThongInputController.enabled) lyThongInputController.enabled = false;
 
         switch (currentState)
@@ -590,7 +627,11 @@ public class Chapter4SoldierEscort : MonoBehaviour
 
     private void EndDialogue()
     {
+        if (currentState == EscortState.Completed) return;
+        StoryStateManager.LyThongReturnedAsOfficial = true;
+        StoryStateManager.IsChapter4Completed = false;
         currentState = EscortState.Completed;
+        onReportCompleted.Invoke();
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (dialogueText != null) dialogueText.text = "";
         StartCoroutine(TransitionToChapter2OfficialRoutine());
@@ -601,6 +642,11 @@ public class Chapter4SoldierEscort : MonoBehaviour
     {
         officialTransitionTimer = 5.0f;
         while (officialTransitionTimer > 0f) { officialTransitionTimer -= Time.deltaTime; yield return null; }
+        if (!UnityEngine.Application.CanStreamedLevelBeLoaded("Chapter2_LyThong"))
+        {
+            transitionError = "Chưa có Chapter2_LyThong trong Build Settings.";
+            yield break;
+        }
         UnityEngine.SceneManagement.SceneManager.LoadScene("Chapter2_LyThong");
     }
 

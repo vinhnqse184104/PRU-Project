@@ -14,8 +14,10 @@ public class SetupChapter4Lighting
 
     static SetupChapter4Lighting()
     {
+        if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode) return;
         EditorApplication.delayCall += () =>
         {
+            if (Application.isPlaying || EditorApplication.isPlayingOrWillChangePlaymode) return;
             if (!SessionState.GetBool(LIGHTING_SESSION_KEY, false))
             {
                 SessionState.SetBool(LIGHTING_SESSION_KEY, true);

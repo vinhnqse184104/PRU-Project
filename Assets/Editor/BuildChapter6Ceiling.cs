@@ -15,8 +15,10 @@ public class BuildChapter6Ceiling
 
     static BuildChapter6Ceiling()
     {
+        if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode) return;
         EditorApplication.delayCall += () =>
         {
+            if (Application.isPlaying || EditorApplication.isPlayingOrWillChangePlaymode) return;
             if (!SessionState.GetBool(CEILING_SESSION_KEY, false))
             {
                 SessionState.SetBool(CEILING_SESSION_KEY, true);

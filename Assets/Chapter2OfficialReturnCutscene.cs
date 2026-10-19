@@ -12,6 +12,10 @@ public class Chapter2OfficialReturnCutscene : MonoBehaviour
 
     [Header("Cấu hình kiểm tra")]
     public bool forceRunInEditor = false;
+    public bool continueToChapter5 = true;
+    public UnityEngine.Events.UnityEvent onOfficialReturnCompleted = new UnityEngine.Events.UnityEvent();
+    public string transitionError { get; private set; }
+    public bool IsCompleted => isCutsceneCompleted;
 
     [Header("Nhân vật")]
     public GameObject lyThongOfficialInstance;
@@ -72,7 +76,7 @@ public class Chapter2OfficialReturnCutscene : MonoBehaviour
 
     void Start()
     {
-        bool shouldRun = StoryStateManager.LyThongReturnedAsOfficial;
+        bool shouldRun = StoryStateManager.LyThongReturnedAsOfficial && !StoryStateManager.IsChapter4Completed;
 #if UNITY_EDITOR
         if (forceRunInEditor) shouldRun = true;
 #endif
@@ -329,6 +333,15 @@ public class Chapter2OfficialReturnCutscene : MonoBehaviour
         HideDialogue();
         isCutsceneCompleted = true;
         isCutsceneRunning = false;
+        StoryStateManager.IsChapter4Completed = true;
+        onOfficialReturnCompleted.Invoke();
+        if (continueToChapter5)
+        {
+            yield return new WaitForSeconds(2f);
+            const string nextScene = "Chapter5_DaiBangBatCongChua";
+            if (Application.CanStreamedLevelBeLoaded(nextScene)) UnityEngine.SceneManagement.SceneManager.LoadScene(nextScene);
+            else transitionError = "Chưa có chương 5 trong Build Settings. Đã lưu hoàn thành chương 4.";
+        }
     }
 
     private IEnumerator MoveMotherToDoorRoutine()

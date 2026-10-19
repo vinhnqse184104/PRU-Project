@@ -8,6 +8,20 @@ public static class StoryStateManager
     private const string KEY_RETURN_DIALOGUE_DONE = "PRU_ReturnDialogueDone";
     private const string KEY_CHAPTER4_REACHED = "PRU_Chapter4Reached";
     private const string KEY_LY_THONG_OFFICIAL_RETURNED = "PRU_LyThongReturnedAsOfficial";
+    private const string KEY_CHAPTER4_COMPLETED = "PRU_M4_Chapter4Completed";
+    private const string KEY_CHAPTER5_COMPLETED = "PRU_M4_Chapter5Completed";
+
+    public static bool IsChapter4Completed
+    {
+        get => PlayerPrefs.GetInt(KEY_CHAPTER4_COMPLETED, 0) == 1;
+        set { PlayerPrefs.SetInt(KEY_CHAPTER4_COMPLETED, value ? 1 : 0); PlayerPrefs.Save(); }
+    }
+
+    public static bool IsChapter5Completed
+    {
+        get => PlayerPrefs.GetInt(KEY_CHAPTER5_COMPLETED, 0) == 1;
+        set { PlayerPrefs.SetInt(KEY_CHAPTER5_COMPLETED, value ? 1 : 0); PlayerPrefs.Save(); }
+    }
 
     public static bool LyThongReturnedAsOfficial
     {
@@ -79,7 +93,8 @@ public static class StoryStateManager
                PlayerPrefs.HasKey(KEY_CHAPTER2_RETURNED) ||
                PlayerPrefs.HasKey(KEY_RETURN_DIALOGUE_DONE) ||
                PlayerPrefs.HasKey(KEY_CHAPTER4_REACHED) ||
-               PlayerPrefs.HasKey(KEY_LY_THONG_OFFICIAL_RETURNED);
+               PlayerPrefs.HasKey(KEY_LY_THONG_OFFICIAL_RETURNED) ||
+               PlayerPrefs.HasKey(KEY_CHAPTER4_COMPLETED) || PlayerPrefs.HasKey(KEY_CHAPTER5_COMPLETED);
     }
 
     /// <summary>
@@ -94,6 +109,8 @@ public static class StoryStateManager
         PlayerPrefs.DeleteKey(KEY_RETURN_DIALOGUE_DONE);
         PlayerPrefs.DeleteKey(KEY_CHAPTER4_REACHED);
         PlayerPrefs.DeleteKey(KEY_LY_THONG_OFFICIAL_RETURNED);
+        PlayerPrefs.DeleteKey(KEY_CHAPTER4_COMPLETED);
+        PlayerPrefs.DeleteKey(KEY_CHAPTER5_COMPLETED);
         PlayerPrefs.Save();
         Debug.Log("[StoryStateManager] BẮT ĐẦU LƯỢT CHƠI MỚI (New Game): Đã reset toàn bộ tiến trình cốt truyện về ban đầu.");
     }

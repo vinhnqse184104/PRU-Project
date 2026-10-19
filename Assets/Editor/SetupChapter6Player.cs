@@ -15,8 +15,10 @@ public class SetupChapter6Player
 
     static SetupChapter6Player()
     {
+        if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode) return;
         EditorApplication.delayCall += () =>
         {
+            if (Application.isPlaying || EditorApplication.isPlayingOrWillChangePlaymode) return;
             if (!SessionState.GetBool(SETUP_SESSION_KEY, false))
             {
                 SessionState.SetBool(SETUP_SESSION_KEY, true);

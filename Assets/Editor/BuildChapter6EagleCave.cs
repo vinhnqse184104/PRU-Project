@@ -20,8 +20,10 @@ public class BuildChapter6EagleCave
 
     static BuildChapter6EagleCave()
     {
+        if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode) return;
         EditorApplication.delayCall += () =>
         {
+            if (Application.isPlaying || EditorApplication.isPlayingOrWillChangePlaymode) return;
             if (!SessionState.GetBool(BUILD_SESSION_KEY, false))
             {
                 SessionState.SetBool(BUILD_SESSION_KEY, true);

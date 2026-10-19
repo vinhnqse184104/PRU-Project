@@ -1,9 +1,18 @@
 ﻿using System.Collections;
 using UnityEngine;
 using TMPro;
+#if ENABLE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 
 public class DaiBangBatCoc : MonoBehaviour
 {
+    [Header("M4 — Tiến trình sau cutscene")]
+    public bool continueToTracking = true;
+    public string trackingSceneName = "Scene_M4_Chapter5_Tracking";
+    public UnityEngine.Events.UnityEvent onKidnappingCompleted = new UnityEngine.Events.UnityEvent();
+    public bool IsCompleted { get; private set; }
+    public string transitionError { get; private set; }
     [Header("Nhân vật tham gia")]
     public Transform daiBang;
     public Transform congChua;
@@ -45,6 +54,12 @@ public class DaiBangBatCoc : MonoBehaviour
 
     void Start()
     {
+        if (daiBang == null || congChua == null || diemBayRa == null || diemBayDi == null)
+        {
+            transitionError = "Thiếu Đại Bàng, Công Chúa hoặc điểm bay trong Inspector.";
+            Debug.LogError("M4_CHAPTER5: " + transitionError);
+            return;
+        }
         if (daiBang != null) daiBang.gameObject.SetActive(false);
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (blackIntroPanel != null) blackIntroPanel.SetActive(false);
@@ -73,13 +88,21 @@ public class DaiBangBatCoc : MonoBehaviour
 
         // GIAI ĐOẠN 3: Thoại sau khi bị bắt
         yield return StartCoroutine(ChayHoiThoai(thoaiSauKhiBat));
+        IsCompleted = true;
+        onKidnappingCompleted.Invoke();
+        if (continueToTracking)
+        {
+            yield return new WaitForSeconds(1.5f);
+            if (Application.CanStreamedLevelBeLoaded(trackingSceneName)) UnityEngine.SceneManagement.SceneManager.LoadScene(trackingSceneName);
+            else transitionError = "Chưa có scene truy đuổi trong Build Settings: " + trackingSceneName;
+        }
     }
 
     private IEnumerator ChayHoiThoai(DongThoai[] danhSachThoai)
     {
         if (danhSachThoai == null || danhSachThoai.Length == 0) yield break;
 
-        dialoguePanel.SetActive(true);
+        if (dialoguePanel != null) dialoguePanel.SetActive(true);
         foreach (var cau in danhSachThoai)
         {
             if (speakerText != null)
@@ -92,14 +115,16 @@ public class DaiBangBatCoc : MonoBehaviour
                 else
                 {
                     speakerText.text = cau.tenNhanVat + ":";
-                    speakerText.color = cau.mauChu;
+                    Color speakerColor = cau.mauChu;
+                    speakerColor.a = 1f;
+                    speakerText.color = speakerColor;
                 }
             }
             if (contentText != null) contentText.text = "\"" + cau.noiDung + "\"";
 
             yield return StartCoroutine(DoiNguoiChoiBamPhim());
         }
-        dialoguePanel.SetActive(false);
+        if (dialoguePanel != null) dialoguePanel.SetActive(false);
     }
 
     private IEnumerator DoiNguoiChoiBamPhim()
@@ -108,6 +133,10 @@ public class DaiBangBatCoc : MonoBehaviour
         bool daBam = false;
         while (!daBam)
         {
+#if ENABLE_INPUT_SYSTEM
+            if (Keyboard.current != null && (Keyboard.current.enterKey.wasPressedThisFrame || Keyboard.current.spaceKey.wasPressedThisFrame)) daBam = true;
+            if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame) daBam = true;
+#endif
             try
             {
                 if (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
@@ -152,5 +181,12 @@ public class DaiBangBatCoc : MonoBehaviour
             yield return null;
         }
         daiBang.gameObject.SetActive(false);
+    }
+
+    void OnGUI()
+    {
+        PRU.M4.M4QuestDrawing.Objective("CHƯƠNG 5 · ĐẠI BÀNG BẮT CÔNG CHÚA",
+            string.IsNullOrEmpty(transitionError) ? (IsCompleted ? "Thạch Sanh lên đường theo dấu Đại Bàng…" : "Theo dõi câu chuyện tại hoàng cung.") : transitionError,
+            "Tiếp theo: bắn cung → theo dấu → tìm cửa hang", "Enter / Space / Chuột trái: tiếp tục hội thoại");
     }
 }

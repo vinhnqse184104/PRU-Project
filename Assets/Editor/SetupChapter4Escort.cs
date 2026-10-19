@@ -18,8 +18,10 @@ public class SetupChapter4Escort
 
     static SetupChapter4Escort()
     {
+        if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode) return;
         EditorApplication.delayCall += () =>
         {
+            if (Application.isPlaying || EditorApplication.isPlayingOrWillChangePlaymode) return;
             if (!SessionState.GetBool(ESCORT_SESSION_KEY, false))
             {
                 SessionState.SetBool(ESCORT_SESSION_KEY, true);

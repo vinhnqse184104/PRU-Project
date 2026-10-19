@@ -14,8 +14,10 @@ public class SyncDialogueUIAllChapters
 
     static SyncDialogueUIAllChapters()
     {
+        if (Application.isBatchMode || EditorApplication.isPlayingOrWillChangePlaymode) return;
         EditorApplication.delayCall += () =>
         {
+            if (Application.isPlaying || EditorApplication.isPlayingOrWillChangePlaymode) return;
             if (!SessionState.GetBool(SYNC_SESSION_KEY, false))
             {
                 SessionState.SetBool(SYNC_SESSION_KEY, true);

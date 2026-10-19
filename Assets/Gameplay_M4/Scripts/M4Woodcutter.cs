@@ -35,6 +35,9 @@ namespace PRU.M4
         {
             if (characterAnimator == null)
                 characterAnimator = GetComponentInChildren<Animator>();
+            // M4 applies each axe hit through TryChop and its cooldown. Shared clips
+            // may contain PlayerMovement hit events, which this visual does not own.
+            if (characterAnimator != null) characterAnimator.fireEvents = false;
             if (characterAnimator != null && characterAnimator.runtimeAnimatorController != null)
             {
                 foreach (var parameter in characterAnimator.parameters)

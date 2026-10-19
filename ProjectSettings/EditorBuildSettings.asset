@@ -6,6 +6,18 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Gameplay_M4/Story/Scene_M4_Story.unity
+    guid: 574e444855974c64193969370569aaa9
+  - enabled: 1
+    path: Assets/Gameplay_M4/Scene_M4_Gameplay.unity
+    guid: 1d0080b4aaa23474cbc8e07707ab2d71
+  - enabled: 1
+    path: Assets/Gameplay_M4/Chapter2/Scene_M4_Chapter2_Map.unity
+    guid: 79adf455e6ddd55418ab796f392d0198
+  - enabled: 1
+    path: Assets/Gameplay_M4/Chapter3/Scene_M4_Chapter3_Map.unity
+    guid: 7c846ace524c2ae4897b494dd55fc5e1
+  - enabled: 1
     path: Assets/Scenes/RungThachSanh.unity
     guid: f55ab8817ee8beb4482e0baed3697c66
   - enabled: 1

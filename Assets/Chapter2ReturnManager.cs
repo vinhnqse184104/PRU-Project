@@ -52,6 +52,9 @@ public class Chapter2ReturnManager : MonoBehaviour
     private int currentDialogueStep = 0;
     private bool isInInteractionRange = false;
     private bool isTransitioningToChapter4 = false;
+    public bool IsDialogueActive => isDialogueActive;
+    public Transform InteractionTarget => lyThongTransform;
+    public string TransitionError { get; private set; }
 
     private struct DialogueLine
     {
@@ -495,12 +498,21 @@ public class Chapter2ReturnManager : MonoBehaviour
 
         yield return new WaitForSeconds(2.0f);
 
+        const string nextScene = "Assets/Scenes/Chapter4_LythongCuopCong.unity";
+        if (!Application.CanStreamedLevelBeLoaded(nextScene))
+        {
+            TransitionError = "Chưa có cảnh chương 4 trong Build Settings.";
+            isTransitioningToChapter4 = false;
+            if (playerMovement != null) playerMovement.enabled = true;
+            yield break;
+        }
+
         StoryStateManager.IsChapter4Reached = true;
         StoryStateManager.HasChanTinhHead = false;
         StoryStateManager.IsReturningToChapter2 = false;
 
         Debug.Log("[Chapter2ReturnManager] Đang chuyển sang Scene Chapter4_Lythongcuopcong...");
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Chapter4_Lythongcuopcong");
+        UnityEngine.SceneManagement.SceneManager.LoadScene(nextScene);
     }
 
     private void UpdateQuestBanner(string text)

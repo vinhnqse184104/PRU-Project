@@ -151,16 +151,17 @@ MonoBehaviour:
   currentWaypointIndex: 0
   soldierSpeed: 2.8
   followDistance: 2
+  rightOffset: 1.2
   rotationSpeed: 6
   waypointTolerance: 0.8
   mainCamera: {fileID: 0}
   dialogueCameraPoint: {fileID: 1153170754}
   cameraTransitionSpeed: 2
-  dialogueText: {fileID: 0}
   dialoguePanel: {fileID: 1952748361}
   speakerText: {fileID: 505694600}
   contentText: {fileID: 103597674}
   hintText: {fileID: 1494156891}
+  dialogueText: {fileID: 0}
 --- !u!1001 &94507812
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1073,6 +1074,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: c8f67004d653df0489435cf801bebbbb, type: 2}
+    - target: {fileID: 5866666021909216657, guid: 688f1e18b92df734d84e67e7948e3188, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8111781155169087978, guid: 688f1e18b92df734d84e67e7948e3188, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
@@ -216892,7 +216897,7 @@ Transform:
   m_GameObject: {fileID: 1153170753}
   serializedVersion: 2
   m_LocalRotation: {x: 0.08377947, y: 0.2745885, z: -0.024023376, w: 0.9576038}
-  m_LocalPosition: {x: -56.41, y: -6.62, z: 15.13}
+  m_LocalPosition: {x: -51.5, y: -8.2, z: 17.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

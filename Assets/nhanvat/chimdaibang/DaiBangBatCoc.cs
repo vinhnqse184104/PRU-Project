@@ -73,6 +73,11 @@ public class DaiBangBatCoc : MonoBehaviour
 
         // GIAI ĐOẠN 3: Thoại sau khi bị bắt
         yield return StartCoroutine(ChayHoiThoai(thoaiSauKhiBat));
+        yield return new WaitForSeconds(1f);
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            "Chapter6_HangDaiBang"
+        );
     }
 
     private IEnumerator ChayHoiThoai(DongThoai[] danhSachThoai)

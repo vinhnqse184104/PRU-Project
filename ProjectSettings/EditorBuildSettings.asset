@@ -17,5 +17,11 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Chapter4_LythongCuopCong.unity
     guid: cd2029f8b9ff9a94c89d2af1aa11fd08
+  - enabled: 1
+    path: Assets/Scenes/Chapter5_DaiBangBatCongChua.unity
+    guid: 5dcebecf618bebe49ae6c542395a7dbc
+  - enabled: 1
+    path: Assets/Scenes/Chapter6_HangDaiBang.unity
+    guid: 487ad242c39e8e142b1b6b5f407d4b9b
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

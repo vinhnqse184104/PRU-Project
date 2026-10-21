@@ -103,27 +103,68 @@ public class PlayerMovement : MonoBehaviour
             spawnPoint = GameObject.Find("Chapter6_StartPoint") ?? GameObject.Find("Chapter6StartPoint") ?? GameObject.Find("ThachSanh_SpawnPoint");
         }
 
-        // Áp dụng spawnPoint nếu có (cho Chapter 2 quay về hoặc Chapter 3)
+        // Áp dụng spawnPoint nếu có (cho Chapter 2 quay về, Chapter 3 hoặc Chapter 6)
         if (spawnPoint != null)
         {
             if (controller != null) controller.enabled = false;
             Vector3 pos = spawnPoint.transform.position;
             float groundHeight = pos.y;
+            bool groundDetected = false;
+
             if (Terrain.activeTerrain != null)
             {
                 groundHeight = Terrain.activeTerrain.SampleHeight(pos) + Terrain.activeTerrain.transform.position.y;
                 if (groundHeight > pos.y) pos.y = groundHeight + 0.05f;
+                groundDetected = true;
             }
-            else if (Physics.Raycast(new Vector3(pos.x, pos.y + 2f, pos.z), Vector3.down, out RaycastHit hit, 5f))
+            else
             {
-                groundHeight = hit.point.y;
-                pos.y = hit.point.y + 0.05f;
+                // Bắn tia raycast xuống đất để phát hiện collider mặt sàn (MeshCollider, BoxCollider)
+                // Lọc bỏ collider của chính nhân vật và bỏ qua Trigger
+                RaycastHit[] hits = Physics.RaycastAll(new Vector3(pos.x, pos.y + 3f, pos.z), Vector3.down, 15f, ~0, QueryTriggerInteraction.Ignore);
+                System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+                foreach (var h in hits)
+                {
+                    if (h.collider != null && h.collider.transform != transform && !h.collider.transform.IsChildOf(transform))
+                    {
+                        groundHeight = h.point.y;
+                        pos.y = groundHeight + 0.05f;
+                        groundDetected = true;
+                        break;
+                    }
+                }
             }
+
+            // Phòng vệ an toàn: Nếu spawnPoint nằm lơ lửng ngoài hư không không có mặt đất bên dưới
+            // nhưng vị trí hiện tại của nhân vật trong scene đang đứng trên mặt đất hợp lệ -> giữ vị trí hiện tại
+            if (!groundDetected && Terrain.activeTerrain == null)
+            {
+                RaycastHit[] selfHits = Physics.RaycastAll(new Vector3(transform.position.x, transform.position.y + 3f, transform.position.z), Vector3.down, 15f, ~0, QueryTriggerInteraction.Ignore);
+                System.Array.Sort(selfHits, (a, b) => a.distance.CompareTo(b.distance));
+                bool currentHasGround = false;
+                foreach (var h in selfHits)
+                {
+                    if (h.collider != null && h.collider.transform != transform && !h.collider.transform.IsChildOf(transform))
+                    {
+                        currentHasGround = true;
+                        break;
+                    }
+                }
+
+                if (currentHasGround)
+                {
+                    Debug.LogWarning($"[PlayerMovement] SpawnPoint '{spawnPoint.name}' tại {pos} không có mặt đất bên dưới! Giữ vị trí scene hiện tại {transform.position}.");
+                    pos = transform.position;
+                }
+            }
+
             transform.position = pos;
             transform.rotation = spawnPoint.transform.rotation;
             Rigidbody rb = GetComponent<Rigidbody>();
-            if (rb != null && !rb.isKinematic)
+            if (rb != null)
             {
+                rb.isKinematic = true;
+                rb.useGravity = false;
                 rb.position = pos;
                 rb.linearVelocity = Vector3.zero;
                 rb.angularVelocity = Vector3.zero;
@@ -131,9 +172,9 @@ public class PlayerMovement : MonoBehaviour
             Physics.SyncTransforms();
             if (controller != null) controller.enabled = true;
 
+            Debug.Log($"[Spawn Check] Scene: {currentScene} | Player Spawned At: {transform.position} | GroundHeight: {groundHeight:F3}");
             if (currentScene == "Chapter2_LyThong")
             {
-                Debug.Log($"[Chapter2 Return Spawn Check] Scene: {currentScene} | Start WorldPos: {transform.position} | GroundHeight: {groundHeight:F3}");
                 StartCoroutine(LogPositionAfterOneSecond(currentScene));
             }
         }

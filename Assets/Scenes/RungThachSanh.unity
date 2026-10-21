@@ -7902,11 +7902,11 @@ MonoBehaviour:
   deerKilled: 0
   horseKilled: 0
   tigerKilled: 0
-  woodRequired: 1
-  chickenRequired: 0
-  deerRequired: 0
-  horseRequired: 0
-  tigerRequired: 0
+  woodRequired: 0
+  chickenRequired: 1
+  deerRequired: 1
+  horseRequired: 1
+  tigerRequired: 1
 --- !u!1 &1304694955
 GameObject:
   m_ObjectHideFlags: 0

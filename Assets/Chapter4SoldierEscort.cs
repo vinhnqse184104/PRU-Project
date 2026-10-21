@@ -600,8 +600,19 @@ public class Chapter4SoldierEscort : MonoBehaviour
     private IEnumerator TransitionToChapter2OfficialRoutine()
     {
         officialTransitionTimer = 5.0f;
-        while (officialTransitionTimer > 0f) { officialTransitionTimer -= Time.deltaTime; yield return null; }
-        UnityEngine.SceneManagement.SceneManager.LoadScene("Chapter2_LyThong");
+
+        while (officialTransitionTimer > 0f)
+        {
+            officialTransitionTimer -= Time.deltaTime;
+            yield return null;
+        }
+
+        // Lưu trạng thái trước khi tải lại scene nhà Lý Thông.
+        StoryStateManager.LyThongReturnedAsOfficial = true;
+
+        UnityEngine.SceneManagement.SceneManager.LoadScene(
+            "Chapter2_LyThong"
+        );
     }
 
     private Texture2D boxBgTexture;

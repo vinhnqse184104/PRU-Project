@@ -8,7 +8,7 @@ using System.Collections.Generic;
 [InitializeOnLoad]
 public class SetupChapter6Player
 {
-    private const string SETUP_SESSION_KEY = "PRU_Chapter6PlayerSetup_v5";
+    private const string SETUP_SESSION_KEY = "PRU_Chapter6PlayerSetup_v6";
     private const string SCENE_PATH = "Assets/Scenes/Chapter6_HangDaiBang.unity";
     private const string TS_FBX_PATH = "Assets/nhanvat/thachsanh/hanhdong/dungyen/Meshy_AI_Axe_Bearing_Wanderer_biped_Animation_01a0d469-8153-7436-8709-d393703fc126_withSkin.fbx";
     private const string CONTROLLER_PATH = "Assets/nhanvat/thachsanh/hanhdong/chay.controller";
@@ -67,9 +67,9 @@ public class SetupChapter6Player
             startPoint = new GameObject("Chapter6_StartPoint");
             Undo.RegisterCreatedObjectUndo(startPoint, "Create Chapter6_StartPoint");
         }
-        // Tọa độ cửa hang trên mặt đất vững chắc, hướng vào trong hang (+Z)
-        startPoint.transform.position = new Vector3(0f, 0.05f, -38.0f);
-        startPoint.transform.rotation = Quaternion.Euler(0f, 0f, 0f);
+        // Tọa độ cửa hang trên mặt đất vững chắc của Ground_EntranceTunnel_-14_-46 (1) (mặt trên Y = 14.9), hướng vào hang (-X)
+        startPoint.transform.position = new Vector3(-490.74f, 14.95f, -139.45f);
+        startPoint.transform.rotation = Quaternion.Euler(0f, -90f, 0f);
 
         // Đồng bộ điểm ThachSanh_SpawnPoint
         GameObject oldSpawn = GameObject.Find("ThachSanh_SpawnPoint");
@@ -228,8 +228,8 @@ public class SetupChapter6Player
         {
             cam.name = "Main Camera";
             cam.tag = "MainCamera";
-            cam.transform.position = new Vector3(0f, 2.5f, -44.5f);
-            cam.transform.rotation = Quaternion.Euler(12f, 0f, 0f);
+            cam.transform.position = new Vector3(-486.24f, 16.95f, -139.45f);
+            cam.transform.rotation = Quaternion.Euler(12f, -90f, 0f);
 
             // Tắt CameraFollow cũ nếu có để tránh xung đột
             CameraFollow oldCf = cam.GetComponent<CameraFollow>();
@@ -268,7 +268,7 @@ public class SetupChapter6Player
         {
             EditorUtility.DisplayDialog("Thành công",
                 "Đã cấu hình nhân vật Thạch Sanh hoàn tất trong Chapter 6:\n\n" +
-                "- Điểm xuất hiện: Chapter6_StartPoint (0, 0.05, -38)\n" +
+                "- Điểm xuất hiện: Chapter6_StartPoint (-490.74, 14.95, -139.45)\n" +
                 "- Điều khiển: WASD di chuyển, Space nhảy\n" +
                 "- Animation: Idle, Walk, Run, Jump, Attack, Kick\n" +
                 "- Chiến đấu: Phím E chém rìu, Phím F đá\n" +

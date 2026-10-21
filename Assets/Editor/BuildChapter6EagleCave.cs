@@ -20,14 +20,7 @@ public class BuildChapter6EagleCave
 
     static BuildChapter6EagleCave()
     {
-        EditorApplication.delayCall += () =>
-        {
-            if (!SessionState.GetBool(BUILD_SESSION_KEY, false))
-            {
-                SessionState.SetBool(BUILD_SESSION_KEY, true);
-                ExecuteBuild(false);
-            }
-        };
+        // Không tự động xây dựng đè lên Scene thủ công khi mở Editor
     }
 
     [MenuItem("Tools/PRU/Xây dựng Hang Đại Bàng Chapter 6 (Free_Rocks)")]

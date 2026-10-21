@@ -15,14 +15,7 @@ public class BuildChapter6Ceiling
 
     static BuildChapter6Ceiling()
     {
-        EditorApplication.delayCall += () =>
-        {
-            if (!SessionState.GetBool(CEILING_SESSION_KEY, false))
-            {
-                SessionState.SetBool(CEILING_SESSION_KEY, true);
-                ExecuteBuildCeiling(false);
-            }
-        };
+        // Không tự động xây dựng đè lên Scene thủ công khi mở Editor
     }
 
     [MenuItem("Tools/PRU/Xây dựng Trần Hang Đá Chapter 6 (Rock Ceiling)")]

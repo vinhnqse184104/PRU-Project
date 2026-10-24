@@ -234,16 +234,37 @@ public class EagleBossAI : MonoBehaviour
     private void Chet()
     {
         isDead = true;
-        StopAllCoroutines();
+        StopAllCoroutines(); // Dừng mọi hành động bay lượn, tuần tra
 
         if (anim != null) anim.SetTrigger("Die");
-
-        Rigidbody rb = GetComponent<Rigidbody>();
-        if (rb == null) rb = gameObject.AddComponent<Rigidbody>();
-        rb.useGravity = true;
-        rb.isKinematic = false;
-        rb.linearVelocity = Vector3.down * 10f;
-
         if (thanhMauBoss != null) thanhMauBoss.gameObject.SetActive(false);
+
+        // 1. Tắt va chạm vật lý cứng, biến thành Trigger để xác nằm trên đất 
+        // nhưng Thạch Sanh có thể đi xuyên qua mà không bị kẹt
+        Collider coll = GetComponent<Collider>();
+        if (coll != null) coll.isTrigger = true;
+
+        // 2. Hủy bỏ hoàn toàn Rigidbody (nếu có) để tránh lỗi rơi tự do lọt map
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null) Destroy(rb);
+
+        // 3. Nếu chim chết lúc đang bay trên cao, cho nó rơi từ từ xuống đất
+        StartCoroutine(XacRoiXuongDat());
+    }
+
+    private IEnumerator XacRoiXuongDat()
+    {
+        // Bắn 1 tia laser ảo từ bụng chim xuống đất để đo khoảng cách
+        if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 50f))
+        {
+            Vector3 diemChamDat = hit.point;
+
+            // Kéo cái xác từ từ rơi xuống điểm chạm đất
+            while (transform.position.y > diemChamDat.y + 0.1f)
+            {
+                transform.position = Vector3.MoveTowards(transform.position, diemChamDat, 5f * Time.deltaTime);
+                yield return null;
+            }
+        }
     }
 }

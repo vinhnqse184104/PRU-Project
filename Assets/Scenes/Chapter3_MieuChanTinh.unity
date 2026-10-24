@@ -3126,7 +3126,7 @@ MonoBehaviour:
   patrolSpeed: 1.8
   chaseSpeed: 4
   patrolRadius: 6
-  waitTimeAtPoint: 2
+  waitTimeAtPoint: 4
   attackCooldown: 2
 --- !u!95 &100337418
 Animator:

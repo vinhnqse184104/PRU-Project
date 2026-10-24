@@ -336,6 +336,7 @@ public class PlayerMovement : MonoBehaviour
                 if (ePressed)
                 {
                     anim.SetTrigger("CutTrigger");
+              
                 }
 
                 // Phím R - Tung đòn tay 2

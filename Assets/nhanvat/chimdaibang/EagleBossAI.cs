@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro; // ĐÃ THÊM THƯ VIỆN NÀY ĐỂ DÙNG TEXTMESHPRO
 using System.Collections;
 
 public class EagleBossAI : MonoBehaviour
@@ -10,16 +11,17 @@ public class EagleBossAI : MonoBehaviour
     public float tocDoBay = 3f;
 
     [Header("Độ cao bay (MỚI)")]
-    public float doCaoBayTrenTroi = 3f; // Tự động bay cao hơn mặt đất 3 mét
-    public float tocDoSaXuong = 7f;    // Tốc độ lao nhanh xuống đất khi vồ mồi
+    public float doCaoBayTrenTroi = 3f;
+    public float tocDoSaXuong = 7f;
 
     [Header("Hiệu ứng Đẩy lùi (Bị chém)")]
     public float lucDayLui = 6f;
     public float thoiGianDayLui = 0.2f;
     private bool dangBiDay = false;
 
-    [Header("UI Thanh Máu")]
+    [Header("UI Thanh Máu & Hướng dẫn")]
     public Slider thanhMauBoss;
+    public TextMeshProUGUI txtNhiemVu; // ĐÃ THÊM BIẾN HIỂN THỊ NHIỆM VỤ
 
     [Header("Bay & Nghiêng Cánh")]
     public float tocDoXoay = 4f;
@@ -81,8 +83,6 @@ public class EagleBossAI : MonoBehaviour
     {
         if (isDead || thachSanh == null || dangBiDay) return;
 
-        // MỚI: Tính khoảng cách theo mặt phẳng ngang 2D (Chỉ lấy trục X và Z)
-        // Việc này giúp chim bay tít trên cao vẫn nhận diện được Thạch Sanh đang ở ngay dưới chân mình
         float khoangCach2D = Vector2.Distance(new Vector2(transform.position.x, transform.position.z), new Vector2(thachSanh.position.x, thachSanh.position.z));
 
         if (khoangCach2D <= tamDanh)
@@ -90,11 +90,9 @@ public class EagleBossAI : MonoBehaviour
             HienThanhMauBoss();
             QuayMatVaNghieng(thachSanh.position);
 
-            // Chim sà xuống mặt đất để chuẩn bị đánh (Lấy độ cao Y bằng với Thạch Sanh)
             Vector3 viTriDuoiDat = new Vector3(transform.position.x, thachSanh.position.y, transform.position.z);
             transform.position = Vector3.MoveTowards(transform.position, viTriDuoiDat, tocDoSaXuong * Time.deltaTime);
 
-            // Chờ chim hạ độ cao xuống gần chạm đất mới bắt đầu vung vuốt
             if (Mathf.Abs(transform.position.y - thachSanh.position.y) <= 1.5f)
             {
                 if (Time.time >= thoiGianDanhTiepTheo)
@@ -109,7 +107,6 @@ public class EagleBossAI : MonoBehaviour
             HienThanhMauBoss();
             QuayMatVaNghieng(thachSanh.position);
 
-            // Bay cao trên trời lượn theo Thạch Sanh
             Vector3 viTriTrenTroi = new Vector3(thachSanh.position.x, thachSanh.position.y + doCaoBayTrenTroi, thachSanh.position.z);
             transform.position = Vector3.MoveTowards(transform.position, viTriTrenTroi, tocDoBay * Time.deltaTime);
         }
@@ -149,7 +146,6 @@ public class EagleBossAI : MonoBehaviour
     private void TimDiemTuanTraMoi()
     {
         Vector2 diemNgauNhien2D = Random.insideUnitCircle * banKinhTuanTra;
-        // Điểm đến tuần tra luôn giữ ở trên cao
         float yTrenCao = thachSanh != null ? thachSanh.position.y + doCaoBayTrenTroi : diemXuatPhat.y + doCaoBayTrenTroi;
         diemDenHienTai = new Vector3(diemXuatPhat.x + diemNgauNhien2D.x, yTrenCao, diemXuatPhat.z + diemNgauNhien2D.y);
         dangChoDoi = false;
@@ -179,7 +175,6 @@ public class EagleBossAI : MonoBehaviour
     {
         if (isDead || thachSanh == null) return;
 
-        // Nới rộng tầm đánh một chút để dự phòng lúc chim đang sà xuống mà hoạt ảnh đã vung vuốt
         float khoangCach = Vector3.Distance(transform.position, thachSanh.position);
         if (khoangCach <= tamDanh + 1.5f)
         {
@@ -234,32 +229,34 @@ public class EagleBossAI : MonoBehaviour
     private void Chet()
     {
         isDead = true;
-        StopAllCoroutines(); // Dừng mọi hành động bay lượn, tuần tra
+        StopAllCoroutines();
 
         if (anim != null) anim.SetTrigger("Die");
         if (thanhMauBoss != null) thanhMauBoss.gameObject.SetActive(false);
 
-        // 1. Tắt va chạm vật lý cứng, biến thành Trigger để xác nằm trên đất 
-        // nhưng Thạch Sanh có thể đi xuyên qua mà không bị kẹt
+        // ĐÃ THÊM: HIỂN THỊ NHIỆM VỤ KHI CHIM CHẾT
+        if (txtNhiemVu != null)
+        {
+            // THÊM DÒNG NÀY VÀO: Ép Unity bật cái chữ này lên lỡ như nó đang bị ẩn
+            txtNhiemVu.gameObject.SetActive(true);
+            txtNhiemVu.text = "Nhiệm vụ: Đi tìm Công chúa và bế đến chỗ sợi dây thừng.";
+        }
+
         Collider coll = GetComponent<Collider>();
         if (coll != null) coll.isTrigger = true;
 
-        // 2. Hủy bỏ hoàn toàn Rigidbody (nếu có) để tránh lỗi rơi tự do lọt map
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null) Destroy(rb);
 
-        // 3. Nếu chim chết lúc đang bay trên cao, cho nó rơi từ từ xuống đất
         StartCoroutine(XacRoiXuongDat());
     }
 
     private IEnumerator XacRoiXuongDat()
     {
-        // Bắn 1 tia laser ảo từ bụng chim xuống đất để đo khoảng cách
         if (Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 50f))
         {
             Vector3 diemChamDat = hit.point;
 
-            // Kéo cái xác từ từ rơi xuống điểm chạm đất
             while (transform.position.y > diemChamDat.y + 0.1f)
             {
                 transform.position = Vector3.MoveTowards(transform.position, diemChamDat, 5f * Time.deltaTime);

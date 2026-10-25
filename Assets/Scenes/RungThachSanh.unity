@@ -7878,6 +7878,7 @@ MonoBehaviour:
   healthBar: {fileID: 1804742321}
   satThuongCuaThachSanh: 25
   tamChem: 3
+  quanLyGame: {fileID: 0}
 --- !u!114 &1298406154
 MonoBehaviour:
   m_ObjectHideFlags: 0

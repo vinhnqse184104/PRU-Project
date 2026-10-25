@@ -20,8 +20,11 @@ public class PlayerHealth : MonoBehaviour
     public int satThuongCuaThachSanh = 25;
     public float tamChem = 3f;
 
-    // THÊM DÒNG NÀY ĐỂ ĐIỀU KHIỂN HOẠT ẢNH
+    [Header("Quản lý Game (THÊM MỚI)")]
+    public QuanLyGame quanLyGame; // Kéo GameManager vào đây
+
     private Animator anim;
+    private bool isDead = false; // Ngăn chặn việc gọi hàm chết nhiều lần
 
     void Start()
     {
@@ -32,12 +35,13 @@ public class PlayerHealth : MonoBehaviour
             healthBar.value = currentHealth;
         }
 
-        // Tự động tìm Animator trên người Thạch Sanh
         anim = GetComponent<Animator>();
     }
 
     public void TakeDamage(int damage, Transform keTanCong = null)
     {
+        if (isDead) return; // Nếu đã chết thì không nhận thêm sát thương
+
         currentHealth -= damage;
         if (healthBar != null) healthBar.value = currentHealth;
 
@@ -54,12 +58,25 @@ public class PlayerHealth : MonoBehaviour
         }
         else
         {
-            // THẠCH SANH HẾT MÁU -> KÍCH HOẠT HOẠT ẢNH CHẾT
-            Debug.Log("Thạch Sanh đã hi sinh! GAME OVER.");
-            if (anim != null) anim.SetTrigger("Die");
+            ThachSanhChet();
+        }
+    }
 
-            // Tùy chọn: Tắt kịch bản di chuyển để người chơi không điều khiển được xác chết
-            // GetComponent<PlayerMovement>().enabled = false; 
+    private void ThachSanhChet()
+    {
+        isDead = true;
+        Debug.Log("Thạch Sanh đã hi sinh! GAME OVER.");
+
+        if (anim != null) anim.SetTrigger("Die");
+
+        // Tắt bộ điều khiển để không trượt đi được nữa
+        MonoBehaviour playerMovement = (MonoBehaviour)GetComponent("PlayerMovement");
+        if (playerMovement != null) playerMovement.enabled = false;
+
+        // Gọi màn hình thua hiện ra sau 2.5 giây (chờ chiếu xong hoạt ảnh ngã)
+        if (quanLyGame != null)
+        {
+            quanLyGame.Invoke("HienThiManHinhThua", 2.5f);
         }
     }
 
@@ -90,10 +107,10 @@ public class PlayerHealth : MonoBehaviour
         dangBiDay = false;
     }
 
-    // ----- THẠCH SANH CHÉM ĐẠI BÀNG (CÓ MÁY DÒ LỖI) -----
-    // ----- THẠCH SANH CHÉM MỌI LOẠI QUÁI -----
     public void ThachSanhChemTrug()
     {
+        if (isDead) return; // Không cho chém khi đã chết
+
         GameObject[] quaiVat = GameObject.FindGameObjectsWithTag("Enemy");
 
         foreach (GameObject quai in quaiVat)
@@ -102,18 +119,14 @@ public class PlayerHealth : MonoBehaviour
 
             if (khoangCach <= tamChem)
             {
-                // Kiểm tra xem quái vật này có phải là Đại Bàng không
                 EagleBossAI bossAI = quai.GetComponent<EagleBossAI>();
 
                 if (bossAI != null)
                 {
-                    // Nếu LÀ Đại Bàng -> Dùng code có đẩy lùi của Đại Bàng
                     bossAI.TakeDamage(satThuongCuaThachSanh, transform);
                 }
                 else
                 {
-                    // Nếu KHÔNG PHẢI Đại Bàng (tức là Chằn Tinh) 
-                    // -> Dùng lệnh SendMessage để tự động gọi hàm trừ máu cũ của Chằn Tinh
                     quai.SendMessage("TakeDamage", satThuongCuaThachSanh, SendMessageOptions.DontRequireReceiver);
                 }
             }

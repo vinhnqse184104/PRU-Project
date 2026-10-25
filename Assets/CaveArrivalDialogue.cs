@@ -13,8 +13,8 @@ public class CaveArrivalDialogue : MonoBehaviour
 
     [Header("Cài đặt Chuyển cảnh")]
     public GameObject dayThung;
-    public GameObject mainCamera;     // Đã mang Main Camera trở lại
-    public GameObject dialogueCamera; // Đã mang Dialogue Camera trở lại
+    public GameObject mainCamera;
+    public GameObject dialogueCamera;
 
     [Header("Nhân vật cần dừng lại")]
     public GameObject lyThong;
@@ -43,7 +43,7 @@ public class CaveArrivalDialogue : MonoBehaviour
             DungNhanVat(lyThong);
             DungNhanVat(meLyThong);
 
-            // 2. Chạy kịch bản (truyền Thạch Sanh vào để xoay mặt)
+            // 2. Chạy kịch bản
             StartCoroutine(KichBanThaDay(other.gameObject));
         }
     }
@@ -57,19 +57,15 @@ public class CaveArrivalDialogue : MonoBehaviour
         if (anim != null) anim.SetFloat("Speed", 0f);
     }
 
-    // HÀM MỚI: Ép các nhân vật quay mặt nhìn nhau
     private void XoayMatVaoNhau(GameObject thachSanh)
     {
         if (thachSanh == null || lyThong == null || meLyThong == null) return;
 
-        // Giữ nguyên trục Y để nhân vật không bị ngửa ra sau hay chúi nhủi xuống đất
         Vector3 viTriLyThong = new Vector3(lyThong.transform.position.x, thachSanh.transform.position.y, lyThong.transform.position.z);
         Vector3 viTriThachSanh = new Vector3(thachSanh.transform.position.x, lyThong.transform.position.y, thachSanh.transform.position.z);
         Vector3 viTriThachSanhChoMe = new Vector3(thachSanh.transform.position.x, meLyThong.transform.position.y, thachSanh.transform.position.z);
 
-        // Thạch Sanh nhìn Lý Thông
         thachSanh.transform.LookAt(viTriLyThong);
-        // Lý Thông và Mẹ Lý Thông nhìn Thạch Sanh
         lyThong.transform.LookAt(viTriThachSanh);
         meLyThong.transform.LookAt(viTriThachSanhChoMe);
     }
@@ -101,10 +97,8 @@ public class CaveArrivalDialogue : MonoBehaviour
 
     IEnumerator KichBanThaDay(GameObject thachSanh)
     {
-        // Quay mặt vào nhau
         XoayMatVaoNhau(thachSanh);
 
-        // Chuyển sang Camera tĩnh
         if (mainCamera != null) mainCamera.SetActive(false);
         if (dialogueCamera != null) dialogueCamera.SetActive(true);
 
@@ -122,7 +116,6 @@ public class CaveArrivalDialogue : MonoBehaviour
         isDialogueActive = false;
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
 
-        // Hiện dây thừng
         if (dayThung != null) dayThung.SetActive(true);
         yield return new WaitForSeconds(1.0f);
 
@@ -130,20 +123,16 @@ public class CaveArrivalDialogue : MonoBehaviour
 
         if (thachSanh != null && dayHang != null)
         {
-            // Trả lại Camera chính để nhìn Thạch Sanh trượt xuống
             if (mainCamera != null) mainCamera.SetActive(true);
             if (dialogueCamera != null) dialogueCamera.SetActive(false);
 
-            // Tạm tắt bộ va chạm để trượt
             CharacterController cc = thachSanh.GetComponent<CharacterController>();
             UnityEngine.AI.NavMeshAgent agent = thachSanh.GetComponent<UnityEngine.AI.NavMeshAgent>();
             if (cc != null) cc.enabled = false;
             if (agent != null) agent.enabled = false;
 
-            // Xoay Thạch Sanh hướng mặt vào vách hang (hoặc hướng sợi dây) khi leo xuống
             thachSanh.transform.rotation = Quaternion.Euler(0, thachSanh.transform.rotation.eulerAngles.y, 0);
 
-            // BẬT HOẠT ẢNH LEO DÂY
             Animator anim = thachSanh.GetComponentInChildren<Animator>();
             if (anim != null)
             {
@@ -153,11 +142,9 @@ public class CaveArrivalDialogue : MonoBehaviour
             Vector3 diemBatDau = thachSanh.transform.position;
             Vector3 diemKetThuc = dayHang.transform.position;
 
-            // Bạn có thể chỉnh lại thời gian này cho khớp với tốc độ của hoạt ảnh leo dây
             float thoiGianLeo = 3.5f;
             float thoiGianDaTroiQua = 0f;
 
-            // Quá trình trượt xuống
             while (thoiGianDaTroiQua < thoiGianLeo)
             {
                 thachSanh.transform.position = Vector3.Lerp(diemBatDau, diemKetThuc, thoiGianDaTroiQua / thoiGianLeo);
@@ -169,22 +156,22 @@ public class CaveArrivalDialogue : MonoBehaviour
             // ĐÁP ĐẤT VÀ KHÔI PHỤC TRẠNG THÁI ĐIỀU KHIỂN
             // ==========================================
 
-            // Chạm đất
             thachSanh.transform.position = diemKetThuc;
 
-            // TẮT HOẠT ẢNH LEO DÂY VÀ TRỞ VỀ ĐỨNG YÊN
             if (anim != null)
             {
                 anim.SetBool("IsClimbing", false);
             }
 
-            // 1. Bật lại bộ va chạm vật lý
             if (cc != null) cc.enabled = true;
 
-            // 2. Tiêu diệt AI tìm đường (NavMeshAgent) để không bị khóa chân
-            if (agent != null) Destroy(agent);
+            // Xử lý NavMeshAgent: Dùng Warp thay vì Destroy để không bị giật lùi về miệng hang
+            if (agent != null)
+            {
+                agent.Warp(diemKetThuc);
+                agent.enabled = true;
+            }
 
-            // 3. Bật lại quyền điều khiển bàn phím (Đổi "PlayerMovement" nếu file di chuyển của bạn tên khác)
             MonoBehaviour playerMovement = (MonoBehaviour)thachSanh.GetComponent("PlayerMovement");
             if (playerMovement != null)
             {

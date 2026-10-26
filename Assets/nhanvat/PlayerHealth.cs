@@ -26,6 +26,16 @@ public class PlayerHealth : MonoBehaviour
     private Animator anim;
     private bool isDead = false; // Ngăn chặn việc gọi hàm chết nhiều lần
 
+    [Header("Âm thanh Vũ khí")]
+    public AudioSource loaVuKhi;
+    public AudioClip tiengChemDa;
+    public AudioClip tiengChemQuai; // Tiếng "phập" hoặc tiếng kêu của động vật
+    public AudioClip tiengChatCay;  // Tiếng "cộc cộc" khi búa rìu đập vào gỗ
+
+    [Header("Âm thanh Nhân vật")]
+    public AudioSource loaThachSanh;         // Loa phát tiếng của Thạch Sanh
+    public AudioClip tiengThachSanhKeu;      // File âm thanh tiếng "Á", "Hự"
+
     void Start()
     {
         currentHealth = maxHealth;
@@ -38,10 +48,22 @@ public class PlayerHealth : MonoBehaviour
         anim = GetComponent<Animator>();
     }
 
+    // GOM CHUNG ÂM THANH VÀO HÀM NÀY ĐỂ TẤT CẢ QUÁI/VẬT ĐÁNH ĐỀU KÊU
     public void TakeDamage(int damage, Transform keTanCong = null)
     {
         if (isDead) return; // Nếu đã chết thì không nhận thêm sát thương
 
+        // ==========================================
+        // 1. PHÁT TIẾNG KÊU ĐAU KHI BỊ ĐÁNH
+        // ==========================================
+        if (loaThachSanh != null && tiengThachSanhKeu != null)
+        {
+            loaThachSanh.PlayOneShot(tiengThachSanhKeu);
+        }
+
+        // ==========================================
+        // 2. XỬ LÝ TRỪ MÁU VÀ ĐẨY LÙI
+        // ==========================================
         currentHealth -= damage;
         if (healthBar != null) healthBar.value = currentHealth;
 
@@ -69,11 +91,30 @@ public class PlayerHealth : MonoBehaviour
 
         if (anim != null) anim.SetTrigger("Die");
 
-        // Tắt bộ điều khiển để không trượt đi được nữa
+        // 1. Tắt kịch bản di chuyển
         MonoBehaviour playerMovement = (MonoBehaviour)GetComponent("PlayerMovement");
         if (playerMovement != null) playerMovement.enabled = false;
 
-        // Gọi màn hình thua hiện ra sau 2.5 giây (chờ chiếu xong hoạt ảnh ngã)
+        // 2. Tắt TẤT CẢ các loại vỏ bọc va chạm có thể cản trở việc nằm bẹp
+        CharacterController cc = GetComponent<CharacterController>();
+        if (cc != null) cc.enabled = false;
+
+        UnityEngine.AI.NavMeshAgent agent = GetComponent<UnityEngine.AI.NavMeshAgent>();
+        if (agent != null) agent.enabled = false;
+
+        Collider col = GetComponent<Collider>(); // Tắt luôn Capsule Collider nếu có
+        if (col != null) col.enabled = false;
+
+        // 3. Đóng băng trọng lực để xác không bị rơi lọt thỏm xuyên qua bản đồ 
+        // khi đã tắt hết va chạm ở bước 2
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.isKinematic = true;
+        }
+
+        // 4. Gọi màn hình thua hiện ra sau 2.5 giây
         if (quanLyGame != null)
         {
             quanLyGame.Invoke("HienThiManHinhThua", 2.5f);
@@ -86,8 +127,10 @@ public class PlayerHealth : MonoBehaviour
         else TakeDamage(damage, null);
     }
 
+    // Giữ nguyên hàm này để lỡ các script cũ đang gọi tới không bị lỗi
     public void NhanSatThuong(int damage, Transform keTanCong = null)
     {
+        // Chuyển hướng xử lý sang hàm gốc
         TakeDamage(damage, keTanCong);
     }
 
@@ -109,26 +152,46 @@ public class PlayerHealth : MonoBehaviour
 
     public void ThachSanhChemTrug()
     {
-        if (isDead) return; // Không cho chém khi đã chết
+        if (isDead) return;
 
+        // ==========================================
+        // 1. TÌM VÀ CHÉM QUÁI VẬT (Gà, Hươu, Chằn Tinh...)
+        // ==========================================
         GameObject[] quaiVat = GameObject.FindGameObjectsWithTag("Enemy");
-
         foreach (GameObject quai in quaiVat)
         {
             float khoangCach = Vector3.Distance(transform.position, quai.transform.position);
-
             if (khoangCach <= tamChem)
             {
-                EagleBossAI bossAI = quai.GetComponent<EagleBossAI>();
+                // PHÁT ÂM THANH CHÉM QUÁI
+                if (loaVuKhi != null && tiengChemQuai != null)
+                {
+                    loaVuKhi.PlayOneShot(tiengChemQuai);
+                }
 
-                if (bossAI != null)
+                EagleBossAI bossAI = quai.GetComponent<EagleBossAI>();
+                if (bossAI != null) bossAI.TakeDamage(satThuongCuaThachSanh, transform);
+                else quai.SendMessage("TakeDamage", satThuongCuaThachSanh, SendMessageOptions.DontRequireReceiver);
+            }
+        }
+
+        // ==========================================
+        // 2. TÌM VÀ CHẶT CÂY
+        // ==========================================
+        GameObject[] cacCay = GameObject.FindGameObjectsWithTag("Tree");
+        foreach (GameObject cay in cacCay)
+        {
+            float khoangCachCay = Vector3.Distance(transform.position, cay.transform.position);
+            if (khoangCachCay <= tamChem)
+            {
+                // PHÁT ÂM THANH CHẶT CÂY
+                if (loaVuKhi != null && tiengChatCay != null)
                 {
-                    bossAI.TakeDamage(satThuongCuaThachSanh, transform);
+                    loaVuKhi.PlayOneShot(tiengChatCay);
                 }
-                else
-                {
-                    quai.SendMessage("TakeDamage", satThuongCuaThachSanh, SendMessageOptions.DontRequireReceiver);
-                }
+
+                cay.SendMessage("TakeDamage", satThuongCuaThachSanh, SendMessageOptions.DontRequireReceiver);
+                cay.SendMessage("BiChat", SendMessageOptions.DontRequireReceiver);
             }
         }
     }

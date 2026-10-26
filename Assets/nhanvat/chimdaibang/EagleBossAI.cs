@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using TMPro; // ĐÃ THÊM THƯ VIỆN NÀY ĐỂ DÙNG TEXTMESHPRO
+using TMPro;
 using System.Collections;
 
 public class EagleBossAI : MonoBehaviour
@@ -21,7 +21,7 @@ public class EagleBossAI : MonoBehaviour
 
     [Header("UI Thanh Máu & Hướng dẫn")]
     public Slider thanhMauBoss;
-    public TextMeshProUGUI txtNhiemVu; // ĐÃ THÊM BIẾN HIỂN THỊ NHIỆM VỤ
+    public TextMeshProUGUI txtNhiemVu;
 
     [Header("Bay & Nghiêng Cánh")]
     public float tocDoXoay = 4f;
@@ -44,6 +44,19 @@ public class EagleBossAI : MonoBehaviour
     private float thoiGianDanhTiepTheo = 0f;
     private string[] danhSachDonDanh = { "DoChem1", "DoChem2", "DoChem3", "DoDa" };
 
+    // ==========================================
+    // KHAI BÁO ÂM THANH (MỚI THÊM)
+    // ==========================================
+    [Header("Âm thanh Boss")]
+    public AudioSource loaBoss;      // Loa gắn trên Đại Bàng
+    public AudioClip tiengBossDanh;  // File âm thanh tiếng rít/tiếng cào
+    public AudioClip tiengBiThuong;  // [THÊM DÒNG NÀY]: Tiếng kêu la khi bị chém trúng
+    // ==========================================
+
+    [Header("Âm thanh Bay")]
+    public AudioSource loaBay;       // Loa thứ 2 gắn trên Đại Bàng
+    public AudioClip tiengBay;       // File tiếng vỗ cánh phành phạch
+
     [Header("Liên kết")]
     public Transform thachSanh;
     private Animator anim;
@@ -65,6 +78,13 @@ public class EagleBossAI : MonoBehaviour
         {
             GameObject ts = GameObject.Find("thachsanh");
             if (ts != null) thachSanh = ts.transform;
+        }
+
+        if (loaBay != null && tiengBay != null)
+        {
+            loaBay.clip = tiengBay;
+            loaBay.loop = true; // Code tự động đánh dấu Loop giúp bạn
+            loaBay.Play();
         }
 
         diemXuatPhat = transform.position;
@@ -171,9 +191,19 @@ public class EagleBossAI : MonoBehaviour
         anim.SetTrigger(danhSachDonDanh[indexNgauNhien]);
     }
 
+    // ĐÂY LÀ HÀM ĐƯỢC ANIMATION GỌI KHI ĐẠI BÀNG ĐÁNH XUỐNG
     public void QuaiVatDanh()
     {
         if (isDead || thachSanh == null) return;
+
+        // ==========================================
+        // PHÁT ÂM THANH TẤN CÔNG (MỚI THÊM)
+        // ==========================================
+        if (loaBoss != null && tiengBossDanh != null)
+        {
+            loaBoss.PlayOneShot(tiengBossDanh);
+        }
+        // ==========================================
 
         float khoangCach = Vector3.Distance(transform.position, thachSanh.position);
         if (khoangCach <= tamDanh + 1.5f)
@@ -191,6 +221,15 @@ public class EagleBossAI : MonoBehaviour
         if (isDead) return;
 
         HienThanhMauBoss();
+
+        // ==========================================
+        // PHÁT ÂM THANH BỊ THƯƠNG (MỚI THÊM)
+        // ==========================================
+        if (loaBoss != null && tiengBiThuong != null)
+        {
+            loaBoss.PlayOneShot(tiengBiThuong);
+        }
+        // ==========================================
 
         currentHp -= luongSatThuong;
         if (thanhMauBoss != null) thanhMauBoss.value = currentHp;
@@ -234,10 +273,8 @@ public class EagleBossAI : MonoBehaviour
         if (anim != null) anim.SetTrigger("Die");
         if (thanhMauBoss != null) thanhMauBoss.gameObject.SetActive(false);
 
-        // ĐÃ THÊM: HIỂN THỊ NHIỆM VỤ KHI CHIM CHẾT
         if (txtNhiemVu != null)
         {
-            // THÊM DÒNG NÀY VÀO: Ép Unity bật cái chữ này lên lỡ như nó đang bị ẩn
             txtNhiemVu.gameObject.SetActive(true);
             txtNhiemVu.text = "Nhiệm vụ: Đi tìm Công chúa và bế đến chỗ sợi dây thừng.";
         }
@@ -247,6 +284,8 @@ public class EagleBossAI : MonoBehaviour
 
         Rigidbody rb = GetComponent<Rigidbody>();
         if (rb != null) Destroy(rb);
+
+        if (loaBay != null) loaBay.Stop();
 
         StartCoroutine(XacRoiXuongDat());
     }

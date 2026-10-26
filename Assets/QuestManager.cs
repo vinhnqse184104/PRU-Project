@@ -231,8 +231,8 @@ public class QuestManager : MonoBehaviour
         isChapter1Completed = true;
         if (questText != null)
         {
-            questText.text = "HOÀN THÀNH CHƯƠNG 1!\n\nCHƯƠNG 2: GẶP LÝ THÔNG";
-            questText.color = Color.green;
+            //questText.text = "HOÀN THÀNH CHƯƠNG 1!\n\nCHƯƠNG 2: GẶP LÝ THÔNG";
+            //questText.color = Color.green;
         }
 
         yield return new WaitForSeconds(3f);
@@ -313,7 +313,7 @@ public class QuestManager : MonoBehaviour
             float top = Screen.height - height - 40f;
 
             GUI.Box(new Rect(left, top, width, height),
-                "<b><color=#00FF00>HOÀN THÀNH CHƯƠNG 1!</color></b>\n<size=18><color=#FFD700>Đang chuyển sang Chương 2: Gặp Lý Thông...</color></size>",
+                "<b><color=#00FF00>HOÀN THÀNH CHƯƠNG 1!</color></b>\n<size=18><color=#FFD700>Theo Lý Thông về nhà...</color></size>",
                 compStyle);
         }
     }

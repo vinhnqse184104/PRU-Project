@@ -9,6 +9,10 @@ public class ChanTinhAttack : MonoBehaviour
     public float attackRange = 2.0f;
     public int attackDamage = 20;
 
+    [Header("Âm thanh Bị thương")]
+    public AudioSource loaThachSanh;    // Kéo Audio Source của Thạch Sanh vào đây
+    public AudioClip tiengBiThuong;     // Nạp file tiếng kêu đau của nhân vật
+
     // Hàm này dùng chung cho TẤT CẢ các đòn tay, chân, húc đầu...
     public void QuaiVatDanh()
     {
@@ -38,5 +42,17 @@ public class ChanTinhAttack : MonoBehaviour
         tamDanh.y += 1f;
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(tamDanh, attackRange);
+    }
+
+    public void TakeDamage(int luongSatThuong, Vector3 viTriBiDanh)
+    {
+        // 1. PHÁT TIẾNG KÊU ĐAU NGAY LẬP TỨC
+        if (loaThachSanh != null && tiengBiThuong != null)
+        {
+            loaThachSanh.PlayOneShot(tiengBiThuong);
+        }
+
+        // 2. CÁC ĐOẠN CODE TRỪ MÁU CŨ CỦA BẠN GIỮ NGUYÊN BÊN DƯỚI
+        // (Ví dụ: currentHealth -= luongSatThuong; ...)
     }
 }

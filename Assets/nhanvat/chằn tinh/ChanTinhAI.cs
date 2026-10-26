@@ -21,6 +21,17 @@ public class ChanTinhAI : MonoBehaviour
     public float attackCooldown = 2.0f;
     private float lastAttackTime = 0f;
 
+    // ==========================================
+    // KHAI BÁO ÂM THANH CHẰN TINH (MỚI THÊM)
+    // ==========================================
+    [Header("Âm thanh Chằn Tinh")]
+    public AudioSource loaHanhDong;      // Loa 1: Phát tiếng đánh
+    public AudioClip tiengDanh;          // Tiếng gầm rú/vung vũ khí
+
+    public AudioSource loaDiChuyen;      // Loa 2: Phát tiếng chân (Loop)
+    public AudioClip tiengBuocChan;      // Tiếng rầm rập
+    // ==========================================
+
     private NavMeshAgent agent;
     private Animator animator;
     private Vector3 spawnPoint;
@@ -64,10 +75,30 @@ public class ChanTinhAI : MonoBehaviour
             PatrolRoutine();
         }
 
+        // ==========================================
+        // XỬ LÝ HOẠT ẢNH VÀ ÂM THANH BƯỚC CHÂN
+        // ==========================================
+        float currentSpeed = agent.isStopped ? 0f : agent.desiredVelocity.magnitude;
         if (animator != null)
         {
-            float currentSpeed = agent.isStopped ? 0f : agent.desiredVelocity.magnitude;
             animator.SetFloat("Speed", currentSpeed);
+        }
+
+        // Bật/tắt tiếng bước chân dựa vào tốc độ di chuyển
+        if (currentSpeed > 0.1f)
+        {
+            if (loaDiChuyen != null && !loaDiChuyen.isPlaying)
+            {
+                loaDiChuyen.clip = tiengBuocChan;
+                loaDiChuyen.Play();
+            }
+        }
+        else
+        {
+            if (loaDiChuyen != null && loaDiChuyen.isPlaying)
+            {
+                loaDiChuyen.Stop();
+            }
         }
     }
 
@@ -90,6 +121,12 @@ public class ChanTinhAI : MonoBehaviour
             // === HỆ THỐNG TUNG CHIÊU NGẪU NHIÊN ===
             if (Time.time >= lastAttackTime + attackCooldown)
             {
+                // [MỚI THÊM] Bật tiếng đánh khi tung chiêu
+                if (loaHanhDong != null && tiengDanh != null)
+                {
+                    loaHanhDong.PlayOneShot(tiengDanh);
+                }
+
                 if (animator != null)
                 {
                     // Trả về số nguyên ngẫu nhiên: 1, 2, hoặc 3 (số 4 ở đây nghĩa là cận dưới 4)

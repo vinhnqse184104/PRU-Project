@@ -16,6 +16,10 @@ public class MauChanTinh : MonoBehaviour
     public float knockbackForce = 1.5f; // Tôi giữ nguyên mức 1.5 cho bạn
     public float knockbackDuration = 0.2f;
 
+    [Header("Âm thanh Bị thương")]
+    public AudioSource loaBiThuong;      // Có thể xài chung loa với lúc đánh
+    public AudioClip tiengChanTinhKeu;   // Tiếng rống đau đớn
+
     // Biến để ngăn quái chết nhiều lần
     private bool isDead = false;
     private bool arenaKnockbackActive;
@@ -41,6 +45,11 @@ public class MauChanTinh : MonoBehaviour
         if (thachSanh != null)
         {
             viTriNguoiDanh = thachSanh.transform.position;
+        }
+
+        if (loaBiThuong != null && tiengChanTinhKeu != null)
+        {
+            loaBiThuong.PlayOneShot(tiengChanTinhKeu);
         }
 
         // Truyền đủ 2 thông tin cho hàm TakeDamage gốc ở bên dưới xử lý

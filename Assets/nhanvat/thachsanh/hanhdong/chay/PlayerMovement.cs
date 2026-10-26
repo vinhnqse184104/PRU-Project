@@ -21,6 +21,15 @@ public class PlayerMovement : MonoBehaviour
     private Vector3 velocity;
     private Camera mainCam;
 
+    [Header("Âm thanh Vũ khí")]
+    public AudioSource loaVuKhi;
+    public AudioClip tiengChemQuai;
+    public AudioClip tiengChatCay;
+
+    [Header("Âm thanh Di chuyển")]
+    public AudioSource loaDiChuyen;      // Loa riêng gắn dưới chân Thạch Sanh
+    public AudioClip tiengBuocChan;      // File âm thanh tiếng chạy (lộp cộp, xào xạc)
+
     void Start()
     {
         controller = GetComponent<CharacterController>();
@@ -367,6 +376,28 @@ public class PlayerMovement : MonoBehaviour
                 }
             }
         }
+
+        // KIỂM TRA PHÁT ÂM THANH BƯỚC CHÂN
+        // Dùng trục Horizontal (A/D) và Vertical (W/S) để biết người chơi có đang bấm nút đi lại hay không
+        bool dangDiChuyen = Mathf.Abs(Input.GetAxis("Horizontal")) > 0.1f || Mathf.Abs(Input.GetAxis("Vertical")) > 0.1f;
+
+        if (dangDiChuyen) // (Tùy chọn: Thêm điều kiện && isGrounded nếu bạn có biến check chạm đất để không phát tiếng khi nhảy)
+        {
+            // Nếu đang di chuyển mà loa chưa phát -> Bật loa lên
+            if (loaDiChuyen != null && !loaDiChuyen.isPlaying)
+            {
+                loaDiChuyen.clip = tiengBuocChan;
+                loaDiChuyen.Play();
+            }
+        }
+        else
+        {
+            // Nếu buông phím ra đứng im -> Tắt loa ngay lập tức
+            if (loaDiChuyen != null && loaDiChuyen.isPlaying)
+            {
+                loaDiChuyen.Stop();
+            }
+        }
     }
 
     // 8. HÀM TẤN CÔNG BẰNG TAY
@@ -380,6 +411,9 @@ public class PlayerMovement : MonoBehaviour
             // 1. Chém trúng Thú/Quái
             if (enemy.CompareTag("Enemy"))
             {
+                // [THÊM 1 DÒNG NÀY ĐỂ PHÁT TIẾNG CHÉM QUÁI]
+                if (loaVuKhi != null && tiengChemQuai != null) loaVuKhi.PlayOneShot(tiengChemQuai);
+
                 // Ưu tiên 1: Thử tìm máu của Boss Chằn Tinh
                 MauChanTinh bossHealth = enemy.GetComponent<MauChanTinh>();
                 if (bossHealth != null)
@@ -387,21 +421,19 @@ public class PlayerMovement : MonoBehaviour
                     bossHealth.TakeDamage(attackDamage, transform.position);
                 }
 
-                // Ưu tiên 2: Thử tìm máu của Gà, Hươu, Ngựa, Hổ (Thường dùng EnemyHealth)
+                // Ưu tiên 2: Thử tìm máu của Gà, Hươu, Ngựa, Hổ
                 EnemyHealth animalHealth = enemy.GetComponent<EnemyHealth>();
                 if (animalHealth != null)
                 {
-                    // Nếu EnemyHealth của bạn chưa có chức năng văng lùi, chỉ cần truyền sát thương:
                     animalHealth.TakeDamage(attackDamage);
-
-                    // LƯU Ý: Nếu script EnemyHealth của bạn CÓ chức năng văng lùi giống Chằn Tinh,
-                    // hãy thêm dấu // tắt dòng trên và bật dòng dưới lên:
-                    // animalHealth.TakeDamage(attackDamage, transform.position);
                 }
             }
             // 2. Chém trúng Cây
             else if (enemy.CompareTag("Tree"))
             {
+                // [THÊM 1 DÒNG NÀY ĐỂ PHÁT TIẾNG CHẶT CÂY]
+                if (loaVuKhi != null && tiengChatCay != null) loaVuKhi.PlayOneShot(tiengChatCay);
+
                 TreeHealth tree = enemy.GetComponent<TreeHealth>();
                 if (tree != null)
                 {

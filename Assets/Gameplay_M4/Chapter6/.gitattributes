@@ -1,0 +1,2 @@
+# Preserve Unity native navigation data byte for byte.
+Navigation/*.asset binary

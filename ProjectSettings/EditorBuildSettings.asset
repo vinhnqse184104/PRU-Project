@@ -38,5 +38,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Chapter6_HangDaiBang.unity
     guid: 487ad242c39e8e142b1b6b5f407d4b9b
+  - enabled: 1
+    path: Assets/Gameplay_M4/Chapter6/Scene_M4_Chapter6_Map.unity
+    guid: e3009b6ca9289f346a23f02ec5c21300
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

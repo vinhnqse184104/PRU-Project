@@ -22,6 +22,7 @@ namespace PRU.M4
 
         private CharacterController controller;
         private float verticalSpeed, cameraYaw, spawnYaw, attackElapsed, cooldown;
+        private bool attackingEnabled = true;
         private bool inputLocked, attacking, hitApplied, snapCamera;
         private bool hasSpeed, hasJump, hasAttack;
         private uint swingRevision;
@@ -116,7 +117,7 @@ namespace PRU.M4
 
         public bool TryAttack()
         {
-            if (!isActiveAndEnabled || !CanAct || attacking || cooldown > 0f) return false;
+            if (!isActiveAndEnabled || !CanAct || !attackingEnabled || attacking || cooldown > 0f) return false;
             attacking = true; hitApplied = false; attackElapsed = 0;
             swingRevision++;
             cooldown = attackCooldown; swingDirection = transform.forward;
@@ -168,10 +169,16 @@ namespace PRU.M4
             CancelAttack(); verticalSpeed = 0;
             if (hasSpeed && characterAnimator != null) characterAnimator.SetFloat(SpeedId, 0f);
         }
+        public void SetAttackingEnabled(bool allowed)
+        {
+            attackingEnabled=allowed;
+            if(!allowed)CancelAttack();
+        }
 
         public void ResetCombat()
         {
             EnsureReferences();
+            attackingEnabled=true;
             CancelAttack(); cooldown = verticalSpeed = 0; SwingId = 0;
             inputLocked = false;
             bool enabled = controller.enabled;

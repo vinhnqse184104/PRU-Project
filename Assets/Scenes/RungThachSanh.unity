@@ -2836,7 +2836,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_VertexColorAlwaysGammaSpace: 0
   m_UseReflectionProbes: 0
-  m_AdditionalShaderChannelsFlag: 0
+  m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
   m_SortingOrder: 100
@@ -3340,7 +3340,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 2.2000122, y: -154}
+  m_AnchoredPosition: {x: 2.2000122, y: -136.4}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &362473826
@@ -4313,7 +4313,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -5617,7 +5617,7 @@ MonoBehaviour:
   m_fontMaterials: []
   m_fontColor32:
     serializedVersion: 2
-    rgba: 4294967295
+    rgba: 4060141311
   m_fontColor: {r: 1, g: 0.84, b: 0, a: 0.95}
   m_enableVertexGradient: 0
   m_colorMode: 3
@@ -5630,7 +5630,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2
@@ -6518,10 +6518,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 362473825}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0, y: -13.1}
-  m_SizeDelta: {x: 0, y: 0}
+  m_AnchorMin: {x: 0, y: 0.5}
+  m_AnchorMax: {x: 0.74375004, y: 1}
+  m_AnchoredPosition: {x: 20.5, y: -49.7}
+  m_SizeDelta: {x: 41, y: 15}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &898112900
 MonoBehaviour:
@@ -6609,7 +6609,7 @@ MonoBehaviour:
   m_VertexBufferAutoSizeReduction: 0
   m_useMaxVisibleDescender: 1
   m_pageToDisplay: 1
-  m_margin: {x: 0, y: 0, z: 0, w: 0}
+  m_margin: {x: 0, y: -40.84561, z: 0, w: 16.68862}
   m_isUsingLegacyAnimationComponent: 0
   m_isVolumetricText: 0
   m_hasFontAssetChanged: 0
@@ -8862,7 +8862,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -1368195991936319270, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.53
+      value: 0.557
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
       propertyPath: m_Name
@@ -8923,6 +8923,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1298406156}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1298406157}
   m_SourcePrefab: {fileID: 100100000, guid: e4da29f22a0535a47990157b43cbd78e, type: 3}
 --- !u!1 &1298406144 stripped
 GameObject:
@@ -9125,16 +9128,21 @@ MonoBehaviour:
   speakerText: {fileID: 482993236}
   contentText: {fileID: 1983093290}
   hintText: {fileID: 694621054}
+  loaHoiThoai: {fileID: 1298406157}
+  giongThachSanhCau1: {fileID: 8300000, guid: be6ee1657c20dda488dbd24fe1e3b7de, type: 3}
+  giongLyThongCau2: {fileID: 8300000, guid: 7d0676948fdde484e958c9fe55629a4a, type: 3}
+  giongThachSanhCau3: {fileID: 8300000, guid: 5c42ec70f702c75478ae8288e6af67c6, type: 3}
+  giongLyThongCau4: {fileID: 8300000, guid: 77e74187f34f896488ede48b53d1bc14, type: 3}
   woodCollected: 0
   chickenKilled: 0
   deerKilled: 0
   horseKilled: 0
   tigerKilled: 0
-  woodRequired: 2
-  chickenRequired: 2
-  deerRequired: 1
-  horseRequired: 1
-  tigerRequired: 1
+  woodRequired: 0
+  chickenRequired: 0
+  deerRequired: 0
+  horseRequired: 0
+  tigerRequired: 0
 --- !u!82 &1298406155
 AudioSource:
   m_ObjectHideFlags: 0
@@ -9248,6 +9256,103 @@ AudioSource:
   m_Volume: 1
   m_Pitch: 1
   Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 1000
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+--- !u!82 &1298406157
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298406144}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
@@ -12789,7 +12894,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0}
   m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: -400, y: 0}
+  m_AnchoredPosition: {x: -400, y: 115.8}
   m_SizeDelta: {x: 500, y: 250}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1825790671
@@ -14294,7 +14399,7 @@ MonoBehaviour:
   m_spriteAsset: {fileID: 0}
   m_tintAllSprites: 0
   m_StyleSheet: {fileID: 0}
-  m_TextStyleHashCode: 0
+  m_TextStyleHashCode: -1183493901
   m_overrideHtmlColors: 0
   m_faceColor:
     serializedVersion: 2

@@ -32,6 +32,15 @@ public class LyThongGuide : MonoBehaviour
     public TextMeshProUGUI contentText;
     public TextMeshProUGUI hintText;
 
+    [Header("Âm thanh chạy Cắt cảnh")]
+    public AudioSource loaChayLyThong;
+    public AudioSource loaChayThachSanh;
+
+    [Header("Âm thanh Lồng tiếng Hội thoại")]
+    public AudioSource loaHoiThoai;           // Loa độc lập để phát giọng nói
+    public AudioClip[] motherDialogueAudio;   // Mảng 8 file tiếng cho đoạn gặp Mẹ
+    public AudioClip[] secretDialogueAudio;   // Mảng 5 file tiếng cho đoạn Bí mật
+
     public void EnsureDialogueUI()
     {
         if (dialoguePanel == null || speakerText == null || contentText == null || hintText == null)
@@ -72,8 +81,8 @@ public class LyThongGuide : MonoBehaviour
     {
         "MẸ LÝ THÔNG:\n\"Trời đất ơi, mày rước cái thằng to lù lù này về làm gì cho tốn cơm tốn gạo hả con?\"",
         "LÝ THÔNG:\n\"Mẹ bé cái mồm thôi! Mẹ quên là nay mai đến phiên con phải ra miếu nộp mạng cho Chằn Tinh rồi à?\"",
-        "MẸ LÝ THÔNG:\n\"Chết cha... mẹ quên béng mất! Thế ý mày rước nó về, bắt nó gọi tao bằng mẹ là để...\"",
-        "LÝ THÔNG:\n\"Đúng rồi đấy! Nó thật thà ngốc nghếch, lại đang mang ơn anh em ta. Đêm mai con sẽ lừa nó đi canh miếu, cho nó đi thế mạng thay con!\"",
+        "MẸ LÝ THÔNG:\n\"Chết cha... mẹ quên đi mất! Thế ý mày rước nó về, bắt nó gọi tao bằng mẹ là để...\"",
+        "LÝ THÔNG:\n\"Đúng rồi đấy! Nó thật thà ngốc nghếch, lại đang mang ơn mẹ con ta . Đêm mai con sẽ lừa nó đi canh miếu, cho nó đi thế mạng thay con!\"",
         "MẸ LÝ THÔNG:\n\"Ôi trời ơi, con trai mẹ thông minh tuyệt đỉnh! Khà khà... Mưu kế hay lắm, mẹ con ta yên tâm vào ngủ thôi!\""
     };
 
@@ -194,6 +203,21 @@ public class LyThongGuide : MonoBehaviour
         bool isMoving = agent != null && agent.velocity.magnitude > 0.1f && !agent.isStopped;
         SetWalking(isMoving);
 
+        // ==========================================
+        // XỬ LÝ BẬT/TẮT ÂM THANH BƯỚC CHÂN
+        // ==========================================
+        if (isMoving)
+        {
+            if (loaChayLyThong != null && !loaChayLyThong.isPlaying) loaChayLyThong.Play();
+            if (loaChayThachSanh != null && !loaChayThachSanh.isPlaying) loaChayThachSanh.Play();
+        }
+        else
+        {
+            if (loaChayLyThong != null && loaChayLyThong.isPlaying) loaChayLyThong.Stop();
+            if (loaChayThachSanh != null && loaChayThachSanh.isPlaying) loaChayThachSanh.Stop();
+        }
+        // ==========================================
+
         if (thachSanh != null)
         {
             if (isMoving)
@@ -226,6 +250,11 @@ public class LyThongGuide : MonoBehaviour
             if (agent != null && agent.isOnNavMesh) agent.isStopped = true;
             SetWalking(false);
             if (thachSanh != null) SetCharacterWalking(thachSanh.gameObject, false);
+
+            // Dừng tiếng chạy khi đã về tới nhà
+            if (loaChayLyThong != null) loaChayLyThong.Stop();
+            if (loaChayThachSanh != null) loaChayThachSanh.Stop();
+
             if (doorInteraction != null) doorInteraction.OpenDoor();
             if (motherNPC != null)
             {
@@ -365,6 +394,30 @@ public class LyThongGuide : MonoBehaviour
     {
         currentSpeech = text;
         EnsureDialogueUI();
+
+        // ========================================================
+        // [MỚI THÊM] HỆ THỐNG TỰ ĐỘNG PHÁT ÂM THANH THEO CÂU THOẠI
+        // ========================================================
+        if (loaHoiThoai != null)
+        {
+            loaHoiThoai.Stop(); // Ngắt tiếng câu cũ nếu người chơi bấm lướt qua nhanh
+            AudioClip clipDePhat = null;
+
+            // Nếu đang ở đoạn hội thoại với mẹ -> Lấy âm thanh từ mảng motherDialogueAudio
+            if (currentState == CutsceneState.MotherDialogue && motherDialogueAudio != null && currentDialogueIndex < motherDialogueAudio.Length)
+            {
+                clipDePhat = motherDialogueAudio[currentDialogueIndex];
+            }
+            // Nếu đang ở đoạn hội thoại bí mật -> Lấy âm thanh từ mảng secretDialogueAudio
+            else if (currentState == CutsceneState.SecretDialogue && secretDialogueAudio != null && currentDialogueIndex < secretDialogueAudio.Length)
+            {
+                clipDePhat = secretDialogueAudio[currentDialogueIndex];
+            }
+
+            // Có file thì phát
+            if (clipDePhat != null) loaHoiThoai.PlayOneShot(clipDePhat);
+        }
+        // ========================================================
 
         // Tách tên người nói và lời thoại
         string speaker = "";

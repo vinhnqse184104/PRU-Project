@@ -3299,8 +3299,6 @@ MonoBehaviour:
   attackOffset: 1
   attackRange: 1.5
   attackDamage: 20
-  loaThachSanh: {fileID: 919132149120013158}
-  tiengBiThuong: {fileID: 8300000, guid: 8f573eea40d1868469a9a78f824d8e5e, type: 3}
 --- !u!82 &100337425
 AudioSource:
   m_ObjectHideFlags: 0
@@ -3322,10 +3320,10 @@ AudioSource:
   SpatializePostEffects: 0
   Priority: 128
   DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
+  MinDistance: 3
+  MaxDistance: 20
   Pan2D: 0
-  rolloffMode: 0
+  rolloffMode: 1
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -3358,7 +3356,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 0
+      value: 1
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -3418,7 +3416,7 @@ AudioSource:
   Spatialize: 0
   SpatializePostEffects: 0
   Priority: 128
-  DopplerLevel: 1
+  DopplerLevel: 2.03
   MinDistance: 1
   MaxDistance: 500
   Pan2D: 0
@@ -3514,6 +3512,11 @@ MonoBehaviour:
   speakerText: {fileID: 0}
   contentText: {fileID: 0}
   hintText: {fileID: 0}
+  loaHoiThoai: {fileID: 0}
+  giongThachSanhCau1: {fileID: 0}
+  giongLyThongCau2: {fileID: 0}
+  giongThachSanhCau3: {fileID: 0}
+  giongLyThongCau4: {fileID: 0}
   woodCollected: 0
   chickenKilled: 0
   deerKilled: 0

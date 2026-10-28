@@ -21,6 +21,13 @@ public class QuestManager : MonoBehaviour
     public TextMeshProUGUI contentText;
     public TextMeshProUGUI hintText;
 
+    [Header("Âm thanh Lồng tiếng")]
+    public AudioSource loaHoiThoai;       // Loa phát giọng nói
+    public AudioClip giongThachSanhCau1;  // File ghi âm Câu 1
+    public AudioClip giongLyThongCau2;    // File ghi âm Câu 2
+    public AudioClip giongThachSanhCau3;  // File ghi âm Câu 3
+    public AudioClip giongLyThongCau4;    // File ghi âm Câu 4
+
     public void EnsureDialogueUI()
     {
         if (dialoguePanel == null || speakerText == null || contentText == null || hintText == null)
@@ -210,20 +217,31 @@ public class QuestManager : MonoBehaviour
         if (questText != null) questText.text = "";
 
         // ================= CÂU 1 =================
+        if (loaHoiThoai != null) loaHoiThoai.Stop(); // Ngắt tiếng cũ (nếu có)
+        if (loaHoiThoai != null && giongThachSanhCau1 != null) loaHoiThoai.PlayOneShot(giongThachSanhCau1);
         ShowDialogueLine("THẠCH SANH", "Chào huynh! Sao huynh lại nằm ngủ giữa chốn rừng thiêng nước độc thế này?", new Color(0.3f, 0.8f, 1.0f));
         yield return StartCoroutine(WaitForKeyPress());
 
         // ================= CÂU 2 =================
+        if (loaHoiThoai != null) loaHoiThoai.Stop();
+        if (loaHoiThoai != null && giongLyThongCau2 != null) loaHoiThoai.PlayOneShot(giongLyThongCau2);
         ShowDialogueLine("LÝ THÔNG", "Ây da... ta đi bán rượu ngang qua, mệt quá nên thiếp đi mất. Cảm ơn chú em đã đánh thức! Mà nhìn chú em sức vóc quả là hơn người!", new Color(1.0f, 0.72f, 0.2f));
         yield return StartCoroutine(WaitForKeyPress());
 
         // ================= CÂU 3 =================
+        if (loaHoiThoai != null) loaHoiThoai.Stop();
+        if (loaHoiThoai != null && giongThachSanhCau3 != null) loaHoiThoai.PlayOneShot(giongThachSanhCau3);
         ShowDialogueLine("THẠCH SANH", "Đệ mồ côi cha mẹ từ nhỏ, sống lủi thủi ở gốc đa này, ngày ngày đốn củi kiếm sống qua ngày thôi.", new Color(0.3f, 0.8f, 1.0f));
         yield return StartCoroutine(WaitForKeyPress());
 
         // ================= CÂU 4 =================
+        if (loaHoiThoai != null) loaHoiThoai.Stop();
+        if (loaHoiThoai != null && giongLyThongCau4 != null) loaHoiThoai.PlayOneShot(giongLyThongCau4);
         ShowDialogueLine("LÝ THÔNG", "Ôi, hóa ra chú em cũng đơn độc. Hay là theo ta về nhà, anh em ta kết nghĩa huynh đệ, có rau ăn rau có cháo ăn cháo, chú em thấy sao?", new Color(1.0f, 0.72f, 0.2f));
         yield return StartCoroutine(WaitForKeyPress());
+
+        // Khi kết thúc đoạn hội thoại, ngắt tiếng luôn nếu nó còn đang nói dở
+        if (loaHoiThoai != null) loaHoiThoai.Stop();
 
         // ================= KẾT THÚC CHƯƠNG 1 =================
         isDialogueActive = false;

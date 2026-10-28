@@ -4106,6 +4106,11 @@ MonoBehaviour:
   speakerText: {fileID: 0}
   contentText: {fileID: 0}
   hintText: {fileID: 0}
+  loaHoiThoai: {fileID: 0}
+  giongThachSanhCau1: {fileID: 0}
+  giongLyThongCau2: {fileID: 0}
+  giongThachSanhCau3: {fileID: 0}
+  giongLyThongCau4: {fileID: 0}
   woodCollected: 0
   chickenKilled: 0
   deerKilled: 0

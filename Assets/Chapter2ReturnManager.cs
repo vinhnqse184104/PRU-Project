@@ -34,6 +34,10 @@ public class Chapter2ReturnManager : MonoBehaviour
     public TextMeshProUGUI contentText;
     public TextMeshProUGUI hintText;
 
+    [Header("Âm thanh Lồng tiếng Hội thoại")]
+    public AudioSource loaHoiThoai;
+    public AudioClip[] mangAmThanhHoiThoai; // Mảng chứa 12 file ghi âm tương ứng với 12 câu chữ
+
     public void EnsureDialogueUI()
     {
         if (dialoguePanel == null || speakerText == null || contentText == null || hintText == null)
@@ -439,6 +443,25 @@ public class Chapter2ReturnManager : MonoBehaviour
     {
         EnsureDialogueUI();
         DialogueLine line = returnDialogues[currentDialogueStep];
+
+        // ========================================================
+        // [MỚI THÊM] HỆ THỐNG TỰ ĐỘNG PHÁT ÂM THANH THEO CÂU THOẠI
+        // ========================================================
+        if (loaHoiThoai != null)
+        {
+            loaHoiThoai.Stop(); // Cắt ngay tiếng câu cũ nếu người chơi bấm lướt nhanh
+
+            // Kiểm tra xem mảng âm thanh có file ở vị trí câu hiện tại không
+            if (mangAmThanhHoiThoai != null && currentDialogueStep < mangAmThanhHoiThoai.Length)
+            {
+                AudioClip clipDePhat = mangAmThanhHoiThoai[currentDialogueStep];
+                if (clipDePhat != null)
+                {
+                    loaHoiThoai.PlayOneShot(clipDePhat);
+                }
+            }
+        }
+        // ========================================================
 
         if (dialoguePanel != null)
         {

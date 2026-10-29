@@ -8,6 +8,13 @@ public class Chapter3Intro : MonoBehaviour
     [TextArea(5, 10)]
     public string introText = "Đêm hôm đó, Lý Thông lấy cớ bận việc, nhờ Thạch Sanh đi canh miếu thờ thay mình.\n\nThạch Sanh thật thà mang búa ra đi mà không hề hay biết rằng... đây là miếu thờ của một con Chằn Tinh hung ác chuyên ăn thịt người.";
 
+    // ==========================================
+    // [MỚI THÊM] ÂM THANH DẪN TRUYỆN
+    // ==========================================
+    [Header("Âm thanh Dẫn truyện")]
+    public AudioSource loaDanTruyen;
+    public AudioClip tiengDanTruyen;
+
     [Header("UI Hội thoại Canvas uGUI (Chuẩn Chapter 4)")]
     public GameObject dialoguePanel;
     public TextMeshProUGUI speakerText;
@@ -39,6 +46,14 @@ public class Chapter3Intro : MonoBehaviour
 
         EnsureDialogueUI();
         ShowIntroUI();
+
+        // ==========================================
+        // [MỚI THÊM] PHÁT TIẾNG DẪN TRUYỆN LÚC MỞ MÀN
+        // ==========================================
+        if (loaDanTruyen != null && tiengDanTruyen != null)
+        {
+            loaDanTruyen.PlayOneShot(tiengDanTruyen);
+        }
     }
 
     private void ShowIntroUI()
@@ -106,6 +121,14 @@ public class Chapter3Intro : MonoBehaviour
         {
             isShowing = false;
             if (dialoguePanel != null) dialoguePanel.SetActive(false);
+
+            // ==========================================
+            // [MỚI THÊM] TẮT TIẾNG DẪN TRUYỆN KHI NGƯỜI CHƠI BẤM BỎ QUA
+            // ==========================================
+            if (loaDanTruyen != null)
+            {
+                loaDanTruyen.Stop();
+            }
 
             // 3. Ẩn chữ và mở khóa di chuyển cho Thạch Sanh
             if (playerMovement != null) playerMovement.enabled = true;

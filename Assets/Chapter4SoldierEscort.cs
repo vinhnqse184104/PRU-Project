@@ -58,6 +58,14 @@ public class Chapter4SoldierEscort : MonoBehaviour
     public TextMeshProUGUI hintText;
     public TextMeshProUGUI dialogueText;
 
+    [Header("Âm thanh Lồng tiếng Hội thoại")]
+    public AudioSource loaHoiThoai;
+    public AudioClip[] mangAmThanhHoiThoai; // Chứa 7 file ghi âm
+
+    [Header("Âm thanh Bước chân Cắt cảnh")]
+    public AudioSource loaBuocChanLyThong;
+    public AudioSource loaBuocChanLinh;
+
     // Component nội bộ
     private CharacterController lyThongCC;
     private CharacterController soldierCC;
@@ -408,6 +416,18 @@ public class Chapter4SoldierEscort : MonoBehaviour
             if (!string.IsNullOrEmpty(soldierSpeedParam)) soldierAnim.SetFloat(soldierSpeedParam, walking ? 1.0f : 0.0f);
             if (!string.IsNullOrEmpty(soldierWalkingBoolParam)) soldierAnim.SetBool(soldierWalkingBoolParam, walking);
         }
+
+        // ==========================================
+        // BẬT/TẮT TIẾNG BƯỚC CHÂN LÍNH
+        // ==========================================
+        if (walking)
+        {
+            if (loaBuocChanLinh != null && !loaBuocChanLinh.isPlaying) loaBuocChanLinh.Play();
+        }
+        else
+        {
+            if (loaBuocChanLinh != null && loaBuocChanLinh.isPlaying) loaBuocChanLinh.Stop();
+        }
     }
 
     private void SetLyThongWalking(bool walking)
@@ -417,6 +437,18 @@ public class Chapter4SoldierEscort : MonoBehaviour
             if (!animParamsCached) CacheAnimatorParameters();
             if (!string.IsNullOrEmpty(lyThongSpeedParam)) lyThongAnim.SetFloat(lyThongSpeedParam, walking ? 1.0f : 0.0f);
             if (!string.IsNullOrEmpty(lyThongWalkingBoolParam)) lyThongAnim.SetBool(lyThongWalkingBoolParam, walking);
+        }
+
+        // ==========================================
+        // BẬT/TẮT TIẾNG BƯỚC CHÂN LÝ THÔNG
+        // ==========================================
+        if (walking)
+        {
+            if (loaBuocChanLyThong != null && !loaBuocChanLyThong.isPlaying) loaBuocChanLyThong.Play();
+        }
+        else
+        {
+            if (loaBuocChanLyThong != null && loaBuocChanLyThong.isPlaying) loaBuocChanLyThong.Stop();
         }
     }
 
@@ -574,6 +606,25 @@ public class Chapter4SoldierEscort : MonoBehaviour
     private void UpdateDialogueUI()
     {
         if (currentDialogueStep < 0 || currentDialogueStep >= scriptLines.Length) return;
+
+        // ========================================================
+        // TỰ ĐỘNG PHÁT ÂM THANH THEO CÂU THOẠI
+        // ========================================================
+        if (loaHoiThoai != null)
+        {
+            loaHoiThoai.Stop(); // Cắt tiếng cũ nếu người chơi bấm lướt nhanh
+
+            if (mangAmThanhHoiThoai != null && currentDialogueStep < mangAmThanhHoiThoai.Length)
+            {
+                AudioClip clipDePhat = mangAmThanhHoiThoai[currentDialogueStep];
+                if (clipDePhat != null)
+                {
+                    loaHoiThoai.PlayOneShot(clipDePhat);
+                }
+            }
+        }
+        // ========================================================
+
         DialogueEntry entry = scriptLines[currentDialogueStep];
         string hexColor = ColorUtility.ToHtmlStringRGB(entry.speakerColor);
         string formatted = $"<b><color=#{hexColor}>{entry.speaker}:</color></b>\n\"{entry.message}\"";
@@ -590,6 +641,11 @@ public class Chapter4SoldierEscort : MonoBehaviour
 
     private void EndDialogue()
     {
+        // ========================================================
+        // TẮT TIẾNG KHI KẾT THÚC HỘI THOẠI
+        // ========================================================
+        if (loaHoiThoai != null) loaHoiThoai.Stop();
+
         currentState = EscortState.Completed;
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
         if (dialogueText != null) dialogueText.text = "";

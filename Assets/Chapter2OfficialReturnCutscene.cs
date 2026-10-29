@@ -41,6 +41,11 @@ public class Chapter2OfficialReturnCutscene : MonoBehaviour
     public TextMeshProUGUI contentText;
     public TextMeshProUGUI hintText;
 
+    [Header("Âm thanh Lồng tiếng")]
+    public AudioSource loaHoiThoai;
+    public AudioClip tiengLyThongGoiMe; // File riêng cho câu gọi mẹ ở đầu Cutscene
+    public AudioClip[] mangAmThanhKhoeKhoang; // Mảng 5 file cho 5 câu trong hình
+
     private bool isCutsceneRunning = false;
     private bool isCutsceneCompleted = false;
 
@@ -277,9 +282,23 @@ public class Chapter2OfficialReturnCutscene : MonoBehaviour
         }
     }
 
-    private void ShowDialogue(string speaker, string message, Color speakerColor)
+    private void ShowDialogue(string speaker, string message, Color speakerColor, AudioClip clipDePhat = null)
     {
         EnsureDialogueUI();
+
+        // =========================================
+        // HỆ THỐNG PHÁT ÂM THANH
+        // =========================================
+        if (loaHoiThoai != null)
+        {
+            loaHoiThoai.Stop(); // Cắt tiếng cũ nếu bấm lướt nhanh
+            if (clipDePhat != null)
+            {
+                loaHoiThoai.PlayOneShot(clipDePhat);
+            }
+        }
+        // =========================================
+
         if (dialoguePanel != null)
         {
             dialoguePanel.SetActive(true);
@@ -318,9 +337,13 @@ public class Chapter2OfficialReturnCutscene : MonoBehaviour
         isCutsceneRunning = true;
         yield return new WaitForSeconds(0.6f);
 
-        ShowDialogue("LÝ THÔNG", "Mẹ ơi! Mẹ mau ra đây! Con có tin vui muốn báo!", new Color(1.0f, 0.72f, 0.2f));
+        // Câu gọi mẹ đầu tiên (truyền file tiengLyThongGoiMe)
+        ShowDialogue("LÝ THÔNG", "Mẹ ơi! Mẹ mau ra đây! Con có tin vui muốn báo!", new Color(1.0f, 0.72f, 0.2f), tiengLyThongGoiMe);
         yield return StartCoroutine(WaitForKeyPress());
         HideDialogue();
+
+        // Ngắt tiếng ngay khi hộp thoại gọi mẹ đóng lại
+        if (loaHoiThoai != null) loaHoiThoai.Stop();
 
         if (doorInteraction != null) doorInteraction.OpenDoor();
         yield return new WaitForSeconds(0.4f);
@@ -330,14 +353,25 @@ public class Chapter2OfficialReturnCutscene : MonoBehaviour
         AlignFacing();
         yield return new WaitForSeconds(0.4f);
 
+        // Vòng lặp 5 câu khoe khoang
         for (int i = 0; i < boastingDialogues.Length; i++)
         {
             var line = boastingDialogues[i];
-            ShowDialogue(line.speaker, line.content, line.speakerColor);
+
+            // Lấy file âm thanh tương ứng từ mảng (nếu có)
+            AudioClip clipChoCauNay = null;
+            if (mangAmThanhKhoeKhoang != null && i < mangAmThanhKhoeKhoang.Length)
+            {
+                clipChoCauNay = mangAmThanhKhoeKhoang[i];
+            }
+
+            ShowDialogue(line.speaker, line.content, line.speakerColor, clipChoCauNay);
             yield return StartCoroutine(WaitForKeyPress());
         }
 
         HideDialogue();
+        if (loaHoiThoai != null) loaHoiThoai.Stop();
+
         isCutsceneCompleted = true;
         isCutsceneRunning = false;
         yield return new WaitForSeconds(nextSceneDelay);

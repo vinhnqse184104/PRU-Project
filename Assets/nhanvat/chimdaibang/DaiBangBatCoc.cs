@@ -25,11 +25,22 @@ public class DaiBangBatCoc : MonoBehaviour
     public TextMeshProUGUI introText;
     [TextArea(2, 4)]
     public string noiDungIntro = "Vài ngày sau, tại Hoàng cung...\nNhà vua, Công chúa và Quận công Lý Thông đang vãn cảnh...";
+    public AudioClip tiengIntro;
 
     [Header("===== CÀI ĐẶT UI HỘI THOẠI =====")]
     public GameObject dialoguePanel;
     public TextMeshProUGUI speakerText;
     public TextMeshProUGUI contentText;
+
+    [Header("Âm thanh Hiệu ứng")]
+    public AudioSource loaHieuUng;
+    public AudioClip tiengDaiBangLaoXuong;
+
+    // =====================================
+    // KHAI BÁO LOA TỔNG CHO TOÀN BỘ SCRIPT
+    // =====================================
+    [Header("Âm thanh Lồng tiếng")]
+    public AudioSource loaHoiThoai;
 
     [System.Serializable]
     public struct DongThoai
@@ -37,6 +48,11 @@ public class DaiBangBatCoc : MonoBehaviour
         public string tenNhanVat;
         [TextArea(2, 4)] public string noiDung;
         public Color mauChu;
+
+        // =====================================
+        // BIẾN LƯU FILE ÂM THANH TỪNG CÂU THOẠI
+        // =====================================
+        public AudioClip fileGhiAm;
     }
 
     [Header("Kịch bản Hội Thoại")]
@@ -59,7 +75,19 @@ public class DaiBangBatCoc : MonoBehaviour
         {
             blackIntroPanel.SetActive(true);
             introText.text = noiDungIntro;
+
+            // --- BẬT TIẾNG INTRO ---
+            if (loaHoiThoai != null)
+            {
+                loaHoiThoai.Stop();
+                if (tiengIntro != null) loaHoiThoai.PlayOneShot(tiengIntro);
+            }
+
             yield return StartCoroutine(DoiNguoiChoiBamPhim());
+
+            // --- TẮT TIẾNG INTRO NGAY KHI BẤM QUA ---
+            if (loaHoiThoai != null) loaHoiThoai.Stop();
+
             blackIntroPanel.SetActive(false);
         }
 
@@ -87,6 +115,18 @@ public class DaiBangBatCoc : MonoBehaviour
         dialoguePanel.SetActive(true);
         foreach (var cau in danhSachThoai)
         {
+            // =====================================
+            // BẬT TIẾNG TỪNG CÂU THOẠI
+            // =====================================
+            if (loaHoiThoai != null)
+            {
+                loaHoiThoai.Stop(); // Cắt tiếng câu cũ
+                if (cau.fileGhiAm != null)
+                {
+                    loaHoiThoai.PlayOneShot(cau.fileGhiAm); // Phát tiếng câu mới
+                }
+            }
+
             if (speakerText != null)
             {
                 // Nếu tên nhân vật là "DẪN TRUYỆN", ta ẩn đi cho giống tiểu thuyết
@@ -104,6 +144,12 @@ public class DaiBangBatCoc : MonoBehaviour
 
             yield return StartCoroutine(DoiNguoiChoiBamPhim());
         }
+
+        // =====================================
+        // TẮT TIẾNG KHI ĐÓNG HỘI THOẠI
+        // =====================================
+        if (loaHoiThoai != null) loaHoiThoai.Stop();
+
         dialoguePanel.SetActive(false);
     }
 
@@ -127,6 +173,15 @@ public class DaiBangBatCoc : MonoBehaviour
     {
         daiBang.position = diemBayRa.position;
         daiBang.gameObject.SetActive(true);
+
+        // =====================================
+        // PHÁT TIẾNG ĐẠI BÀNG LAO XUỐNG
+        // =====================================
+        if (loaHieuUng != null && tiengDaiBangLaoXuong != null)
+        {
+            loaHieuUng.PlayOneShot(tiengDaiBangLaoXuong);
+        }
+        // =====================================
 
         while (Vector3.Distance(daiBang.position, congChua.position) > 1.5f)
         {

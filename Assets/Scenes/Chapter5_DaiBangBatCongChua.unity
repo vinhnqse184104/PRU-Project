@@ -10858,6 +10858,7 @@ GameObject:
   m_Component:
   - component: {fileID: 100381200}
   - component: {fileID: 100381201}
+  - component: {fileID: 100381202}
   m_Layer: 0
   m_Name: CutsceneManager
   m_TagString: Untagged
@@ -10903,36 +10904,145 @@ MonoBehaviour:
   gocQuayMoi: {fileID: 1307934399}
   blackIntroPanel: {fileID: 1474327656}
   introText: {fileID: 1162667390}
-  noiDungIntro: "V\xE0i ng\xE0y sau, t\u1EA1i Ho\xE0ng cung...\nNh\xE0 vua, C\xF4ng ch\xFAa v\xE0 Ph\xF2 M\xE3 L\xFD Th\xF4ng \u0111ang \u0111\u1EE9ng tr\xF2 chuy\u1EC7n v\u1EDBi nhau "
+  noiDungIntro: "V\xE0i ng\xE0y sau, t\u1EA1i Ho\xE0ng cung...\nNh\xE0 vua, C\xF4ng ch\xFAa v\xE0 Qu\u1EADn C\xF4ng L\xFD Th\xF4ng \u0111ang \u0111\u1EE9ng tr\xF2 chuy\u1EC7n v\u1EDBi nhau "
+  tiengIntro: {fileID: 8300000, guid: 513b77fd6dcfec24caecd90c0dc61737, type: 3}
   dialoguePanel: {fileID: 1217603441}
   speakerText: {fileID: 1508240116}
   contentText: {fileID: 1530029614}
+  loaHieuUng: {fileID: 2048933563}
+  tiengDaiBangLaoXuong: {fileID: 8300000, guid: 1a6a5df6184e21a46b708ccacb2103be, type: 3}
+  loaHoiThoai: {fileID: 100381202}
   thoaiTruocKhiBat:
   - tenNhanVat: "NH\xC0 VUA"
     noiDung: "Khanh l\xE0m Qu\u1EADn c\xF4ng \u0111\xE3 quen ch\u01B0a? Nay c\xF9ng tr\u1EABm v\xE0 C\xF4ng ch\xFAa \u0111i d\u1EA1o, khanh th\u1EA5y phong c\u1EA3nh ho\xE0ng cung th\u1EBF n\xE0o?"
     mauChu: {r: 0.8490566, g: 0.7871636, b: 0.10092555, a: 0}
+    fileGhiAm: {fileID: 8300000, guid: 50ae1a28785a97548966b59ef4d7857f, type: 3}
   - tenNhanVat: "L\xDD TH\xD4NG"
     noiDung: "T\xE2u b\u1EC7 h\u1EA1, nh\u1EDD h\u1ED3ng ph\xFAc lai tr\xE1ng, th\u1EA7n th\u1EA5y m\u1ECDi th\u1EE9 \u0111\u1EC1u tr\xE1ng l\u1EC7, c\u1EA3m th\u1EA5y r\u1EA5t vui khi c\xF3 \u0111\u01B0\u1EE3c ng\xE0y h\xF4m nay \u1EA1 !"
     mauChu: {r: 0.85660374, g: 0.18345842, b: 0.16000704, a: 0}
+    fileGhiAm: {fileID: 8300000, guid: 208bfee3b2f1c0540b090b947483ae74, type: 3}
   - tenNhanVat: "C\xD4NG CH\xDAA"
     noiDung: "Ph\u1EE5 v\u01B0\u01A1ng, t\u1EEB ng\xE0y tr\u1EEB \u0111\u01B0\u1EE3c y\xEAu qu\xE1i, b\xE1 t\xE1nh kh\xF4ng c\xF2n l\u1EA7m than, nhi th\u1EA7n c\u0169ng th\u1EA5y l\xF2ng nh\u1EB9 nh\xF5m."
     mauChu: {r: 0.9245283, g: 0.116874315, b: 0.8286625, a: 0}
+    fileGhiAm: {fileID: 8300000, guid: b3b9c6abf5d76f0458f886f7cb06a72e, type: 3}
   - tenNhanVat: "NH\xC0 VUA"
     noiDung: "Haha, t\u1EA5t c\u1EA3 l\xE0 nh\u1EDD c\xF4ng l\u1EDBn c\u1EE7a  L\xFD Th\xF4ng \u0111\xE2y..."
     mauChu: {r: 0.93207544, g: 0.8521526, b: 0.117828384, a: 0}
+    fileGhiAm: {fileID: 8300000, guid: 0180e89333dc6144c9f90328a2ad43a2, type: 3}
   - tenNhanVat: "D\u1EAAN TRUY\u1EC6N"
-    noiDung: "\u0110ang n\xF3i chuy\u1EC7n vui v\u1EDBi nhau b\u1ED5ng nhi\xEAn t\u1EEB \u0111\xE2u tr\xEAn tr\u1EDDi c\xF3 1 con \u0111\u1EA1i b\xE0ng tinh t\u1EEB \u0111\xE2u xu\u1EA5t hi\u1EC7n \xE0o xu\u1ED1ng b\u1EAFt c\xF4ng ch\xFAa \u0111i m\u1EA5t t\xEDch."
+    noiDung: "\u0110ang n\xF3i chuy\u1EC7n vui v\u1EDBi nhau b\u1ED5ng nhi\xEAn tr\u1EDDi c\xF3 1 con \u0111\u1EA1i b\xE0ng tinh t\u1EEB \u0111\xE2u xu\u1EA5t hi\u1EC7n \xE0o xu\u1ED1ng b\u1EAFt c\xF4ng ch\xFAa \u0111i m\u1EA5t ."
     mauChu: {r: 0.8867924, g: 0.8835828, b: 0.85500175, a: 0}
+    fileGhiAm: {fileID: 8300000, guid: 228bed477c184ed47b9e79d20bf86550, type: 3}
   thoaiSauKhiBat:
   - tenNhanVat: "NH\xC0 VUA "
     noiDung: "Tr\u1EDDi \u01A1i! Qu\xE1i \u0111i\u1EC3u ph\u01B0\u01A1ng n\xE0o to gan d\xE1m c\u01B0\u1EDBp con g\xE1i ta !"
     mauChu: {r: 0.93962264, g: 0.8772611, b: 0.12587398, a: 0}
+    fileGhiAm: {fileID: 8300000, guid: 0d99b21a6de84c549945581c46362261, type: 3}
   - tenNhanVat: "L\xDD TH\xD4NG "
     noiDung: "B\u1EC7... b\u1EC7 h\u1EA1 c\u1EA9n th\u1EADn! (L\xF9i l\u1EA1i run r\u1EA9y) Y\xEAu... y\xEAu qu\xE1i n\xE0y \u0111\xE1ng s\u1EE3 qu\xE1!"
     mauChu: {r: 0.9169811, g: 0.25417605, b: 0.06747586, a: 0}
+    fileGhiAm: {fileID: 8300000, guid: 892d316a89576b24fab94c37874f7fa1, type: 3}
   - tenNhanVat: "NH\xC0 VUA "
     noiDung: "L\xFD Th\xF4ng! Ng\u01B0\u01A1i l\xE0 ng\u01B0\u1EDDi t\xE0i gi\u1ECFi nh\u1EA5t! Tr\u1EABm ra l\u1EC7nh cho ng\u01B0\u01A1i ph\u1EA3i t\xECm v\xE0 c\u1EE9u b\u1EB1ng \u0111\u01B0\u1EE3c C\xF4ng ch\xFAa v\u1EC1 \u0111\xE2y !"
     mauChu: {r: 0.91764706, g: 0.86353153, b: 0.06666663, a: 0}
+    fileGhiAm: {fileID: 8300000, guid: 58224e93811593c45a2bd8789578a368, type: 3}
+--- !u!82 &100381202
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 100381199}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &100907385
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -172265,7 +172375,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 28e85ff1a1c2f5f4c8bf7d63503a7613, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2048933563}
   m_SourcePrefab: {fileID: 100100000, guid: 28e85ff1a1c2f5f4c8bf7d63503a7613, type: 3}
 --- !u!4 &1659019576 stripped
 Transform:
@@ -197225,6 +197338,7 @@ GameObject:
   - component: {fileID: 1918488953}
   - component: {fileID: 1918488952}
   - component: {fileID: 1918488951}
+  - component: {fileID: 1918488956}
   m_Layer: 0
   m_Name: Main Camera (1)
   m_TagString: MainCamera
@@ -197375,6 +197489,14 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 15, y: 90, z: 0}
+--- !u!81 &1918488956
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1918488950}
+  m_Enabled: 1
 --- !u!1001 &1918650635
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -211803,6 +211925,108 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1030996740, guid: abc00000000016214156280470527958, type: 3}
   m_PrefabInstance: {fileID: 2048517073}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &2048933561 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 28e85ff1a1c2f5f4c8bf7d63503a7613, type: 3}
+  m_PrefabInstance: {fileID: 1659019575}
+  m_PrefabAsset: {fileID: 0}
+--- !u!82 &2048933563
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2048933561}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_Resource: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 1
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1001 &2049839290
 PrefabInstance:
   m_ObjectHideFlags: 0

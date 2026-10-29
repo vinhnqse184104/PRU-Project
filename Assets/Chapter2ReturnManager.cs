@@ -118,7 +118,7 @@ public class Chapter2ReturnManager : MonoBehaviour
         new Color(1.0f, 0.85f, 0.2f)),
 
     new DialogueLine("THẠCH SANH",
-        "Vâng, em xin nghe lời anh. Em về đây!",
+        "Vâng, em xin nghe lời anh. Em đi đây!",
         new Color(0.3f, 0.8f, 1.0f))
     };
 

@@ -12,7 +12,7 @@ public class Chapter3Intro : MonoBehaviour
     // [MỚI THÊM] ÂM THANH DẪN TRUYỆN
     // ==========================================
     [Header("Âm thanh Dẫn truyện")]
-    public AudioSource loaDanTruyen;
+    public AudioSource loaDanTruyen;    
     public AudioClip tiengDanTruyen;
 
     [Header("UI Hội thoại Canvas uGUI (Chuẩn Chapter 4)")]

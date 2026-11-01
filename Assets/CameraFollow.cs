@@ -31,9 +31,13 @@ public class CameraFollow : MonoBehaviour
             return;
         }
 
-        // Khóa chuột vào giữa màn hình và ẩn con trỏ đi
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // Khóa chuột vào giữa màn hình và ẩn con trỏ đi (chỉ khi không có màn hình giới thiệu đang mở)
+        GameObject intro = GameObject.Find("Panel_GioiThieu");
+        if (Time.timeScale > 0f && (intro == null || !intro.activeInHierarchy))
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
 
         ResolveTarget();
     }
@@ -71,6 +75,9 @@ public class CameraFollow : MonoBehaviour
             enabled = false;
             return;
         }
+
+        // Khi game đang tạm dừng (ví dụ màn hình giới thiệu đang mở) thì không xoay camera theo chuột
+        if (Time.timeScale <= 0f) return;
 
         // Trong Chapter 4, nếu chưa có mục tiêu thì cập nhật mục tiêu sang Lý Thông
         if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name.ToLower().Contains("chapter4"))

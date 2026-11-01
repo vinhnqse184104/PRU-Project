@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.InputSystem;
@@ -165,11 +165,10 @@ public class CaveArrivalDialogue : MonoBehaviour
 
             if (cc != null) cc.enabled = true;
 
-            // Xử lý NavMeshAgent: Dùng Warp thay vì Destroy để không bị giật lùi về miệng hang
+            // Xử lý NavMeshAgent: Tắt hoàn toàn trên Thạch Sanh để CharacterController toàn quyền điều khiển
             if (agent != null)
             {
-                agent.Warp(diemKetThuc);
-                agent.enabled = true;
+                agent.enabled = false;
             }
 
             MonoBehaviour playerMovement = (MonoBehaviour)thachSanh.GetComponent("PlayerMovement");
@@ -177,6 +176,12 @@ public class CaveArrivalDialogue : MonoBehaviour
             {
                 playerMovement.enabled = true;
             }
+
+            MonoBehaviour playerCut = (MonoBehaviour)thachSanh.GetComponent("PlayerCut");
+            if (playerCut != null) playerCut.enabled = true;
+
+            MonoBehaviour playerKick = (MonoBehaviour)thachSanh.GetComponent("PlayerKick");
+            if (playerKick != null) playerKick.enabled = true;
         }
     }
 

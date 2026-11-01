@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using TMPro;
 using System.Collections;
 using UnityEngine.InputSystem;
@@ -63,56 +63,148 @@ public class EagleQuestDialogue : MonoBehaviour
         }
     }
 
+    [Header("Cài đặt Xoay nhân vật")]
+    public float turnSpeed = 360f; // Tốc độ xoay mượt theo trục Y (độ/giây)
+
+    private Coroutine rotateCoroutine;
+
+    // Tạm khóa hoặc mở lại điều khiển của Thạch Sanh (di chuyển và tấn công)
+    private void SetPlayerControl(bool enabled)
+    {
+        if (thachSanhMovement != null)
+        {
+            thachSanhMovement.enabled = enabled;
+        }
+
+        if (thachSanh != null)
+        {
+            PlayerMovement pm = thachSanh.GetComponent<PlayerMovement>();
+            if (pm != null) pm.enabled = enabled;
+
+            PlayerCut cut = thachSanh.GetComponent<PlayerCut>() ?? thachSanh.GetComponentInChildren<PlayerCut>();
+            if (cut != null) cut.enabled = enabled;
+
+            PlayerKick kick = thachSanh.GetComponent<PlayerKick>() ?? thachSanh.GetComponentInChildren<PlayerKick>();
+            if (kick != null) kick.enabled = enabled;
+
+            Animator anim = thachSanh.GetComponent<Animator>() ?? thachSanh.GetComponentInChildren<Animator>();
+            if (anim != null && !enabled)
+            {
+                anim.SetFloat("Speed", 0f);
+            }
+
+            if (enabled)
+            {
+                NavMeshAgent agent = thachSanh.GetComponent<NavMeshAgent>();
+                if (agent != null)
+                {
+                    agent.enabled = false;
+                }
+            }
+        }
+    }
+
+    // Ra lệnh cho Thạch Sanh xoay mặt mượt mà về phía đối phương
+    public void RotateThachSanhTowards(GameObject target, float speed = 0f)
+    {
+        if (thachSanh == null || target == null) return;
+        if (speed <= 0f) speed = turnSpeed;
+
+        if (rotateCoroutine != null)
+        {
+            StopCoroutine(rotateCoroutine);
+        }
+        rotateCoroutine = StartCoroutine(SmoothRotateThachSanh(target.transform.position, speed));
+    }
+
+    // Coroutine xoay mượt bằng Quaternion.RotateTowards CHỈ trên trục Y, không nghiêng ngã
+    private IEnumerator SmoothRotateThachSanh(Vector3 targetPos, float speed)
+    {
+        if (thachSanh == null) yield break;
+
+        Vector3 startPos = thachSanh.transform.position;
+        Vector3 direction = targetPos - startPos;
+        direction.y = 0f; // Chỉ xoay theo trục Y, không nghiêng hoặc ngã người
+
+        if (direction.sqrMagnitude < 0.0001f) yield break;
+
+        Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+        while (thachSanh != null && Quaternion.Angle(thachSanh.transform.rotation, targetRotation) > 0.5f)
+        {
+            thachSanh.transform.rotation = Quaternion.RotateTowards(
+                thachSanh.transform.rotation,
+                targetRotation,
+                speed * Time.deltaTime
+            );
+            // Bảo toàn tuyệt đối vị trí đứng của Thạch Sanh không bị xê dịch
+            thachSanh.transform.position = startPos;
+            yield return null;
+        }
+
+        if (thachSanh != null)
+        {
+            thachSanh.transform.rotation = targetRotation;
+            thachSanh.transform.position = startPos;
+        }
+    }
+
     IEnumerator KichBanNhoCuuCongChua()
     {
-        // 1. Tạm khóa người chơi điều khiển Thạch Sanh khi đang nói chuyện
-        if (thachSanhMovement != null) thachSanhMovement.enabled = false;
+        // 1. Tạm khóa toàn bộ điều khiển di chuyển và tấn công của Thạch Sanh
+        SetPlayerControl(false);
+
+        // 2. Chuyển sang góc Camera Hội Thoại nếu có
+        if (mainCamera != null) mainCamera.SetActive(false);
+        if (dialogueCamera != null) dialogueCamera.SetActive(true);
 
         isDialogueActive = true;
+
+        // Câu 1: MẸ LÝ THÔNG cất tiếng gọi -> Thạch Sanh tự động quay người lại đối diện Mẹ Lý Thông
+        RotateThachSanhTowards(meLyThong);
         ShowDialogueLine("MẸ LÝ THÔNG", "Ôi Thạch Sanh con ơi! Mẹ và anh Thông tìm con mỏi cả mắt! May quá con đây rồi!", colorMeLyThong);
         yield return StartCoroutine(WaitForKeyPress());
+
+        // Câu 2: THẠCH SANH đáp lại
         ShowDialogueLine("THẠCH SANH", "Ủa, mẹ và anh Thông? Sao hai người lại vào tận chốn rừng sâu hiểm độc thế này?", colorThachSanh);
         yield return StartCoroutine(WaitForKeyPress());
+
+        // Câu 3: LÝ THÔNG nói -> Thạch Sanh quay người hướng về Lý Thông
+        RotateThachSanhTowards(lyThong);
         ShowDialogueLine("LÝ THÔNG", "Em ơi, Công chúa vừa bị Đại Bàng tinh quắp bay về phía rặng núi mờ kia rồi!", colorLyThong);
         yield return StartCoroutine(WaitForKeyPress());
+
+        // Câu 4: MẸ LÝ THÔNG khẩn khoản -> Thạch Sanh quay người hướng về Mẹ Lý Thông
+        RotateThachSanhTowards(meLyThong);
         ShowDialogueLine("MẸ LÝ THÔNG", "Anh con thì sức yếu tài hèn... Con hãy thương lấy mẹ và anh, giúp gia đình ta cứu công chúa nhé!", colorMeLyThong);
         yield return StartCoroutine(WaitForKeyPress());
+
+        // Câu 5: THẠCH SANH khẳng định
         ShowDialogueLine("THẠCH SANH", "Mẹ và anh đừng lo! Đệ sẽ đi tìm hang ổ của Đại Bàng tinh để cứu công chúa!", colorThachSanh);
         yield return StartCoroutine(WaitForKeyPress());
+
+        // Câu 6: LÝ THÔNG kết luận -> Thạch Sanh quay người hướng về Lý Thông
+        RotateThachSanhTowards(lyThong);
         ShowDialogueLine("LÝ THÔNG", "Tốt lắm! Anh và mẹ sẽ đi cùng em .", colorLyThong);
         yield return StartCoroutine(WaitForKeyPress());
 
         isDialogueActive = false;
         if (dialoguePanel != null) dialoguePanel.SetActive(false);
 
-        // ==========================================
-        // 2. RA LỆNH CHO 3 NGƯỜI ĐI ĐẾN HANG ĐẠI BÀNG
-        // ==========================================
-        MoveCharacter(thachSanh);
-        MoveCharacter(lyThong);
-        MoveCharacter(meLyThong);
-
-        // 1. Chuyển sang góc Camera Hội Thoại
-        if (mainCamera != null) mainCamera.SetActive(false);
-        if (dialogueCamera != null) dialogueCamera.SetActive(true);
-
-        if (thachSanhMovement != null) thachSanhMovement.enabled = false;
-
-        isDialogueActive = true;
-
-
-
-        isDialogueActive = false;
-        if (dialoguePanel != null) dialoguePanel.SetActive(false);
-
-        // 2. Hội thoại xong -> Trả lại Camera chính để theo dõi nhân vật chạy
+        // 3. Trả lại Camera chính để theo dõi nhân vật di chuyển
         if (mainCamera != null) mainCamera.SetActive(true);
         if (dialogueCamera != null) dialogueCamera.SetActive(false);
 
-        // 3. Ra lệnh chạy đến đích
-        MoveCharacter(thachSanh);
-        MoveCharacter(lyThong);
-        MoveCharacter(meLyThong);
+        // ==========================================
+        // 4. RA LỆNH CHO LÝ THÔNG VÀ MẸ ĐI ĐẾN CỬA HANG, MỞ LẠI ĐIỀU KHIỂN CHO THẠCH SANH
+        // ==========================================
+        if (caveDestination != null)
+        {
+            MoveCharacter(lyThong);
+            MoveCharacter(meLyThong);
+        }
+
+        SetPlayerControl(true);
     }
 
     // Hàm gắn AI và ra lệnh đi đến đích

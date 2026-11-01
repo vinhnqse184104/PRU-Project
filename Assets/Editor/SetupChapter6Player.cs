@@ -8,7 +8,7 @@ using System.Collections.Generic;
 [InitializeOnLoad]
 public class SetupChapter6Player
 {
-    private const string SETUP_SESSION_KEY = "PRU_Chapter6PlayerSetup_v6";
+    private const string SETUP_SESSION_KEY = "PRU_Chapter6PlayerSetup_v7";
     private const string SCENE_PATH = "Assets/Scenes/Chapter6_HangDaiBang.unity";
     private const string TS_FBX_PATH = "Assets/nhanvat/thachsanh/hanhdong/dungyen/Meshy_AI_Axe_Bearing_Wanderer_biped_Animation_01a0d469-8153-7436-8709-d393703fc126_withSkin.fbx";
     private const string CONTROLLER_PATH = "Assets/nhanvat/thachsanh/hanhdong/chay.controller";
@@ -196,19 +196,21 @@ public class SetupChapter6Player
         PlayerKick kick = playerInstance.GetComponent<PlayerKick>();
         if (kick == null) kick = playerInstance.AddComponent<PlayerKick>();
 
-        // G. CapsuleCollider & Rigidbody (Khớp cấu hình Chapter 3)
+        // G. CapsuleCollider & Rigidbody (Khớp cấu hình Chapter 3 & PlayerMovement)
         CapsuleCollider capCol = playerInstance.GetComponent<CapsuleCollider>();
         if (capCol == null) capCol = playerInstance.AddComponent<CapsuleCollider>();
-        capCol.center = new Vector3(0f, 0.8f, 0f);
+        capCol.center = new Vector3(0f, 0.9f, 0f);
         capCol.radius = 0.35f;
         capCol.height = 1.8f;
+        capCol.isTrigger = true;
 
         Rigidbody rb = playerInstance.GetComponent<Rigidbody>();
         if (rb == null) rb = playerInstance.AddComponent<Rigidbody>();
         rb.isKinematic = true;
         rb.useGravity = false;
 
-        // H. UI Canvas & Thanh máu (PlayerHealth)
+        UnityEngine.AI.NavMeshAgent nma = playerInstance.GetComponent<UnityEngine.AI.NavMeshAgent>();
+        if (nma != null) Undo.DestroyObjectImmediate(nma);        // H. UI Canvas & Thanh máu (PlayerHealth)
         Slider healthBarSlider = EnsureHealthBarUI();
 
         PlayerHealth health = playerInstance.GetComponent<PlayerHealth>();

@@ -20,6 +20,8 @@ public class PlayerMovement : MonoBehaviour
     private Animator anim;
     private Vector3 velocity;
     private Camera mainCam;
+    private bool wasGroundedLastFrame = true;
+    private float jumpCooldownTimer = 0f; // Thời gian chống nhận nhầm chạm đất và chống spam nhảy (Grace period)
 
     [Header("Âm thanh Vũ khí")]
     public AudioSource loaVuKhi;
@@ -101,6 +103,19 @@ public class PlayerMovement : MonoBehaviour
             {
                 GameObject newGameObj = new GameObject("Chapter1NewGameHandler");
                 newGameObj.AddComponent<Chapter1NewGameHandler>();
+            }
+
+            if (Terrain.activeTerrain != null)
+            {
+                Vector3 curPos = transform.position;
+                float groundY = Terrain.activeTerrain.SampleHeight(curPos) + Terrain.activeTerrain.transform.position.y;
+                if (curPos.y < groundY || Mathf.Abs(curPos.y - groundY) > 0.3f)
+                {
+                    if (controller != null) controller.enabled = false;
+                    transform.position = new Vector3(curPos.x, groundY, curPos.z);
+                    Physics.SyncTransforms();
+                    if (controller != null) controller.enabled = true;
+                }
             }
         }
         else if (currentScene == "Chapter3_MieuChanTinh")
@@ -201,8 +216,69 @@ public class PlayerMovement : MonoBehaviour
         if (anim != null)
             anim.applyRootMotion = false;
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // Đảm bảo thông số chuẩn cho CharacterController (đáy tại Y=0, cao 1.8m)
+        if (controller != null)
+        {
+            controller.center = new Vector3(0f, 0.9f, 0f);
+            controller.radius = 0.35f;
+            controller.height = 1.8f;
+            controller.stepOffset = 0.3f;
+            controller.slopeLimit = 45f;
+            controller.skinWidth = 0.08f;
+        }
+
+        // Đảm bảo CapsuleCollider không xung đột vật lý với CharacterController
+        CapsuleCollider cap = GetComponent<CapsuleCollider>();
+        if (cap != null)
+        {
+            cap.center = new Vector3(0f, 0.9f, 0f);
+            cap.radius = 0.35f;
+            cap.height = 1.8f;
+            cap.isTrigger = true;
+        }
+
+        // Khóa Rigidbody để CharacterController toàn quyền xử lý di chuyển
+        Rigidbody rbComp = GetComponent<Rigidbody>();
+        if (rbComp != null)
+        {
+            rbComp.isKinematic = true;
+            rbComp.useGravity = false;
+            rbComp.constraints = RigidbodyConstraints.FreezeRotation;
+        }
+
+        // Đặt lại local position của model con nếu bị lệch
+        foreach (Transform child in GetComponentsInChildren<Transform>(true))
+        {
+            if (child == transform) continue;
+            if (child.name.ToLower().Contains("meshy") || child.name.ToLower().Contains("wanderer") || child.name.ToLower().Contains("axe"))
+            {
+                if (child.localPosition.y != 0f || child.localPosition.x != 0f)
+                {
+                    child.localPosition = Vector3.zero;
+                }
+            }
+        }
+
+        // Tự động căn chỉnh chân nhân vật chạm sát mặt đất ngay khi vào cảnh (giới hạn chênh lệch < 1.0m, không kéo lên tầng khác)
+        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.down, out RaycastHit initGroundHit, 2f, ~0, QueryTriggerInteraction.Ignore))
+        {
+            if (initGroundHit.collider.transform != transform && !initGroundHit.collider.transform.IsChildOf(transform) && initGroundHit.normal.y >= 0.65f)
+            {
+                float diff = Mathf.Abs(initGroundHit.point.y - transform.position.y);
+                if (diff < 1.0f)
+                {
+                    Vector3 initPos = transform.position;
+                    initPos.y = initGroundHit.point.y;
+                    transform.position = initPos;
+                }
+            }
+        }
+
+        if (Time.timeScale > 0f)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
     }
 
     private System.Collections.IEnumerator LogPositionAfterOneSecond(string sceneName)
@@ -218,7 +294,9 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        // 1. KIỂM TRA TRẠNG THÁI TẤN CÔNG
+        // Khi game đang tạm dừng (ví dụ màn hình giới thiệu đang mở) thì không cập nhật di chuyển
+        if (Time.timeScale <= 0f) return;
+
         // 1. KIỂM TRA TRẠNG THÁI TẤN CÔNG
         bool isAttacking = false;
         if (anim != null)
@@ -280,7 +358,7 @@ public class PlayerMovement : MonoBehaviour
             move = (fwd * moveZ + rgt * moveX).normalized;
         }
 
-        // 4. TRỌNG LỰC VÀ NHẢY
+        // 4. KIỂM TRA MẶT ĐẤT CHÍNH XÁC, NHẢY & TRỌNG LỰC
         bool spacePressed = false;
         if (Keyboard.current != null && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
@@ -291,18 +369,60 @@ public class PlayerMovement : MonoBehaviour
             try { spacePressed = Input.GetKeyDown(KeyCode.Space); } catch { }
         }
 
-        if (controller.isGrounded)
+        // Đếm lùi thời gian bảo vệ cú nhảy (Grace Period) để nhân vật bay lên hoàn toàn mà không bị check nhầm chạm đất
+        if (jumpCooldownTimer > 0f)
         {
-            if (velocity.y < 0) velocity.y = -2f;
-            if (!isAttacking && spacePressed)
+            jumpCooldownTimer -= Time.deltaTime;
+        }
+
+        bool isGrounded = false;
+        Vector3 groundNormal = Vector3.up;
+
+        // BẢO VỆ CÚ NHẢY: Khi vừa bấm nhảy hoặc vận tốc Y đang bay lên (> 0.05), TUYỆT ĐỐI không nhận là chạm đất
+        if (jumpCooldownTimer > 0f || velocity.y > 0.05f)
+        {
+            isGrounded = false;
+        }
+        else
+        {
+            // Chỉ kiểm tra mặt đất khi đang rơi xuống hoặc đã hết đà nhảy lên
+            isGrounded = controller.isGrounded;
+
+            // Kiểm tra raycast chính xác sát đáy chân (khoảng cách 0.25m vừa đủ, không vươn quá xa gây nhận nhầm khi ở trên không)
+            Vector3 rayOrigin = transform.position + Vector3.up * 0.15f;
+            if (Physics.Raycast(rayOrigin, Vector3.down, out RaycastHit groundHit, 0.25f, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (groundHit.collider != null && groundHit.collider.transform != transform && !groundHit.collider.transform.IsChildOf(transform))
+                {
+                    // Chỉ công nhận là mặt đất nếu góc nghiêng có thể đi được (slope <= ~48 độ)
+                    if (groundHit.normal.y >= 0.65f)
+                    {
+                        isGrounded = true;
+                        groundNormal = groundHit.normal;
+                    }
+                }
+            }
+        }
+
+        if (isGrounded)
+        {
+            // Lực bám đất êm ái (-2f thay vì -5f để không bị giật khựng vị trí Y khi chạm đất)
+            if (velocity.y < 0f) velocity.y = -2f;
+
+            // Mỗi lần nhấn chỉ kích hoạt 1 lần nhảy duy nhất, có thời gian đệm chống spam phím
+            if (!isAttacking && spacePressed && jumpCooldownTimer <= 0f)
             {
                 velocity.y = jumpForce;
+                jumpCooldownTimer = 0.25f; // Khóa 0.25s chống chạm đất sớm và chống nhảy liên tục ngoài ý muốn
+                isGrounded = false;
+                wasGroundedLastFrame = false;
                 if (anim != null) anim.SetTrigger("JumpTrigger");
             }
         }
         else
         {
             velocity.y += gravity * Time.deltaTime;
+            if (velocity.y < -20f) velocity.y = -20f;
         }
 
         // 5. ĐIỀU CHỈNH TỐC ĐỘ Combat
@@ -319,9 +439,66 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // 6. ÁP DỤNG DI CHUYỂN
-        Vector3 finalMovement = move * currentSpeed;
-        finalMovement.y = velocity.y;
+        Vector3 moveDir = move;
+        // Chiếu vector di chuyển lên mặt dốc CHỈ KHI đang chạm đất ổn định
+        if (isGrounded && groundNormal != Vector3.up && groundNormal.y >= 0.65f)
+        {
+            Vector3 projected = Vector3.ProjectOnPlane(move, groundNormal).normalized;
+            if (projected.y <= 0.75f)
+            {
+                moveDir = projected;
+            }
+        }
+
+        Vector3 finalMovement = moveDir * currentSpeed;
+        if (isGrounded)
+        {
+            finalMovement.y += velocity.y;
+        }
+        else
+        {
+            // Khi đang ở trên không: Thành phần Y thuần túy do vận tốc nhảy và trọng lực điều khiển
+            finalMovement.y = velocity.y;
+        }
         controller.Move(finalMovement * Time.deltaTime);
+
+        // Bám dốc khi chạy xuống địa hình dốc hang động (Downhill slope-snapping)
+        // TUYỆT ĐỐI KHÔNG BÁM XUỐNG KHI ĐANG TRONG QUÁ TRÌNH NHẢY (jumpCooldownTimer > 0 hoặc velocity.y > 0)
+        if (jumpCooldownTimer <= 0f && velocity.y <= 0f && wasGroundedLastFrame && !isGrounded && move.magnitude > 0.1f)
+        {
+            Vector3 snapOrigin = transform.position + Vector3.up * 0.2f;
+            if (Physics.Raycast(snapOrigin, Vector3.down, out RaycastHit snapHit, 0.8f, ~0, QueryTriggerInteraction.Ignore))
+            {
+                if (snapHit.collider.transform != transform && !snapHit.collider.transform.IsChildOf(transform))
+                {
+                    float snapDist = snapHit.distance - 0.2f;
+                    // Chỉ kéo xuống nếu độ hụt chân dương (nằm phía dưới) và góc mặt phẳng đi bộ được
+                    if (snapDist > 0.02f && snapDist <= 0.5f && snapHit.normal.y >= 0.65f)
+                    {
+                        controller.Move(Vector3.down * snapDist);
+                        isGrounded = true;
+                    }
+                }
+            }
+        }
+        wasGroundedLastFrame = isGrounded;
+
+        // An toàn tuyệt đối: Không để nhân vật lọt xuống dưới Terrain ở các cảnh ngoài trời
+        // Tuyệt đối không áp dụng cho hang động (Chapter 6) vì hang động nằm ngầm dưới lòng đất/núi
+        string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name.ToLower();
+        bool isUndergroundCave = sceneName.Contains("chapter6") || sceneName.Contains("hang") || sceneName.Contains("cave");
+        if (Terrain.activeTerrain != null && !isUndergroundCave)
+        {
+            float terrainHeight = Terrain.activeTerrain.SampleHeight(transform.position) + Terrain.activeTerrain.transform.position.y;
+            // Chỉ cứu nguy bằng CharacterController.Move nếu chân thực sự bị lọt hẳn xuống dưới đất khi đang rơi (không can thiệp khi đang nhảy lên)
+            if (transform.position.y < (terrainHeight - 0.05f) && velocity.y <= 0f)
+            {
+                float penetration = terrainHeight - transform.position.y;
+                controller.Move(Vector3.up * penetration);
+                velocity.y = 0f;
+                isGrounded = true;
+            }
+        }
 
         // 7. CẬP NHẬT ANIMATOR CHẠY
         if (anim != null)
@@ -381,7 +558,7 @@ public class PlayerMovement : MonoBehaviour
         // Dùng trục Horizontal (A/D) và Vertical (W/S) để biết người chơi có đang bấm nút đi lại hay không
         bool dangDiChuyen = Mathf.Abs(Input.GetAxis("Horizontal")) > 0.1f || Mathf.Abs(Input.GetAxis("Vertical")) > 0.1f;
 
-        if (dangDiChuyen) // (Tùy chọn: Thêm điều kiện && isGrounded nếu bạn có biến check chạm đất để không phát tiếng khi nhảy)
+        if (dangDiChuyen && isGrounded)
         {
             // Nếu đang di chuyển mà loa chưa phát -> Bật loa lên
             if (loaDiChuyen != null && !loaDiChuyen.isPlaying)

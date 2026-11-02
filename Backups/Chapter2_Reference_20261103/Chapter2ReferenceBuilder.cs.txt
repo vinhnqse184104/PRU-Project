@@ -1,0 +1,78 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+public static class Chapter2ReferenceBuilder {
+ const string A="Assets/Chapter2ReferenceRedesign";
+ static Transform root;static Terrain terrain;static Material timber,tile,pink,leaf,straw;
+ static List<CombineInstance> pieces=new List<CombineInstance>();
+ static Vector3 G(float x,float z)=>new Vector3(x,terrain.SampleHeight(new Vector3(x,0,z))+terrain.transform.position.y,z);
+ static Material M(string name,Color color){var m=new Material(Shader.Find("Universal Render Pipeline/Lit"));m.SetColor("_BaseColor",color);m.SetFloat("_Smoothness",.18f);m.SetFloat("_Cull",0);m.enableInstancing=true;AssetDatabase.CreateAsset(m,A+"/"+name+".mat");return m;}
+ static GameObject P(string name,PrimitiveType type,Vector3 p,Vector3 s,Material m){var g=GameObject.CreatePrimitive(type);g.name=name;g.transform.SetParent(root);g.transform.position=p;g.transform.localScale=s;UnityEngine.Object.DestroyImmediate(g.GetComponent<Collider>());g.GetComponent<Renderer>().sharedMaterial=m;g.layer=2;GameObjectUtility.SetStaticEditorFlags(g,StaticEditorFlags.BatchingStatic);return g;}
+ static void Beam(string name,Vector3 a,Vector3 b,float width,Material m){var g=P(name,PrimitiveType.Cylinder,(a+b)*.5f,new Vector3(width,(a-b).magnitude*.5f,width),m);g.transform.up=(b-a).normalized;}
+ static GameObject MeshObject(string name,List<Vector3> verts,List<int> indices,Material mat){var mesh=new Mesh();mesh.indexFormat=UnityEngine.Rendering.IndexFormat.UInt32;mesh.SetVertices(verts);mesh.SetTriangles(indices,0);mesh.RecalculateNormals();mesh.RecalculateBounds();AssetDatabase.CreateAsset(mesh,A+"/"+name+".asset");var g=new GameObject(name);g.transform.SetParent(root);g.AddComponent<MeshFilter>().sharedMesh=mesh;g.AddComponent<MeshRenderer>().sharedMaterial=mat;g.layer=2;GameObjectUtility.SetStaticEditorFlags(g,StaticEditorFlags.BatchingStatic);return g;}
+ static void Roof(){var v=new List<Vector3>();var tri=new List<int>();
+  // Individual curved half-round clay tiles, combined into one mesh; open porch stays above head height.
+  for(int side=-1;side<=1;side+=2)for(int col=0;col<30;col++)for(int row=0;row<15;row++){
+   float x=78.25f+col*.31f;float t=row/14f;float z=26.1f+side*t*5.35f;float y=6.8f-3.35f*t+.4f*t*t;
+   int begin=v.Count;for(int end=0;end<2;end++)for(int j=0;j<=6;j++){float a=j*Mathf.PI/6;float tz=t+end*.079f;v.Add(new Vector3(x+Mathf.Cos(a)*.175f,6.8f-3.35f*tz+.4f*tz*tz+Mathf.Sin(a)*.11f,26.1f+side*tz*5.35f));}
+   for(int j=0;j<6;j++){int q=begin+j;tri.AddRange(new[]{q,q+1,q+7,q+1,q+8,q+7});}
+  }MeshObject("House_CurvedClayTiles_900",v,tri,tile);
+  Beam("Roof_RidgeBeam",new Vector3(78,6.92f,26.1f),new Vector3(87.9f,6.92f,26.1f),.24f,timber);
+  foreach(float x in new[]{78.55f,87.15f}){Beam("Porch_TimberPost",G(x,31.8f),new Vector3(x,3.65f,31.8f),.22f,timber);Beam("Porch_Rafter",new Vector3(x,3.65f,31.8f),new Vector3(x,5.6f,28.1f),.16f,timber);}
+  Beam("Porch_FrontBeam",new Vector3(78.55f,3.68f,31.8f),new Vector3(87.15f,3.68f,31.8f),.19f,timber);
+ }
+ static void BlossomTree(Vector3 p,float scale,string name){
+  var saved=root;var group=new GameObject(name).transform;group.SetParent(root);root=group;
+  Beam("OldTree_Trunk",p,p+new Vector3(-.5f,6,0),1.1f*scale,timber);
+  var v=new List<Vector3>();var tr=new List<int>();UnityEngine.Random.InitState(317);
+  for(int branch=0;branch<10;branch++){
+   float a=branch*2.399f;var end=p+new Vector3(Mathf.Cos(a)*4.7f,7.5f+(branch%3)*.8f,Mathf.Sin(a)*4.2f)*scale;
+   Beam("OldTree_Branch",p+Vector3.up*4*scale,end,.28f*scale,timber);
+   for(int n=0;n<65;n++){
+    var q=end+UnityEngine.Random.insideUnitSphere*1.8f*scale;var normal=UnityEngine.Random.onUnitSphere;var right=Vector3.Cross(normal,Vector3.up).normalized;if(right.sqrMagnitude<.1f)right=Vector3.right;var up=Vector3.Cross(normal,right);float r=UnityEngine.Random.Range(.09f,.18f)*scale;
+    for(int petal=0;petal<5;petal++){float ang=petal*Mathf.PI*2/5;var d=right*Mathf.Cos(ang)+up*Mathf.Sin(ang);var tangent=Vector3.Cross(normal,d);int b=v.Count;v.Add(q);v.Add(q+d*r+tangent*r*.42f);v.Add(q+d*r*1.65f);v.Add(q+d*r-tangent*r*.42f);tr.AddRange(new[]{b,b+1,b+2,b,b+2,b+3});}
+   }
+  }MeshObject(name+"_650_FivePetalBlossoms",v,tr,pink);root=saved;
+ }
+ static void Hay(Vector3 p){P("Haystack_Core",PrimitiveType.Capsule,p+Vector3.up*1.15f,new Vector3(1.6f,1.2f,1.6f),straw);UnityEngine.Random.InitState(72);var v=new List<Vector3>();var tr=new List<int>();for(int i=0;i<260;i++){float a=i*2.399f;float y=UnityEngine.Random.Range(.1f,2.4f);float radius=(1-y/2.6f)*.95f;var q=p+new Vector3(Mathf.Cos(a)*radius,y,Mathf.Sin(a)*radius);int b=v.Count;v.Add(q);v.Add(q+new Vector3(.035f,.06f,0));v.Add(q+new Vector3(Mathf.Cos(a)*.23f,-.35f,Mathf.Sin(a)*.23f));tr.AddRange(new[]{b,b+1,b+2});}MeshObject("Haystack_StrawStrands",v,tr,straw);}
+ static void Coop(Vector3 p){for(int i=0;i<13;i++){float a=i*Mathf.PI/12;for(int j=0;j<8;j++){float a0=j*Mathf.PI/16;float a1=(j+1)*Mathf.PI/16;Beam("ChickenCoop_BambooRib",p+new Vector3(Mathf.Cos(a)*Mathf.Cos(a0),Mathf.Sin(a0),Mathf.Sin(a)*Mathf.Cos(a0)),p+new Vector3(Mathf.Cos(a)*Mathf.Cos(a1),Mathf.Sin(a1),Mathf.Sin(a)*Mathf.Cos(a1)),.025f,timber);}}}
+ public static void Build(){
+  if(EditorApplication.isPlaying)throw new Exception("Stop Play first");if(AssetDatabase.IsValidFolder(A)){Refine();return;}var original=SceneManager.GetActiveScene();if(original.path!=Chapter2EnvironmentTool.ScenePath||original.isDirty)throw new Exception("Open saved Chapter2 first");
+  terrain=UnityEngine.Object.FindAnyObjectByType<Terrain>();AssetDatabase.CreateFolder("Assets","Chapter2ReferenceRedesign");var stage=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Additive);SceneManager.SetActiveScene(stage);root=new GameObject("Chapter2_Reference_Redesign").transform;
+  timber=M("OldDarkTimber",new Color(.28f,.15f,.065f));tile=M("WeatheredClayTiles",new Color(.30f,.15f,.10f));pink=M("PalePinkBlossoms",new Color(.95f,.67f,.65f));leaf=M("GardenGreen",new Color(.18f,.36f,.14f));straw=M("GoldenDryStraw",new Color(.53f,.38f,.16f));
+  Roof();BlossomTree(G(74.5f,31.5f),1.15f,"Ancient_BlossomTree_Left");BlossomTree(G(72,48),.8f,"BlossomTree_Garden");Hay(G(90,47));Coop(G(77.4f,37));
+  for(int i=0;i<4;i++){float x=70+i*10;float z=12+(i%2)*4;var prefab=AssetDatabase.LoadAssetAtPath<GameObject>("Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Prefabs/URP/House_1_URP.prefab");var go=(GameObject)PrefabUtility.InstantiatePrefab(prefab,root);PrefabUtility.UnpackPrefabInstance(go,PrefabUnpackMode.Completely,InteractionMode.AutomatedAction);go.name="Distant_Village_House_"+i;go.transform.position=G(x,z);go.transform.rotation=Quaternion.Euler(0,i*33,0);foreach(var c in go.GetComponentsInChildren<Collider>(true))UnityEngine.Object.DestroyImmediate(c);foreach(var c in go.GetComponentsInChildren<MonoBehaviour>(true))UnityEngine.Object.DestroyImmediate(c);}
+  // Decorative hills are real meshes beyond the village, never changing Terrain or navigation.
+  for(int i=0;i<5;i++){var g=P("Distant_Karst_Silhouette_"+i,PrimitiveType.Sphere,new Vector3(52+i*18,3,-35-i%2*12),new Vector3(18+i%2*5,22+i%3*9,17),M("MountainBlue_"+i,new Color(.07f,.12f,.19f)));}
+  var sky=new Material(Shader.Find("Chapter2/ReferenceNight"));AssetDatabase.CreateAsset(sky,A+"/ReferenceNightSky.mat");RenderSettings.skybox=sky;RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Trilight;RenderSettings.ambientSkyColor=new Color(.31f,.43f,.64f);RenderSettings.ambientEquatorColor=new Color(.23f,.31f,.4f);RenderSettings.ambientGroundColor=new Color(.12f,.16f,.18f);RenderSettings.fog=true;RenderSettings.fogColor=new Color(.075f,.13f,.21f);RenderSettings.fogMode=FogMode.ExponentialSquared;RenderSettings.fogDensity=.0035f;
+  AssetDatabase.SaveAssets();EditorSceneManager.SaveScene(stage,A+"/ReferenceOnly.unity");File.WriteAllText(Chapter2EnvironmentTool.Output+"build.done","roof tiles=900; blossom trees=2; flowers=1300; haystack=1; coop=1; village houses=4; distant hills=5; new colliders="+root.GetComponentsInChildren<Collider>(true).Length);EditorSceneManager.CloseScene(stage,true);SceneManager.SetActiveScene(original);
+ }
+ public static void Preview(){var go=new GameObject("Temporary_ReferenceReviewCamera");var c=go.AddComponent<Camera>();go.transform.position=new Vector3(85.5f,3.4f,43);go.transform.LookAt(new Vector3(80.5f,3.2f,27));c.fieldOfView=68;c.farClipPlane=400;Chapter2EnvironmentTool.Capture(c,"Reference_preview");UnityEngine.Object.DestroyImmediate(go);}
+ static void Refine(){var scene=EditorSceneManager.OpenScene(A+"/ReferenceOnly.unity");root=scene.GetRootGameObjects().Single().transform;
+  root.Find("Ancient_BlossomTree_Left").localPosition=new Vector3(15,0,0);
+  foreach(var tree in root.GetComponentsInChildren<Transform>().Where(t=>t.name=="Ancient_BlossomTree_Left"||t.name=="BlossomTree_Garden").ToArray()){
+   foreach(var r in tree.GetComponentsInChildren<MeshRenderer>().Where(r=>r.name.StartsWith("OldTree_")))r.enabled=false;
+   if(tree.Find("BlossomTree_Existing3DModel"))continue;
+   var path=AssetDatabase.GUIDToAssetPath(AssetDatabase.FindAssets("ShrubTree_C t:Prefab").First());var go=(GameObject)PrefabUtility.InstantiatePrefab(AssetDatabase.LoadAssetAtPath<GameObject>(path),tree);PrefabUtility.UnpackPrefabInstance(go,PrefabUnpackMode.Completely,InteractionMode.AutomatedAction);go.name="BlossomTree_Existing3DModel";go.transform.position=tree.name.StartsWith("Ancient")?new Vector3(89.5f,.3f,31.5f):new Vector3(72,.3f,48);go.transform.localScale=Vector3.one*(tree.name.StartsWith("Ancient")?1.7f:1.2f);
+   foreach(var c in go.GetComponentsInChildren<Collider>(true))UnityEngine.Object.DestroyImmediate(c);foreach(var c in go.GetComponentsInChildren<MonoBehaviour>(true))UnityEngine.Object.DestroyImmediate(c);
+   foreach(var r in go.GetComponentsInChildren<MeshRenderer>(true)){r.sharedMaterials=r.sharedMaterials.Select(m=>{var id=AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(m));return AssetDatabase.LoadAssetAtPath<Material>("Assets/Chapter2VillageEnhancement/Foliage_"+id+".mat")??m;}).ToArray();}
+  }
+  var pinkMat=AssetDatabase.LoadAssetAtPath<Material>(A+"/PalePinkBlossoms.mat");pinkMat.EnableKeyword("_EMISSION");pinkMat.SetColor("_EmissionColor",new Color(.12f,.055f,.05f));
+  var bark=AssetDatabase.LoadAssetAtPath<Material>("Assets/Chapter2VillageEnhancement/Foliage_0c7635408f4c1244e88fa5bd2f861e4a.mat");var tm=AssetDatabase.LoadAssetAtPath<Material>(A+"/OldDarkTimber.mat");if(bark)tm.SetTexture("_BaseMap",bark.GetTexture("_BaseMap"));
+  if(!root.Find("Courtyard_MoonFill")){var g=new GameObject("Courtyard_MoonFill");g.transform.SetParent(root);g.transform.position=new Vector3(85,7,35);var l=g.AddComponent<Light>();l.type=LightType.Point;l.range=28;l.intensity=2.3f;l.color=new Color(.5f,.66f,1);l.shadows=LightShadows.None;
+   g=new GameObject("Blossom_WarmUplight");g.transform.SetParent(root);g.transform.position=new Vector3(89,1.3f,32);l=g.AddComponent<Light>();l.type=LightType.Point;l.range=16;l.intensity=3;l.color=new Color(1,.64f,.35f);l.shadows=LightShadows.None;
+  }
+  foreach(var t in root.GetComponentsInChildren<Transform>().Where(t=>t.name.StartsWith("Distant_Karst_Silhouette_")).ToArray()){
+   if(t.GetComponent<MeshFilter>().sharedMesh.name.StartsWith("Karst"))continue;var vertices=new List<Vector3>();var tris=new List<int>();int n=24;
+   for(int z=0;z<=n;z++)for(int x=0;x<=n;x++){float xx=x/(float)n*2-1,zz=z/(float)n*2-1;float radial=Mathf.Clamp01(1-xx*xx-zz*zz);float noise=Mathf.PerlinNoise(x*.21f+t.position.x,z*.18f);vertices.Add(new Vector3(xx*.5f,Mathf.Pow(radial,.65f)*(.2f+noise*.5f)-.2f,zz*.5f));}
+   for(int z=0;z<n;z++)for(int x=0;x<n;x++){int k=z*(n+1)+x;tris.AddRange(new[]{k,k+n+1,k+1,k+1,k+n+1,k+n+2});}
+   var mesh=new Mesh();mesh.name="Karst_"+t.name;mesh.SetVertices(vertices);mesh.SetTriangles(tris,0);mesh.RecalculateNormals();AssetDatabase.CreateAsset(mesh,A+"/"+mesh.name+".asset");t.GetComponent<MeshFilter>().sharedMesh=mesh;
+  }
+  AssetDatabase.SaveAssets();EditorSceneManager.SaveScene(scene);EditorSceneManager.OpenScene(Chapter2EnvironmentTool.ScenePath);File.WriteAllText(Chapter2EnvironmentTool.Output+"refine.done","composition and lights refined");
+ }
+}

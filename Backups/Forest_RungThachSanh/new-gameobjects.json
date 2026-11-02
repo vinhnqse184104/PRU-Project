@@ -1,0 +1,632 @@
+[
+  {
+    "id": "5000000000000",
+    "name": "Understory_Shrub_07",
+    "transform": "5000000000001",
+    "parent": "5000000000226",
+    "localPosition": "{x: 181, y: 11.065757, z: 110}"
+  },
+  {
+    "id": "5000000000002",
+    "name": "ShrubBush_B_Branch_LOD0",
+    "transform": "5000000000003",
+    "parent": "5000000000189",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000006",
+    "name": "ShrubBush_B_Branch_LOD1",
+    "transform": "5000000000007",
+    "parent": "5000000000001",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000008",
+    "name": "GrassShort_A_LOD1",
+    "transform": "5000000000009",
+    "parent": "5000000000091",
+    "localPosition": "{x: 0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000010",
+    "name": "ShrubBush_B_Leaves_LOD1",
+    "transform": "5000000000011",
+    "parent": "5000000000001",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000012",
+    "name": "Natural_Grass_05",
+    "transform": "5000000000013",
+    "parent": "5000000000226",
+    "localPosition": "{x: 172, y: 0.6615204, z: 118}"
+  },
+  {
+    "id": "5000000000014",
+    "name": "ShrubBush_B_Branch_LOD0",
+    "transform": "5000000000015",
+    "parent": "5000000000001",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000018",
+    "name": "ShrubBush_B_Billboard_LOD3",
+    "transform": "5000000000019",
+    "parent": "5000000000201",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000020",
+    "name": "ShrubBush_B_Leaves_LOD0",
+    "transform": "5000000000021",
+    "parent": "5000000000109",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000024",
+    "name": "GrassShort_A_LOD0",
+    "transform": "5000000000025",
+    "parent": "5000000000013",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000028",
+    "name": "ShrubBush_B_Leaves_LOD2",
+    "transform": "5000000000029",
+    "parent": "5000000000109",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000030",
+    "name": "ShrubBush_B_Branch_LOD0",
+    "transform": "5000000000031",
+    "parent": "5000000000115",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000034",
+    "name": "ShrubBush_B_Branch_LOD2",
+    "transform": "5000000000035",
+    "parent": "5000000000001",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000036",
+    "name": "ShrubBush_B_Leaves_LOD0",
+    "transform": "5000000000037",
+    "parent": "5000000000201",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000040",
+    "name": "ShrubBush_B_Branch_LOD2",
+    "transform": "5000000000041",
+    "parent": "5000000000101",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000042",
+    "name": "GrassShort_A_LOD2",
+    "transform": "5000000000043",
+    "parent": "5000000000091",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000044",
+    "name": "ShrubBush_B_Leaves_LOD1",
+    "transform": "5000000000045",
+    "parent": "5000000000115",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000046",
+    "name": "ShrubBush_B_Billboard_LOD3",
+    "transform": "5000000000047",
+    "parent": "5000000000189",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000048",
+    "name": "ShrubBush_B_Branch_LOD1",
+    "transform": "5000000000049",
+    "parent": "5000000000115",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000050",
+    "name": "Natural_Grass_01",
+    "transform": "5000000000051",
+    "parent": "5000000000226",
+    "localPosition": "{x: 169, y: 4.375492, z: 110}"
+  },
+  {
+    "id": "5000000000052",
+    "name": "ShrubBush_B_Billboard_LOD3",
+    "transform": "5000000000053",
+    "parent": "5000000000089",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000054",
+    "name": "ShrubBush_B_Leaves_LOD0",
+    "transform": "5000000000055",
+    "parent": "5000000000189",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000058",
+    "name": "GrassShort_A_LOD1",
+    "transform": "5000000000059",
+    "parent": "5000000000013",
+    "localPosition": "{x: 0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000060",
+    "name": "GrassShort_A_LOD0",
+    "transform": "5000000000061",
+    "parent": "5000000000073",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000064",
+    "name": "ShrubBush_B_Branch_LOD0",
+    "transform": "5000000000065",
+    "parent": "5000000000089",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000068",
+    "name": "ShrubBush_B_Leaves_LOD0",
+    "transform": "5000000000069",
+    "parent": "5000000000001",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000072",
+    "name": "Natural_Grass_02",
+    "transform": "5000000000073",
+    "parent": "5000000000226",
+    "localPosition": "{x: 172, y: 2.5854657, z: 70}"
+  },
+  {
+    "id": "5000000000074",
+    "name": "ShrubBush_B_Branch_LOD1",
+    "transform": "5000000000075",
+    "parent": "5000000000109",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000076",
+    "name": "ShrubBush_B_Billboard_LOD3",
+    "transform": "5000000000077",
+    "parent": "5000000000185",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000078",
+    "name": "GrassShort_A_LOD2",
+    "transform": "5000000000079",
+    "parent": "5000000000051",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000080",
+    "name": "ShrubBush_B_Leaves_LOD1",
+    "transform": "5000000000081",
+    "parent": "5000000000109",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000082",
+    "name": "ShrubBush_B_Leaves_LOD1",
+    "transform": "5000000000083",
+    "parent": "5000000000189",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000084",
+    "name": "ShrubBush_B_Leaves_LOD1",
+    "transform": "5000000000085",
+    "parent": "5000000000089",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000086",
+    "name": "ShrubBush_B_Leaves_LOD2",
+    "transform": "5000000000087",
+    "parent": "5000000000201",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000088",
+    "name": "Understory_Shrub_03",
+    "transform": "5000000000089",
+    "parent": "5000000000226",
+    "localPosition": "{x: 169, y: 0.54010123, z: 114}"
+  },
+  {
+    "id": "5000000000090",
+    "name": "Natural_Grass_04",
+    "transform": "5000000000091",
+    "parent": "5000000000226",
+    "localPosition": "{x: 172, y: 2.4469063, z: 114}"
+  },
+  {
+    "id": "5000000000092",
+    "name": "ShrubBush_B_Branch_LOD2",
+    "transform": "5000000000093",
+    "parent": "5000000000089",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000094",
+    "name": "GrassShort_A_LOD0",
+    "transform": "5000000000095",
+    "parent": "5000000000091",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000098",
+    "name": "ShrubBush_B_Branch_LOD1",
+    "transform": "5000000000099",
+    "parent": "5000000000201",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000100",
+    "name": "Understory_Shrub_06",
+    "transform": "5000000000101",
+    "parent": "5000000000226",
+    "localPosition": "{x: 181, y: 8.928045, z: 106}"
+  },
+  {
+    "id": "5000000000102",
+    "name": "ShrubBush_B_Branch_LOD1",
+    "transform": "5000000000103",
+    "parent": "5000000000189",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000104",
+    "name": "ShrubBush_B_Branch_LOD0",
+    "transform": "5000000000105",
+    "parent": "5000000000201",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000108",
+    "name": "Understory_Shrub_04",
+    "transform": "5000000000109",
+    "parent": "5000000000226",
+    "localPosition": "{x: 175, y: 0.99212855, z: 106}"
+  },
+  {
+    "id": "5000000000110",
+    "name": "GrassShort_A_LOD2",
+    "transform": "5000000000111",
+    "parent": "5000000000013",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000112",
+    "name": "GrassShort_A_LOD1",
+    "transform": "5000000000113",
+    "parent": "5000000000215",
+    "localPosition": "{x: 0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000114",
+    "name": "Understory_Shrub_05",
+    "transform": "5000000000115",
+    "parent": "5000000000226",
+    "localPosition": "{x: 175, y: 1.5579776, z: 118}"
+  },
+  {
+    "id": "5000000000116",
+    "name": "GrassShort_A_LOD0",
+    "transform": "5000000000117",
+    "parent": "5000000000051",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000120",
+    "name": "ShrubBush_B_Billboard_LOD3",
+    "transform": "5000000000121",
+    "parent": "5000000000115",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000122",
+    "name": "ShrubBush_B_Leaves_LOD2",
+    "transform": "5000000000123",
+    "parent": "5000000000001",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000124",
+    "name": "ShrubBush_B_Leaves_LOD0",
+    "transform": "5000000000125",
+    "parent": "5000000000089",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000128",
+    "name": "Natural_Grass_06",
+    "transform": "5000000000129",
+    "parent": "5000000000226",
+    "localPosition": "{x: 181, y: 11.574153, z: 118}"
+  },
+  {
+    "id": "5000000000130",
+    "name": "ShrubBush_B_Leaves_LOD0",
+    "transform": "5000000000131",
+    "parent": "5000000000101",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000134",
+    "name": "GrassShort_A_LOD2",
+    "transform": "5000000000135",
+    "parent": "5000000000129",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000136",
+    "name": "Ancient_Banyan_02",
+    "transform": "5000000000137",
+    "parent": "5000000000226",
+    "localPosition": "{x: 178, y: 7.0970397, z: 113}"
+  },
+  {
+    "id": "5000000000140",
+    "name": "ShrubBush_B_Leaves_LOD2",
+    "transform": "5000000000141",
+    "parent": "5000000000115",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000142",
+    "name": "GrassShort_A_LOD1",
+    "transform": "5000000000143",
+    "parent": "5000000000051",
+    "localPosition": "{x: 0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000144",
+    "name": "ShrubBush_B_Branch_LOD2",
+    "transform": "5000000000145",
+    "parent": "5000000000115",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000146",
+    "name": "ShrubBush_B_Leaves_LOD2",
+    "transform": "5000000000147",
+    "parent": "5000000000189",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000148",
+    "name": "GrassShort_A_LOD0",
+    "transform": "5000000000149",
+    "parent": "5000000000129",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000152",
+    "name": "ShrubBush_B_Leaves_LOD2",
+    "transform": "5000000000153",
+    "parent": "5000000000101",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000154",
+    "name": "ShrubBush_B_Branch_LOD1",
+    "transform": "5000000000155",
+    "parent": "5000000000185",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000156",
+    "name": "ShrubBush_B_Leaves_LOD1",
+    "transform": "5000000000157",
+    "parent": "5000000000101",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000158",
+    "name": "ShrubBush_B_Leaves_LOD0",
+    "transform": "5000000000159",
+    "parent": "5000000000115",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000162",
+    "name": "ShrubBush_B_Leaves_LOD1",
+    "transform": "5000000000163",
+    "parent": "5000000000185",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000164",
+    "name": "GrassShort_A_LOD2",
+    "transform": "5000000000165",
+    "parent": "5000000000073",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000166",
+    "name": "GrassShort_A_LOD2",
+    "transform": "5000000000167",
+    "parent": "5000000000215",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000168",
+    "name": "ShrubBush_B_Leaves_LOD2",
+    "transform": "5000000000169",
+    "parent": "5000000000185",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000170",
+    "name": "ShrubBush_B_Branch_LOD1",
+    "transform": "5000000000171",
+    "parent": "5000000000089",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000172",
+    "name": "ShrubBush_B_Branch_LOD0",
+    "transform": "5000000000173",
+    "parent": "5000000000185",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000176",
+    "name": "ShrubBush_B_Billboard_LOD3",
+    "transform": "5000000000177",
+    "parent": "5000000000109",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000178",
+    "name": "ShrubBush_B_Branch_LOD2",
+    "transform": "5000000000179",
+    "parent": "5000000000189",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000180",
+    "name": "GrassShort_A_LOD1",
+    "transform": "5000000000181",
+    "parent": "5000000000073",
+    "localPosition": "{x: 0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000182",
+    "name": "ShrubBush_B_Branch_LOD2",
+    "transform": "5000000000183",
+    "parent": "5000000000109",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000184",
+    "name": "Understory_Shrub_08",
+    "transform": "5000000000185",
+    "parent": "5000000000226",
+    "localPosition": "{x: 181, y: 12.075217, z: 114}"
+  },
+  {
+    "id": "5000000000186",
+    "name": "ShrubBush_B_Leaves_LOD1",
+    "transform": "5000000000187",
+    "parent": "5000000000201",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000188",
+    "name": "Understory_Shrub_02",
+    "transform": "5000000000189",
+    "parent": "5000000000226",
+    "localPosition": "{x: 169, y: 4.2447853, z: 106}"
+  },
+  {
+    "id": "5000000000190",
+    "name": "ShrubBush_B_Branch_LOD2",
+    "transform": "5000000000191",
+    "parent": "5000000000201",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000192",
+    "name": "ShrubBush_B_Branch_LOD2",
+    "transform": "5000000000193",
+    "parent": "5000000000185",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000194",
+    "name": "ShrubBush_B_Billboard_LOD3",
+    "transform": "5000000000195",
+    "parent": "5000000000101",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000196",
+    "name": "ShrubBush_B_Branch_LOD0",
+    "transform": "5000000000197",
+    "parent": "5000000000101",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000200",
+    "name": "Understory_Shrub_01",
+    "transform": "5000000000201",
+    "parent": "5000000000226",
+    "localPosition": "{x: 166, y: 3.9967241, z: 110}"
+  },
+  {
+    "id": "5000000000202",
+    "name": "ShrubBush_B_Branch_LOD0",
+    "transform": "5000000000203",
+    "parent": "5000000000109",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000206",
+    "name": "GrassShort_A_LOD0",
+    "transform": "5000000000207",
+    "parent": "5000000000215",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000210",
+    "name": "ShrubBush_B_Billboard_LOD3",
+    "transform": "5000000000211",
+    "parent": "5000000000001",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000212",
+    "name": "ShrubBush_B_Leaves_LOD2",
+    "transform": "5000000000213",
+    "parent": "5000000000089",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000214",
+    "name": "Natural_Grass_03",
+    "transform": "5000000000215",
+    "parent": "5000000000226",
+    "localPosition": "{x: 172, y: 4.205802, z: 110}"
+  },
+  {
+    "id": "5000000000216",
+    "name": "ShrubBush_B_Leaves_LOD0",
+    "transform": "5000000000217",
+    "parent": "5000000000185",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000220",
+    "name": "GrassShort_A_LOD1",
+    "transform": "5000000000221",
+    "parent": "5000000000129",
+    "localPosition": "{x: 0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000222",
+    "name": "ShrubBush_B_Branch_LOD1",
+    "transform": "5000000000223",
+    "parent": "5000000000101",
+    "localPosition": "{x: -0, y: 0, z: 0}"
+  },
+  {
+    "id": "5000000000224",
+    "name": "Forest_Environment_Enhancement",
+    "transform": "5000000000226",
+    "parent": "0",
+    "localPosition": "{x: 0, y: 0, z: 0}"
+  }
+]

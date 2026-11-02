@@ -1,0 +1,13 @@
+PASS initial objective=2, existing NPC active, no automatic dialogue, counters=0, original spawn retained; saved later-chapter flag did not block Chapter 1.
+PASS Start button unlocks game and displays full top-left objective.
+PASS objective collapses after six gameplay seconds; still no dialogue and counters remain zero.
+PASS explicit New Game reload resets interaction and objective without hard-coded character relocation.
+PASS reached original interaction through existing PlayerMovement. Player=(89.48, 0.06, 80.52) NPC=(91.25, 0.39, 78.07) all collection/kill counts=0.
+Dialogue 1: THẠCH SANH: "Chào huynh! Sao huynh lại nằm ngủ giữa chốn rừng thiêng nước độc thế này?"
+Dialogue 2: LÝ THÔNG: "Ây da... ta đi bán rượu ngang qua, mệt quá nên thiếp đi mất. Cảm ơn chú em đã đánh thức! Mà nhìn chú em sức vóc quả là hơn người!"
+Dialogue 3: THẠCH SANH: "Đệ mồ côi cha mẹ từ nhỏ, sống lủi thủi ở gốc đa này, ngày ngày đốn củi kiếm sống qua ngày thôi."
+Dialogue 4: LÝ THÔNG: "Ôi, hóa ra chú em cũng đơn độc. Hay là theo ta về nhà, anh em ta kết nghĩa huynh đệ, có rau ăn rau có cháo ăn cháo, chú em thấy sao?"
+PASS original four dialogue lines completed; Chapter2_LyThong loaded; LyThongGuide enabled state=GuideHome; home/player references valid; BedSleepTrigger still targets Chapter3_MieuChanTinh.
+PASS FREE EXPLORATION FLOW
+
+Original story PlayerPrefs restored=True

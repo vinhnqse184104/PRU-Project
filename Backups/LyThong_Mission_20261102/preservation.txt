@@ -1,0 +1,4 @@
+Scene before/after SHA256=A41186D02DE58CE47A4C9B38D314430BFC8232188F96576C7F5DC9A89CF44750
+Scene unchanged byte-for-byte=True
+No gameplay source changes by this task.
+Temporary Editor harness removed from Assets.

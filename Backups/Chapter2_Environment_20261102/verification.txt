@@ -1,0 +1,8 @@
+Scene=Assets/Scenes/Chapter2_LyThong.unity
+RootCount=1
+AddedColliders=0
+MonoBehaviourComponentsInMemory=5 (URP light rendering data); AddedSerializedGameplayScripts=0
+HeightmapIdentical=True
+TreeInstancesPreserved=True
+NavMeshRoute=PathComplete (97.640, 0.361, 89.050);(81.980, 0.286, 31.290)
+MissingMaterials=0

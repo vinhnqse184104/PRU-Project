@@ -1,0 +1,20 @@
+ M Assets/Chapter1NewGameHandler.cs
+ M Assets/GioiThieuCotTruyen.cs
+ M Assets/QuestManager.cs
+ M Assets/Scenes/Chapter2_LyThong.unity
+ M Assets/Scenes/RungThachSanh.unity
+?? Assets/Chapter2VillageEnhancement.meta
+?? Assets/Chapter2VillageEnhancement/
+?? Assets/Editor/Chapter2EnvironmentTool.cs
+?? Assets/Editor/Chapter2PlayProbe.cs
+?? Assets/Editor/ForestEnvironmentState.cs
+?? Assets/Editor/ForestEnvironmentState.cs.meta
+?? Assets/Editor/ForestLiveAudit.cs
+?? Assets/Editor/ForestLiveAudit.cs.meta
+?? Assets/Editor/ThachSanhForestEnhancer.cs
+?? Assets/Editor/ThachSanhForestEnhancer.cs.meta
+?? Assets/ForestGameViewEnhancement.meta
+?? Assets/ForestGameViewEnhancement/
+?? Assets/_Recovery.meta
+?? Assets/_Recovery/
+?? Backups/

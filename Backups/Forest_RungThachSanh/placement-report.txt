@@ -1,0 +1,17 @@
+Render-only additions. No collider, rigidbody, animator, gameplay script, light, camera, or NavMeshObstacle. Group ignored by future NavMesh baking.
+Ancient_Banyan_02 position=(178.000, 7.097, 113.000) bounds=Center: (178.01, 7.09, 112.99), Extents: (4.71, 2.70, 4.70)
+Understory_Shrub_01 position=(166.000, 3.997, 110.000) bounds=Center: (165.88, 4.98, 110.08), Extents: (1.61, 1.04, 1.54)
+Understory_Shrub_02 position=(169.000, 4.245, 106.000) bounds=Center: (168.92, 5.23, 106.12), Extents: (1.74, 1.04, 1.68)
+Understory_Shrub_03 position=(169.000, 0.540, 114.000) bounds=Center: (169.06, 1.52, 114.13), Extents: (1.75, 1.04, 1.80)
+Understory_Shrub_04 position=(175.000, 0.992, 106.000) bounds=Center: (175.14, 1.97, 106.05), Extents: (1.86, 1.04, 1.89)
+Understory_Shrub_05 position=(175.000, 1.558, 118.000) bounds=Center: (175.06, 2.54, 117.87), Extents: (1.82, 1.04, 1.78)
+Understory_Shrub_06 position=(181.000, 8.928, 106.000) bounds=Center: (181.02, 9.91, 105.86), Extents: (1.97, 1.04, 1.95)
+Understory_Shrub_07 position=(181.000, 11.066, 110.000) bounds=Center: (180.95, 12.05, 109.86), Extents: (1.81, 1.04, 1.85)
+Understory_Shrub_08 position=(181.000, 12.075, 114.000) bounds=Center: (180.89, 13.06, 113.90), Extents: (1.47, 1.04, 1.55)
+Natural_Grass_01 position=(169.000, 4.375, 110.000) bounds=Center: (169.09, 4.47, 110.05), Extents: (1.25, 0.18, 1.26)
+Natural_Grass_02 position=(172.000, 2.585, 70.000) bounds=Center: (171.98, 2.68, 69.90), Extents: (0.94, 0.18, 1.01)
+Natural_Grass_03 position=(172.000, 4.206, 110.000) bounds=Center: (172.10, 4.30, 109.96), Extents: (0.98, 0.18, 0.91)
+Natural_Grass_04 position=(172.000, 2.447, 114.000) bounds=Center: (172.07, 2.54, 113.92), Extents: (1.24, 0.18, 1.21)
+Natural_Grass_05 position=(172.000, 0.662, 118.000) bounds=Center: (172.02, 0.76, 117.90), Extents: (1.20, 0.18, 1.23)
+Natural_Grass_06 position=(181.000, 11.574, 118.000) bounds=Center: (180.93, 11.67, 118.08), Extents: (1.24, 0.18, 1.22)
+Accepted objects: 15

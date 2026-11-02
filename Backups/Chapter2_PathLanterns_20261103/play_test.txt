@@ -1,0 +1,2 @@
+Start NPC=(97.64, 0.36, 89.05) player=(97.64, 0.33, 90.55)
+State=MotherDialogue NPC=(82.50, 0.32, 33.21) moved=57.85506 path=PathComplete remaining=1.990472 dialogueVisible=True errors=0

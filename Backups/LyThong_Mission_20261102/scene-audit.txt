@@ -1,0 +1,117 @@
+PROJECT C:/Users/Admin/source/repos/PRU-Project/Assets
+SCENE Assets/Scenes/RungThachSanh.unity dirty=False playing=False
+OBJECT LyThong id=GlobalObjectId_V1-2-f55ab8817ee8beb4482e0baed3697c66-919132149155446097-1777358050 position=(91.2520, 0.3900, 78.0700) rotation=(0.0000, 200.0000, 0.0000) scale=(1.0000, 1.0000, 1.0000) activeSelf=True
+COLLIDER CapsuleCollider enabled=True trigger=False bounds=Center: (91.25, 0.39, 78.07), Extents: (0.80, 0.80, 0.80)
+COLLIDER SphereCollider enabled=True trigger=True bounds=Center: (91.25, 0.39, 78.07), Extents: (3.00, 3.00, 3.00)
+OBJECT cayda id=GlobalObjectId_V1-2-f55ab8817ee8beb4482e0baed3697c66-919132149155446097-64844734 position=(94.6000, 4.6200, 81.0000) rotation=(270.0000, 0.0000, 0.0000) scale=(800.0000, 800.0000, 800.0000) activeSelf=True
+COLLIDER CapsuleCollider enabled=True trigger=False bounds=Center: (94.62, 4.60, 81.01), Extents: (5.60, 5.60, 7.61)
+OBJECT thachsanh id=GlobalObjectId_V1-2-f55ab8817ee8beb4482e0baed3697c66-919132149155446097-1298406143 position=(96.4600, 0.0000, 92.2800) rotation=(0.0000, 0.0000, 0.0000) scale=(1.0000, 1.0000, 1.0000) activeSelf=True
+COLLIDER CapsuleCollider enabled=True trigger=True bounds=Center: (96.46, 0.90, 92.28), Extents: (0.35, 0.90, 0.35)
+COLLIDER CharacterController enabled=True trigger=False bounds=Center: (96.46, 0.90, 92.28), Extents: (0.35, 0.90, 0.35)
+OBJECT thachsanh id=GlobalObjectId_V1-2-f55ab8817ee8beb4482e0baed3697c66-919132149155446097-1298406143 position=(96.4600, 0.0000, 92.2800) rotation=(0.0000, 0.0000, 0.0000) scale=(1.0000, 1.0000, 1.0000) activeSelf=True
+COLLIDER CapsuleCollider enabled=True trigger=True bounds=Center: (96.46, 0.90, 92.28), Extents: (0.35, 0.90, 0.35)
+COLLIDER CharacterController enabled=True trigger=False bounds=Center: (96.46, 0.90, 92.28), Extents: (0.35, 0.90, 0.35)
+LYTHONG_ROOT_COUNT=1
+INTERACTION {
+    "MonoBehaviour": {
+        "m_Enabled": true,
+        "m_EditorHideFlags": 0,
+        "m_Name": "",
+        "m_EditorClassIdentifier": "Assembly-CSharp::LyThongInteraction",
+        "questManager": {
+            "instanceID": 0
+        },
+        "standingPrefab": {
+            "fileID": 919132149155446097,
+            "guid": "0f63902532c916d4280667fba4ca451d",
+            "type": 3
+        },
+        "standingController": {
+            "fileID": 9100000,
+            "guid": "0799b3b2729adf046b31c13e704d0001",
+            "type": 2
+        },
+        "lyThongMaterial": {
+            "fileID": 2100000,
+            "guid": "2537cfa7e26c4ce45819095150e92c7e",
+            "type": 2
+        },
+        "triggerDistance": 3.0,
+        "standUpDuration": 1.600000023841858
+    }
+}
+QUEST {
+    "MonoBehaviour": {
+        "m_Enabled": true,
+        "m_EditorHideFlags": 0,
+        "m_Name": "",
+        "m_EditorClassIdentifier": "Assembly-CSharp::QuestManager",
+        "questText": {
+            "instanceID": 0
+        },
+        "lyThongNPC": {
+            "instanceID": 0
+        },
+        "lyThongAnimator": {
+            "instanceID": 0
+        },
+        "dialoguePanel": {
+            "instanceID": 0
+        },
+        "speakerText": {
+            "instanceID": 0
+        },
+        "contentText": {
+            "instanceID": 0
+        },
+        "hintText": {
+            "instanceID": 0
+        },
+        "loaHoiThoai": {
+            "instanceID": 0
+        },
+        "giongThachSanhCau1": {
+            "fileID": 8300000,
+            "guid": "be6ee1657c20dda488dbd24fe1e3b7de",
+            "type": 3
+        },
+        "giongLyThongCau2": {
+            "fileID": 8300000,
+            "guid": "7d0676948fdde484e958c9fe55629a4a",
+            "type": 3
+        },
+        "giongThachSanhCau3": {
+            "fileID": 8300000,
+            "guid": "5c42ec70f702c75478ae8288e6af67c6",
+            "type": 3
+        },
+        "giongLyThongCau4": {
+            "fileID": 8300000,
+            "guid": "77e74187f34f896488ede48b53d1bc14",
+            "type": 3
+        },
+        "woodCollected": 0,
+        "chickenKilled": 0,
+        "deerKilled": 0,
+        "horseKilled": 0,
+        "tigerKilled": 0,
+        "woodRequired": 1,
+        "chickenRequired": 1,
+        "deerRequired": 1,
+        "horseRequired": 1,
+        "tigerRequired": 1
+    }
+}
+quest.lyThongNPC==LyThong: True
+interaction.questManager correct: True
+NAV start=True (96.46, 0.11, 92.28)
+APPROACH degrees=0 sample=True point=(91.21, 0.87, 80.06) path=PathComplete corners=6 distanceToNPC=2.044903
+APPROACH degrees=45 sample=True point=(92.00, 1.12, 79.67) path=PathComplete corners=5 distanceToNPC=1.909371
+APPROACH degrees=90 sample=True point=(93.34, 1.04, 78.17) path=PathComplete corners=7 distanceToNPC=2.18452
+APPROACH degrees=135 sample=True point=(92.88, 0.86, 76.44) path=PathComplete corners=7 distanceToNPC=2.347696
+APPROACH degrees=180 sample=True point=(90.99, 0.17, 75.70) path=PathComplete corners=5 distanceToNPC=2.394207
+APPROACH degrees=225 sample=True point=(89.63, 0.18, 76.44) path=PathComplete corners=5 distanceToNPC=2.309243
+APPROACH degrees=270 sample=True point=(88.95, 0.53, 78.07) path=PathComplete corners=5 distanceToNPC=2.303964
+APPROACH degrees=315 sample=True point=(89.63, 0.83, 79.70) path=PathComplete corners=5 distanceToNPC=2.340836
+ENV nearest renderer bounds distance to LyThong=14.45316 renderer=Ancient_Banyan_1 overlapping protected interaction margin=0
+ENV colliders=0

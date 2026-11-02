@@ -1,0 +1,144 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+
+// Editor-only scenery authoring. Never attaches a gameplay component or changes navigation.
+public static class Chapter2VillageBuilder
+{
+    const string A="Assets/Chapter2VillageEnhancement";
+    const string Pack="Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Prefabs/URP/";
+    static Transform root;
+    static Terrain terrain;
+    static Material wood,stone,roof,glow,water;
+    static List<string> inventory;
+    public static void BatchBuild(){EditorSceneManager.OpenScene(Chapter2EnvironmentTool.ScenePath);Build();}
+    public static void BatchPreview(){EditorSceneManager.OpenScene(Chapter2EnvironmentTool.ScenePath);Preview();}
+    static Vector3 Ground(float x,float z)=>new Vector3(x,terrain.SampleHeight(new Vector3(x,0,z))+terrain.transform.position.y,z);
+    static Material Mat(string name,Color c,float emission=0)
+    {
+        var m=new Material(Shader.Find("Universal Render Pipeline/Lit"));m.name=name;m.SetColor("_BaseColor",c);m.SetFloat("_Smoothness",.18f);m.enableInstancing=true;
+        if(emission>0){m.EnableKeyword("_EMISSION");m.SetColor("_EmissionColor",c*emission);}
+        AssetDatabase.CreateAsset(m,A+"/"+name+".mat");return m;
+    }
+    static GameObject Part(string name,PrimitiveType type,Vector3 p,Vector3 scale,Material mat,Transform parent=null)
+    {
+        var go=GameObject.CreatePrimitive(type);go.name=name;go.transform.SetParent(parent?parent:root);go.transform.position=p;go.transform.localScale=scale;
+        UnityEngine.Object.DestroyImmediate(go.GetComponent<Collider>());go.GetComponent<Renderer>().sharedMaterial=mat;go.layer=2;go.isStatic=true;return go;
+    }
+    static GameObject Prop(string filename,float x,float z,float yaw=0,float scale=1)
+    {
+        string path=filename.Contains("/")?filename:Pack+filename+".prefab";
+        var prefab=AssetDatabase.LoadAssetAtPath<GameObject>(path);if(!prefab)throw new Exception("Missing prefab "+path);
+        var go=(GameObject)PrefabUtility.InstantiatePrefab(prefab,root);PrefabUtility.UnpackPrefabInstance(go,PrefabUnpackMode.Completely,InteractionMode.AutomatedAction);
+        go.name=filename.Split('/').Last().Replace(".prefab","");go.transform.position=Ground(x,z);go.transform.rotation=Quaternion.Euler(0,yaw,0);go.transform.localScale*=scale;
+        foreach(var c in go.GetComponentsInChildren<Collider>(true))UnityEngine.Object.DestroyImmediate(c);
+        foreach(var c in go.GetComponentsInChildren<Rigidbody>(true))UnityEngine.Object.DestroyImmediate(c);
+        foreach(var c in go.GetComponentsInChildren<MonoBehaviour>(true))UnityEngine.Object.DestroyImmediate(c);
+        foreach(var t in go.GetComponentsInChildren<Transform>(true)){t.gameObject.layer=2;t.gameObject.isStatic=true;}
+        inventory.Add(path+" @ "+go.transform.position.ToString("F2"));return go;
+    }
+    static void Fence(Vector2 a,Vector2 b)
+    {
+        int n=Mathf.CeilToInt(Vector2.Distance(a,b)/1.45f);var d=(b-a)/n;
+        for(int i=0;i<=n;i++){var q=a+d*i;var p=Ground(q.x,q.y);Part("BambooFence_Post",PrimitiveType.Cylinder,p+Vector3.up*.62f,new Vector3(.13f,.62f,.13f),wood);}
+        for(int i=0;i<n;i++)for(int h=0;h<2;h++){
+            var q=a+d*(i+.5f);var p=Ground(q.x,q.y)+Vector3.up*(.42f+h*.48f);var bar=Part("BambooFence_Rail",PrimitiveType.Cylinder,p,new Vector3(.085f,d.magnitude*.52f,.085f),wood);bar.transform.up=new Vector3(d.x,0,d.y).normalized;
+        }
+    }
+    static void Lamp(Vector3 p,bool post)
+    {
+        if(post)Part("Lantern_Post",PrimitiveType.Cylinder,new Vector3(p.x,p.y/2,p.z),new Vector3(.13f,p.y/2,.13f),wood);
+        Part("Lantern_WarmGlass",PrimitiveType.Cube,p,new Vector3(.25f,.43f,.25f),glow);
+        for(int i=0;i<4;i++){float t=i*Mathf.PI/2+Mathf.PI/4;Part("Lantern_Frame",PrimitiveType.Cube,p+new Vector3(Mathf.Cos(t)*.15f,0,Mathf.Sin(t)*.15f),new Vector3(.035f,.5f,.035f),wood);}
+        Part("Lantern_Cap",PrimitiveType.Cube,p+Vector3.up*.26f,new Vector3(.38f,.08f,.38f),roof);
+        var go=new GameObject("Lantern_WarmLight");go.transform.SetParent(root);go.transform.position=p;var l=go.AddComponent<Light>();l.type=LightType.Point;l.color=new Color(1,.64f,.28f);l.intensity=3.5f;l.range=7;l.shadows=LightShadows.None;l.renderMode=LightRenderMode.ForcePixel;
+    }
+    public static void Build()
+    {
+        if(EditorApplication.isPlaying)throw new Exception("Stop Play before authoring");
+        var original=SceneManager.GetActiveScene();if(original.path!=Chapter2EnvironmentTool.ScenePath||original.isDirty)throw new Exception("Open saved Chapter2 scene first");
+        if(AssetDatabase.IsValidFolder(A))throw new Exception("Enhancement already exists. Use backup for deliberate rebuild; no duplicate generation.");
+        AssetDatabase.CreateFolder("Assets","Chapter2VillageEnhancement");inventory=new List<string>();terrain=original.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<Terrain>()).First();
+        var stage=EditorSceneManager.NewScene(NewSceneSetup.EmptyScene,NewSceneMode.Additive);SceneManager.SetActiveScene(stage);root=new GameObject("Chapter2_Environment_Enhancement").transform;
+        wood=Mat("Bamboo_WarmTimber",new Color(.27f,.16f,.075f));stone=Mat("Well_WeatheredStone",new Color(.33f,.37f,.32f));roof=Mat("Village_OldTerracotta",new Color(.25f,.115f,.065f));glow=Mat("Lantern_AmberEmission",new Color(1,.53f,.12f),3);water=Mat("Well_DarkWater",new Color(.07f,.13f,.16f));
+        Fence(new Vector2(75.5f,28),new Vector2(75.5f,41));Fence(new Vector2(75.5f,41),new Vector2(79,41));
+        Fence(new Vector2(88.5f,28),new Vector2(88.5f,41));Fence(new Vector2(88.5f,41),new Vector2(86.5f,41));
+        Lamp(new Vector3(80.28f,2.5f,28.35f),false);Lamp(new Vector3(84.65f,2.65f,30.35f),false);
+        Lamp(Ground(78.8f,41)+Vector3.up*1.7f,true);Lamp(Ground(88.5f,41)+Vector3.up*1.7f,true);
+        // Emissive inserts only over existing windows. Door and its trigger remain clear.
+        foreach(var p in new[]{new Vector3(80.44f,2.13f,28.075f),new Vector3(85.44f,2.13f,30.075f)}){
+            Part("Window_WarmInterior",PrimitiveType.Cube,p,new Vector3(.58f,.82f,.025f),glow);
+            for(int i=-1;i<=1;i++)Part("Window_WoodMullion",PrimitiveType.Cube,p+new Vector3(i*.19f,0,.025f),new Vector3(.035f,.84f,.035f),wood);
+            Part("Window_WoodCrossbar",PrimitiveType.Cube,p+new Vector3(0,0,.025f),new Vector3(.61f,.04f,.04f),wood);
+        }
+        Prop("Pot_1_URP",77.2f,32.4f,15);Prop("Pot_2_URP",77.9f,33.1f,55,.8f);Prop("Wooden_Bucket_URP",73.9f,37.8f,30);
+        Prop("Wooden_Cart_URP",91,44.5f,75);Prop("Wooden_Barrel_URP",87.5f,34,25);Prop("Wooden_Tub_URP",76.6f,35,15,.8f);
+        var wp=Ground(73.5f,37);for(int i=0;i<16;i++){float t=i*Mathf.PI/8;var s=Part("Well_StoneRing",PrimitiveType.Cube,wp+new Vector3(Mathf.Cos(t)*.8f,.5f,Mathf.Sin(t)*.8f),new Vector3(.35f,.95f,.32f),stone);s.transform.rotation=Quaternion.Euler(0,-t*Mathf.Rad2Deg,0);}
+        Part("Well_Water",PrimitiveType.Cylinder,wp+Vector3.up*.16f,new Vector3(1.35f,.025f,1.35f),water);
+        foreach(float x in new[]{-.95f,.95f})Part("Well_TimberSupport",PrimitiveType.Cylinder,wp+new Vector3(x,1.4f,0),new Vector3(.14f,1.4f,.14f),wood);
+        for(int i=-1;i<=1;i+=2){var p=Part("Well_PitchedRoof",PrimitiveType.Cube,wp+new Vector3(0,2.75f,i*.4f),new Vector3(2.6f,.14f,1.05f),roof);p.transform.rotation=Quaternion.Euler(i*32,0,0);}
+        for(int row=0;row<3;row++)for(int i=0;i<4-row;i++){var p=Part("Firewood_Log",PrimitiveType.Cylinder,Ground(76.8f,29.8f)+new Vector3(i*.29f+row*.14f,.17f+row*.26f,0),new Vector3(.27f,.62f,.27f),wood);p.transform.rotation=Quaternion.Euler(90,0,0);}
+        string tree=AssetDatabase.GUIDToAssetPath(AssetDatabase.FindAssets("ShrubTree_C t:Prefab").First());
+        string bush=AssetDatabase.GUIDToAssetPath(AssetDatabase.FindAssets("ShrubBush_B t:Prefab").First());
+        string grass=AssetDatabase.GUIDToAssetPath(AssetDatabase.FindAssets("GrassShort_A t:Prefab").First());
+        string flower=AssetDatabase.GUIDToAssetPath(AssetDatabase.FindAssets("FlowersWTTFE-B t:Prefab").First());
+        foreach(var p in new[]{new Vector3(71,0,43),new Vector3(73,0,54),new Vector3(76,0,64),new Vector3(78,0,77),new Vector3(102,0,73),new Vector3(104,0,44)})Prop(tree,p.x,p.z,p.x*17,1.1f);
+        for(int i=0;i<8;i++){
+            float z=36+i*6.2f;float x=81.98f+(z-31.29f)*15.66f/57.76f;
+            for(int side=-1;side<=1;side+=2){float bx=x+side*(4.6f+(i%3)*.35f);Prop(bush,bx,z,i*47,.65f);Prop(grass,bx-side*.8f,z+1,i*71,1.2f);if(i%2==0)Prop(flower,bx-side*.5f,z-1,i*39,.8f);}
+        }
+        // A night fill spot avoids becoming the Directional Light selected by the existing guide script.
+        var moon=new GameObject("Moonlight_BlueFill");moon.transform.SetParent(root);moon.transform.position=new Vector3(65,38,57);moon.transform.LookAt(new Vector3(85,0,52));var ml=moon.AddComponent<Light>();ml.type=LightType.Spot;ml.spotAngle=110;ml.range=100;ml.color=new Color(.48f,.65f,1);ml.intensity=5;ml.shadows=LightShadows.Soft;ml.shadowStrength=.55f;ml.shadowBias=.08f;
+        var sky=new Material(Shader.Find("Skybox/Procedural"));sky.SetColor("_SkyTint",new Color(.12f,.21f,.4f));sky.SetColor("_GroundColor",new Color(.055f,.075f,.11f));sky.SetFloat("_Exposure",.38f);sky.SetFloat("_SunSize",.015f);AssetDatabase.CreateAsset(sky,A+"/MoonlitSky.mat");
+        RenderSettings.skybox=sky;RenderSettings.ambientMode=UnityEngine.Rendering.AmbientMode.Trilight;RenderSettings.ambientSkyColor=new Color(.27f,.35f,.5f);RenderSettings.ambientEquatorColor=new Color(.19f,.25f,.32f);RenderSettings.ambientGroundColor=new Color(.10f,.12f,.14f);RenderSettings.ambientIntensity=1;RenderSettings.fog=true;RenderSettings.fogMode=FogMode.ExponentialSquared;RenderSettings.fogColor=new Color(.13f,.19f,.28f);RenderSettings.fogDensity=.006f;
+        // Terrain clone: change paint only; preserve heights, detail maps, trees and navigation geometry.
+        var td=UnityEngine.Object.Instantiate(terrain.terrainData);td.name="Chapter2_Terrain_EnvironmentOnly";AssetDatabase.CreateAsset(td,A+"/Chapter2_Terrain.asset");
+        var dirt=new TerrainLayer();dirt.diffuseTexture=AssetDatabase.LoadAssetAtPath<Texture2D>("Assets/Toby Fredson/The Toby Foliage Engine/(TTFE)_Demo/Textures/Textures_Tiles Nature/BaseDirtGCATA_Albedo.png");if(!dirt.diffuseTexture)throw new Exception("Missing dirt texture");dirt.tileSize=new Vector2(5,5);dirt.diffuseRemapMax=new Vector4(.76f,.66f,.53f,1);AssetDatabase.CreateAsset(dirt,A+"/Courtyard_Dirt.terrainlayer");
+        var layers=td.terrainLayers;td.terrainLayers=layers.Concat(new[]{dirt}).ToArray();var old=terrain.terrainData.GetAlphamaps(0,0,td.alphamapWidth,td.alphamapHeight);var map=new float[td.alphamapHeight,td.alphamapWidth,layers.Length+1];
+        for(int z=0;z<td.alphamapHeight;z++)for(int x=0;x<td.alphamapWidth;x++){
+            var p=terrain.transform.position+new Vector3(x/(float)(td.alphamapWidth-1)*td.size.x,0,z/(float)(td.alphamapHeight-1)*td.size.z);var start=new Vector2(97.64f,89.05f);var end=new Vector2(81.98f,31.29f);var q=new Vector2(p.x,p.z);float t=Mathf.Clamp01(Vector2.Dot(q-start,end-start)/(end-start).sqrMagnitude);float dist=Vector2.Distance(q,start+(end-start)*t);float w=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(1.15f,2.4f,dist));float yard=1-Mathf.SmoothStep(0,1,Mathf.InverseLerp(3,6,Vector2.Distance(q,new Vector2(82,34))));w=Mathf.Max(w,yard)*.86f;for(int l=0;l<layers.Length;l++)map[z,x,l]=old[z,x,l]*(1-w);map[z,x,layers.Length]=w;
+        }td.SetAlphamaps(0,0,map);
+        AssetDatabase.SaveAssets();EditorSceneManager.SaveScene(stage,A+"/EnvironmentOnly.unity");File.WriteAllText(Chapter2EnvironmentTool.Output+"inventory.txt",string.Join("\n",inventory)+"\nDecorative primitives="+root.GetComponentsInChildren<MeshRenderer>(true).Count()+"\nNo new colliders="+root.GetComponentsInChildren<Collider>(true).Length+"\nTerrain GUID="+AssetDatabase.AssetPathToGUID(A+"/Chapter2_Terrain.asset"));
+        EditorSceneManager.CloseScene(stage,true);SceneManager.SetActiveScene(original);File.WriteAllText(Chapter2EnvironmentTool.Output+"build.done","Scenery staging saved. Merge required before completion.");
+    }
+    public static void Preview()
+    {
+        var go=new GameObject("Temporary_Environment_Preview");var c=go.AddComponent<Camera>();go.transform.position=new Vector3(86,4.1f,42);go.transform.LookAt(new Vector3(81,2,27));c.fieldOfView=65;c.farClipPlane=200;Chapter2EnvironmentTool.Capture(c,"Courtyard_preview");UnityEngine.Object.DestroyImmediate(go);
+    }
+    public static void Refine()
+    {
+        if(EditorApplication.isPlaying)throw new Exception("Stop Play first");
+        var scene=EditorSceneManager.OpenScene(A+"/EnvironmentOnly.unity");var cache=new Dictionary<Material,Material>();
+        root=scene.GetRootGameObjects().Single(g=>g.name=="Chapter2_Environment_Enhancement").transform;
+        foreach(var t in root.GetComponentsInChildren<Transform>(true))GameObjectUtility.SetStaticEditorFlags(t.gameObject,StaticEditorFlags.BatchingStatic);
+        if(!root.Find("Garden_MossStone_1")){
+            var moss=Mat("Garden_MossStone",new Color(.30f,.36f,.22f));int count=0;
+            foreach(var p in new[]{new Vector2(77,39),new Vector2(87.5f,37),new Vector2(80,49),new Vector2(91,52),new Vector2(83,65),new Vector2(95,67),new Vector2(87,78),new Vector2(99,81)}){
+                var stone=Part("Garden_MossStone_"+(++count),PrimitiveType.Sphere,new Vector3(p.x,.30f,p.y),new Vector3(.65f,.35f,.48f),moss);stone.transform.rotation=Quaternion.Euler(8,count*31,12);GameObjectUtility.SetStaticEditorFlags(stone,StaticEditorFlags.BatchingStatic);
+            }
+        }
+        foreach(var r in scene.GetRootGameObjects().SelectMany(g=>g.GetComponentsInChildren<MeshRenderer>(true)))
+        {
+            var mats=r.sharedMaterials;
+            for(int i=0;i<mats.Length;i++){
+                var s=mats[i];if(!s||AssetDatabase.GetAssetPath(s).StartsWith(A))continue;
+                if(!s.shader.name.Contains("TTFE"))continue;
+                if(!cache.TryGetValue(s,out var m)){
+                    m=new Material(s);m.name=s.name+"_Chapter2";m.enableInstancing=true;
+                    foreach(var prop in new[]{"_AlbedoColor","_AlebedoColor","_AlbedoCOLOZ"})if(m.HasProperty(prop))m.SetColor(prop,new Color(.58f,.76f,.39f));
+                    foreach(var prop in new[]{"_DryLeafColor","_Dryleafcolor","_Dryleafcolor1","_Dryleafcolor2","_Dryleafcolor3","_Leadydry"})if(m.HasProperty(prop))m.SetColor(prop,new Color(.36f,.48f,.17f));
+                    var id=AssetDatabase.AssetPathToGUID(AssetDatabase.GetAssetPath(s));AssetDatabase.CreateAsset(m,A+"/Foliage_"+id+".mat");cache[s]=m;
+                }mats[i]=m;
+            }r.sharedMaterials=mats;
+        }
+        var sky=AssetDatabase.LoadAssetAtPath<Material>(A+"/MoonlitSky.mat");sky.shader=Shader.Find("Chapter2/MoonlitSky");RenderSettings.skybox=sky;
+        RenderSettings.ambientSkyColor=new Color(.35f,.44f,.58f);RenderSettings.ambientEquatorColor=new Color(.25f,.32f,.39f);RenderSettings.ambientGroundColor=new Color(.14f,.17f,.19f);
+        AssetDatabase.SaveAssets();EditorSceneManager.SaveScene(scene);File.WriteAllText(Chapter2EnvironmentTool.Output+"refine.done","Scene-local foliage copies="+cache.Count);EditorSceneManager.OpenScene(Chapter2EnvironmentTool.ScenePath);
+    }
+}
+

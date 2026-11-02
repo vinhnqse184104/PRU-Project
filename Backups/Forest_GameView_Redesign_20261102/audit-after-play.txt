@@ -1,0 +1,53 @@
+PROJECT C:/Users/Admin/source/repos/PRU-Project/Assets
+SCENE Assets/Scenes/RungThachSanh.unity dirty=False playing=True
+ROOT Main Camera pos=(96.460, 2.250, 88.280) rot=(29.36, 0.00, 0.00) scale=(1.00, 1.00, 1.00)
+CAM Main Camera enabled=True fov=60 forward=(0.00, -0.49, 0.87) scripts=UniversalAdditionalCameraData,CameraFollow,CinemachineBrain
+ROOT Directional Light pos=(122.700, 29.300, 93.800) rot=(50.00, 330.00, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Terrain pos=(0.000, 0.000, 0.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00)
+TERRAIN Assets/ForestGameViewEnhancement/RungThachSanh_VisualTerrain.asset size=(200.00, 100.00, 200.00)
+TREETYPE Assets/ForestGameViewEnhancement/TerrainVisual_0.prefab
+TREETYPE Assets/ForestGameViewEnhancement/TerrainVisual_1.prefab
+TREETYPE Assets/ForestGameViewEnhancement/TerrainVisual_2.prefab
+TREETYPE Assets/ForestGameViewEnhancement/TerrainVisual_3.prefab
+TREETYPE Assets/ForestGameViewEnhancement/TerrainVisual_4.prefab
+TREETYPE Assets/ForestGameViewEnhancement/TerrainVisual_5.prefab
+TREETYPE Assets/ForestGameViewEnhancement/TerrainVisual_6.prefab
+TREETYPE Assets/ForestGameViewEnhancement/TerrainVisual_7.prefab
+ROOT cayda pos=(94.600, 4.620, 81.000) rot=(270.00, 0.00, 0.00) scale=(800.00, 800.00, 800.00)
+TREE cayda bounds=Center: (94.62, 4.60, 81.01), Extents: (7.59, 4.66, 7.61)
+ROOT thachsanh pos=(96.460, 0.000, 92.280) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT cay pos=(166.950, 7.920, 68.800) rot=(270.00, 0.00, 0.00) scale=(1000.00, 1000.00, 1000.00)
+ROOT cay (1) pos=(173.520, 9.780, 111.820) rot=(270.00, 0.00, 0.00) scale=(1500.00, 1500.00, 1500.00)
+ROOT FreeLook Camera pos=(96.460, 2.250, 88.280) rot=(29.36, 0.00, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT nhathachsanh pos=(78.460, 2.580, 81.970) rot=(270.00, 0.00, 0.00) scale=(900.00, 900.00, 900.00)
+ROOT Tiger_001 pos=(103.640, 0.183, 162.012) rot=(0.00, 162.49, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Tiger_001 (1) pos=(120.351, 0.039, 107.088) rot=(0.00, 197.80, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Tiger_001 (2) pos=(151.904, 1.152, 173.777) rot=(0.00, 85.01, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Chicken_001 pos=(87.107, 0.039, 119.878) rot=(0.00, 312.02, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Chicken_001 (1) pos=(92.137, 0.082, 99.996) rot=(0.00, 86.20, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Chicken_001 (2) pos=(86.355, 0.039, 120.535) rot=(0.00, 127.95, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Chicken_001 (3) pos=(88.339, 0.064, 101.153) rot=(0.00, 21.78, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Chicken_001 (4) pos=(79.091, 0.039, 112.445) rot=(0.00, 27.85, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Chicken_001 (5) pos=(69.572, 0.053, 116.694) rot=(0.00, 41.44, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Deer_001 (3) pos=(46.289, 0.115, 116.043) rot=(0.00, 27.64, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Deer_001 pos=(57.545, 0.071, 112.090) rot=(0.00, 206.51, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Deer_001 (1) pos=(87.111, 0.039, 110.480) rot=(0.00, 155.68, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Deer_001 (2) pos=(73.049, 0.054, 121.476) rot=(0.00, 73.79, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Horse_001 pos=(107.728, 0.050, 132.328) rot=(0.00, 110.05, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Horse_001 (1) pos=(124.206, 0.069, 140.594) rot=(0.00, 289.79, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Horse_001 (2) pos=(132.849, 0.131, 149.431) rot=(0.00, 139.17, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT EventSystem pos=(0.000, 0.000, 0.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Canvas pos=(562.600, 180.900, 0.000) rot=(0.00, 0.00, 0.00) scale=(0.44, 0.44, 0.44)
+ROOT cadoncuiy pos=(118.604, 2.700, 78.030) rot=(270.00, 0.00, 0.00) scale=(500.00, 500.00, 500.00)
+ROOT cadoncuiy (1) pos=(143.150, 2.700, 107.000) rot=(270.00, 0.00, 0.00) scale=(500.00, 500.00, 500.00)
+ROOT cadoncuiy (2) pos=(93.060, 3.220, 115.140) rot=(270.00, 0.00, 0.00) scale=(500.00, 500.00, 500.00)
+ROOT NextChapterTrigger pos=(60.480, 2.700, 96.750) rot=(270.00, 0.00, 0.00) scale=(500.00, 500.00, 500.00)
+ROOT cadoncuiy (3) pos=(60.480, 2.700, 96.750) rot=(270.00, 0.00, 0.00) scale=(500.00, 500.00, 500.00)
+ROOT LyThong pos=(91.252, 0.390, 78.070) rot=(0.00, 200.00, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Chapter1_DialogueCanvas pos=(562.600, 180.900, 0.000) rot=(0.00, 0.00, 0.00) scale=(0.44, 0.44, 0.44)
+ROOT Panel_GameOver pos=(413.800, 192.900, 0.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT GameManager pos=(381.679, 0.000, 853.921) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT StoryManager pos=(381.679, 0.000, 853.921) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT IntroVideoPlayer pos=(0.000, 0.000, 0.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Forest_Environment_Enhancement pos=(0.000, 0.000, 0.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00)
+ROOT Chapter1NewGameHandler pos=(0.000, 0.000, 0.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00)

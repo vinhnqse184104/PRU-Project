@@ -1,0 +1,10 @@
+{
+  "target": "C:/Users/Admin/source/repos/PRU-Project/Assets/Scenes/RungThachSanh.unity",
+  "originalSHA256": "a3747544fc41a447266c4f127941d35b26e8be6f2a6ef7765ff1c8b6b3f712f1",
+  "afterSHA256": "49e48b5efc176f8ea37ba7be77d92402eb7f59e4dbe581e9a333159990b491ac",
+  "existingBlocksUnchanged": 669,
+  "addedBlocks": 227,
+  "newGameObjects": 90,
+  "decorativeGroups": 15,
+  "changedExistingBlock": "SceneRoots: appended one root reference only"
+}

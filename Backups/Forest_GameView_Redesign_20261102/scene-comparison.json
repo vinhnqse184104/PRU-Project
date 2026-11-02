@@ -1,0 +1,35 @@
+{
+  "project": "C:/Users/Admin/source/repos/PRU-Project/",
+  "beforeSHA256": "49e48b5efc176f8ea37ba7be77d92402eb7f59e4dbe581e9a333159990b491ac",
+  "afterSHA256": "a41186d02de58ce47a4c9b38d314430bfc8232188f96576c7f5dc9a89cf44750",
+  "originalBlocks": 897,
+  "newBlocks": 119,
+  "changedOriginalBlocks": [
+    {
+      "id": "2",
+      "type": 104,
+      "missing": false
+    },
+    {
+      "id": "350734488",
+      "type": 154,
+      "missing": false
+    },
+    {
+      "id": "350734489",
+      "type": 218,
+      "missing": false
+    },
+    {
+      "id": "961792718",
+      "type": 108,
+      "missing": false
+    },
+    {
+      "id": "5000000000226",
+      "type": 4,
+      "missing": false
+    }
+  ],
+  "protectedRawBlockDifferences": []
+}

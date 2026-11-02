@@ -1,0 +1,103 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Reflection;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+
+[InitializeOnLoad]
+public static class FreeExploreFlowTest
+{
+    const string Folder="Backups/Free_Explore_LyThong_20261102";
+    static readonly string[] Keys={"PRU_ChanTinhDefeated","PRU_HasChanTinhHead","PRU_Chapter2Returned","PRU_ReturnDialogueDone","PRU_Chapter4Reached","PRU_LyThongReturnedAsOfficial"};
+    [Serializable] public class Prefs {public bool[] present;public int[] values;}
+    static StringBuilder log;
+    static bool running;
+    static int phase,corner,lines;
+    static double realStart;
+    static float gamePhaseTime;
+    static QuestManager quest;
+    static LyThongInteraction npc;
+    static Transform player;
+    static Vector3[] route;
+    static string dialogue;
+    static FreeExploreFlowTest(){EditorApplication.update+=Poll;EditorApplication.playModeStateChanged+=State;}
+    static object Read(object o,string name)=>o.GetType().GetField(name,BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public).GetValue(o);
+    static Prefs Snapshot()=>new Prefs{present=Keys.Select(PlayerPrefs.HasKey).ToArray(),values=Keys.Select(k=>PlayerPrefs.GetInt(k,0)).ToArray()};
+    static void Restore(){var json=SessionState.GetString("FreeExplorePrefs","");if(string.IsNullOrEmpty(json))return;var p=JsonUtility.FromJson<Prefs>(json);for(int i=0;i<Keys.Length;i++){if(p.present[i])PlayerPrefs.SetInt(Keys[i],p.values[i]);else PlayerPrefs.DeleteKey(Keys[i]);}PlayerPrefs.Save();}
+    static void Note(string text){log.AppendLine(text);File.WriteAllText(Folder+"/runtime-progress.txt",log.ToString());}
+    static void Poll()
+    {
+        if(EditorApplication.isCompiling||EditorApplication.isUpdating)return;var path=Folder+"/request.txt";
+        if(File.Exists(path)){try{var cmd=File.ReadAllText(path).Trim();File.Delete(path);if(cmd=="test")Begin();}catch(Exception e){File.WriteAllText(Folder+"/test-error.txt",e.ToString());}}
+        if(running&&EditorApplication.isPlaying)try{Tick();}catch(Exception e){Finish("FAIL "+e);}
+    }
+    static void Begin()
+    {
+        var scene=SceneManager.GetActiveScene();if(EditorApplication.isPlaying||scene.path!="Assets/Scenes/RungThachSanh.unity"||scene.isDirty)throw new Exception("Open saved RungThachSanh in Edit mode");
+        var json=JsonUtility.ToJson(Snapshot());File.WriteAllText(Folder+"/test-prefs-before.json",json);SessionState.SetString("FreeExplorePrefs",json);SessionState.SetBool("FreeExploreOriginalBackground",Application.runInBackground);SessionState.SetBool("FreeExploreTestPending",true);
+        // A saved later-chapter flag must not hide the first objective when explicitly opening Chapter 1.
+        PlayerPrefs.SetInt("PRU_LyThongReturnedAsOfficial",1);PlayerPrefs.Save();EditorApplication.isPaused=false;EditorApplication.isPlaying=true;
+    }
+    static void State(PlayModeStateChange state)
+    {
+        if(state==PlayModeStateChange.EnteredPlayMode&&SessionState.GetBool("FreeExploreTestPending",false)){SessionState.SetBool("FreeExploreTestPending",false);SessionState.SetBool("FreeExploreTestRestore",true);Application.runInBackground=true;running=true;phase=0;realStart=EditorApplication.timeSinceStartup;log=new StringBuilder();}
+        if(state==PlayModeStateChange.EnteredEditMode&&SessionState.GetBool("FreeExploreTestRestore",false)){running=false;Input();Restore();Application.runInBackground=SessionState.GetBool("FreeExploreOriginalBackground",false);SessionState.SetBool("FreeExploreTestRestore",false);File.WriteAllText(Folder+"/test-prefs-after.json",JsonUtility.ToJson(Snapshot()));File.AppendAllText(Folder+"/runtime-result.txt","\nOriginal story PlayerPrefs restored="+(SessionState.GetString("FreeExplorePrefs","")==JsonUtility.ToJson(Snapshot())));}
+    }
+    static void Input(params Key[] keys){if(Keyboard.current!=null)InputSystem.QueueStateEvent(Keyboard.current,new KeyboardState(keys));}
+    static void Find(){quest=UnityEngine.Object.FindAnyObjectByType<QuestManager>();npc=SceneManager.GetActiveScene().GetRootGameObjects().Single(x=>x.name=="LyThong").GetComponent<LyThongInteraction>();player=SceneManager.GetActiveScene().GetRootGameObjects().Single(x=>x.name=="thachsanh").transform;}
+    static void Assert(bool value,string text){if(!value)throw new Exception(text);}
+    static void ZeroCounts(){Assert(quest.woodCollected==0&&quest.chickenKilled==0&&quest.deerKilled==0&&quest.horseKilled==0&&quest.tigerKilled==0,"Old quest counters must remain zero");}
+    static void Tick()
+    {
+        if(EditorApplication.isPaused){EditorApplication.isPaused=false;Note("Continued Editor after diagnostic pause.");}
+        if(EditorApplication.timeSinceStartup-realStart>120){Finish("TIMEOUT phase="+phase+" player="+(player?player.position.ToString():"none")+" timeScale="+Time.timeScale+" gameTime="+Time.time+" focused="+Application.isFocused);return;}
+        if(phase==0)
+        {
+            if(EditorApplication.timeSinceStartup-realStart<1)return;
+            Find();if(!quest||!npc)return;Assert((int)Read(quest,"currentQuest")==2,"Forest must start at find-LyThong objective");Assert(npc.gameObject.activeInHierarchy,"Existing NPC hidden");Assert(!(bool)Read(quest,"isDialogueActive"),"Auto dialogue at start");ZeroCounts();Assert(Vector3.Distance(player.position,new Vector3(96.46f,0,92.28f))<.12f,"Spawn moved");Assert(Vector3.Distance(npc.transform.position,new Vector3(91.252f,.39f,78.07f))<.001f,"NPC moved");
+            Note("PASS initial objective=2, existing NPC active, no automatic dialogue, counters=0, original spawn retained; saved later-chapter flag did not block Chapter 1.");
+            UnityEngine.Object.FindAnyObjectByType<GioiThieuCotTruyen>().BamNutBatDau();Assert(quest.questText.gameObject.activeInHierarchy,"Objective hidden after Start");Assert(quest.questText.text=="Nhiệm vụ: Hãy khám phá khu rừng và tìm Lý Thông dưới gốc cây đa.","Full hint incorrect");Assert(quest.questText.rectTransform.anchorMax==new Vector2(0,1),"Hint not top-left");Note("PASS Start button unlocks game and displays full top-left objective.");gamePhaseTime=Time.time;phase=1;return;
+        }
+        if(phase==1)
+        {
+            if(Time.time-gamePhaseTime>.2f&&!File.Exists(Folder+"/objective-full.png"))ScreenCapture.CaptureScreenshot(Folder+"/objective-full.png");
+            if(Time.time-gamePhaseTime<6.3f)return;Assert(quest.questText.text=="Mục tiêu: Tìm Lý Thông","Compact hint incorrect");ZeroCounts();Assert(!(bool)Read(quest,"isDialogueActive"),"Dialogue auto-started while idle");Note("PASS objective collapses after six gameplay seconds; still no dialogue and counters remain zero.");
+            phase=2;UnityEngine.Object.FindAnyObjectByType<Chapter1NewGameHandler>().StartNewGameFromChapter1();return;
+        }
+        if(phase==2)
+        {
+            Find();if(!quest||(int)Read(quest,"currentQuest")!=2)return;Assert(npc.gameObject.activeInHierarchy&&!(bool)Read(npc,"isMet"),"New Game did not reset find-NPC state");Assert(Vector3.Distance(player.position,new Vector3(96.46f,0,92.28f))<.12f,"New Game spawn differs from saved scene");Note("PASS explicit New Game reload resets interaction and objective without hard-coded character relocation.");
+            UnityEngine.Object.FindAnyObjectByType<GioiThieuCotTruyen>().BamNutBatDau();ZeroCounts();
+            Assert(NavMesh.SamplePosition(player.position,out var a,2,NavMesh.AllAreas),"Start NavMesh sample failed");Assert(NavMesh.SamplePosition(npc.transform.position+Vector3.forward*2.2f,out var b,2,NavMesh.AllAreas),"Goal NavMesh sample failed");var p=new NavMeshPath();Assert(NavMesh.CalculatePath(a.position,b.position,NavMesh.AllAreas,p)&&p.status==NavMeshPathStatus.PathComplete,"No approach route");route=p.corners;corner=1;phase=3;return;
+        }
+        if(phase==3)
+        {
+            ZeroCounts();if((bool)Read(npc,"isMet")){Input();Note("PASS reached original interaction through existing PlayerMovement. Player="+player.position+" NPC="+npc.transform.position+" all collection/kill counts=0.");phase=4;gamePhaseTime=Time.time;return;}
+            if(corner>=route.Length){Input();return;}var d=route[corner]-player.position;d.y=0;if(d.magnitude<.45f){corner++;return;}var cam=Camera.main;var f=cam.transform.forward;f.y=0;f.Normalize();var r=cam.transform.right;r.y=0;r.Normalize();float x=Vector3.Dot(d.normalized,r),z=Vector3.Dot(d.normalized,f);var keys=new List<Key>();if(x>.28f)keys.Add(Key.D);if(x<-.28f)keys.Add(Key.A);if(z>.28f)keys.Add(Key.W);if(z<-.28f)keys.Add(Key.S);Input(keys.ToArray());return;
+        }
+        if(phase==4)
+        {
+            Input();if(!(bool)Read(quest,"isDialogueActive")||Time.time-gamePhaseTime<2.4f)return;Assert((int)Read(quest,"currentQuest")==3&&quest.dialoguePanel.activeInHierarchy,"Dialogue transition broken");ZeroCounts();lines=1;dialogue=quest.contentText.text;Note("Dialogue 1: "+quest.speakerText.text+" "+dialogue);ScreenCapture.CaptureScreenshot(Folder+"/dialogue-original.png");gamePhaseTime=Time.time;phase=5;return;
+        }
+        if(phase==5){if(Time.time-gamePhaseTime<.3f)return;Input(Key.Enter);gamePhaseTime=Time.time;phase=6;return;}
+        if(phase==6){if(Time.time-gamePhaseTime<.12f)return;Input();phase=7;return;}
+        if(phase==7)
+        {
+            Input();if(SceneManager.GetActiveScene().name=="Chapter2_LyThong"){phase=8;gamePhaseTime=Time.time;return;}
+            if(!quest)return;if(!(bool)Read(quest,"isDialogueActive")){Assert(lines==4,"Dialogue ended before four lines");return;}
+            if(dialogue!=quest.contentText.text){dialogue=quest.contentText.text;lines++;Assert(lines<=4,"Unexpected duplicate dialogue");Note("Dialogue "+lines+": "+quest.speakerText.text+" "+dialogue);gamePhaseTime=Time.time;phase=5;}return;
+        }
+        if(phase==8)
+        {
+            Input();if(Time.time-gamePhaseTime<.5f)return;var guide=UnityEngine.Object.FindAnyObjectByType<LyThongGuide>();Assert(guide&&guide.enabled&&guide.gameObject.activeInHierarchy,"Chapter2 guide disabled");Assert(guide.homePoint&&guide.thachSanh,"Chapter2 guide references missing");var bed=UnityEngine.Object.FindAnyObjectByType<BedSleepTrigger>();Assert(bed&&bed.nextSceneName=="Chapter3_MieuChanTinh","Next chapter sleep objective missing");Note("PASS original four dialogue lines completed; Chapter2_LyThong loaded; LyThongGuide enabled state="+guide.currentState+"; home/player references valid; BedSleepTrigger still targets Chapter3_MieuChanTinh.");Finish("PASS FREE EXPLORATION FLOW");
+        }
+    }
+    static void Finish(string result){Input();Note(result);File.WriteAllText(Folder+"/runtime-result.txt",log.ToString());running=false;EditorApplication.isPlaying=false;Debug.Log(result);}
+}

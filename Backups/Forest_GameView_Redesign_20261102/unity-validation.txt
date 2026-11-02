@@ -1,0 +1,6 @@
+Project: C:/Users/Admin/source/repos/PRU-Project/Assets
+Scene loaded; missing scripts=0
+Decorations=58 renderers=78
+Mesh/material/shader references valid; no new colliders or runtime scripts.
+Terrain dimensions and every height sample unchanged; TerrainCollider shares cloned visual data.
+Play/Game View smoke check documented separately in REPORT.md; full gameplay and FPS not tested.

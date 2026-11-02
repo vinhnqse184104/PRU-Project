@@ -1,0 +1,11 @@
+{
+  "added_blocks": 50,
+  "original_blocks": 2855,
+  "original_blocks_changed": [
+    {
+      "type": 1660057539,
+      "id": "9223372036854775807"
+    }
+  ],
+  "original_gameplay_camera_transforms_identical": true
+}

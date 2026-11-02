@@ -1,0 +1,366 @@
+[
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\BedSleepTrigger.cs",
+    "Hash": "81806DC1EFD88BE628B1087421FAADF415DDF0CB064FEA555D7E7D67B9000E3B"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\CameraFollow.cs",
+    "Hash": "0D2450E53D1B1CBDFBB1CA75FB4FB72BB4E270DFC598713E831623DE4E043547"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\CaveArrivalDialogue.cs",
+    "Hash": "EA312F2502E4853DBC785CD698E7028DEAB210EAA8C961C686337FFF75D46582"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Chapter1NewGameHandler.cs",
+    "Hash": "6BE6A15934F5CA515557AC984ED804067D3AF7380D27C40071477DF7C49C1485"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Chapter2OfficialReturnCutscene.cs",
+    "Hash": "53714AD9B6CC02149EC6F197B7BF42FC07277862C8463B53192C5D07AC5BA47C"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Chapter2ReturnManager.cs",
+    "Hash": "0AAF0D5D340EFD8E0D32835C1049F50DB4496ED12E98DCBB21BAF62EC74BCE4B"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Chapter3BossBattleManager.cs",
+    "Hash": "D5905C188B21AD42DC473522689D79F80CE7BD32D348B2566C31F05F6F1D0DB1"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Chapter3Intro.cs",
+    "Hash": "D4F2A19246903256DE5BF1155D781F9CCD7A4F46A4E1C16DCAC5FA4B6E702429"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Chapter4PalaceManager.cs",
+    "Hash": "4CE99F2D5CDC96A5F3677909E3D91A037C6049EB0F071275DC6CDD0E9062AA0E"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Chapter4SoldierEscort.cs",
+    "Hash": "F93F9112F9200EF1AB36A182BAF9ECADB6269E589AC2D5A90C24067394D262D4"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Chapter6CameraFollow.cs",
+    "Hash": "F593BDCE326E1DB56892B5EBC61440F2DDCEE9D07AB567167317436375076FC3"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\ChapterDialogueUIHelper.cs",
+    "Hash": "AEB9D3BFA69BC453A6A8FA8F99A253F75F50E7F9ADEE2AD72538C48C6687F8A0"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\CuuCongChua.cs",
+    "Hash": "00551F2F9473A6514061E3F76BF99B76A0FAA6EF65B027D1AA175AB2D0976C82"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\DayThungGiaiCuu.cs",
+    "Hash": "7C735C32781D430B481302FA23390A2C9F9FFAFC87F7E34AD2630501B9C8F832"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\DoorInteraction.cs",
+    "Hash": "FF59E7FE65D79F6C7C0839CC8BF3F59BF6FCBFCD264FDF5F022468BB73A0BAD4"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\EagleQuestDialogue.cs",
+    "Hash": "74F3BB803B50ECFA04FB6C9D282DA91EAD4D771F4439BF2C6CEF780C9CE06F1D"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\EnemyHealth.cs",
+    "Hash": "97A38AE56E4DAC8CCCE8066862DE0693A092DE5C7F23D223E7E824DDFC201BA0"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\GioiThieuCotTruyen.cs",
+    "Hash": "A51A8A7E4A55AD70C2578E35122F53DD0C1C15F79B3DDCDEE51ABC6AF4F9C590"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\LyThongGuide.cs",
+    "Hash": "3CC15A5FD7B7D706779385CA95C355F5BB37FA40DC47C2E28DBAC6538F8AB3B1"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\LyThongPlayerController.cs",
+    "Hash": "EAD33ADE8EC45870C5369579999549272749695D66CB2C3EFC6330814E7AED60"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\MountainColliderFixer.cs",
+    "Hash": "C2976D2D01094FF13EC63B9E89C2B4C5C8C25B559E883C2EC355ED9836639654"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\NextChapterTrigger.cs",
+    "Hash": "B68983400D02AE82E3EE6441935C40B6DD66E5393C00DB9D2933DCA75CBBB6DF"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\PlayerTrophyHolder.cs",
+    "Hash": "97D63760CF178C3CC6F71E76C51DEA76A18459ABB27C0A9DED6D525473D52958"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\QuanLyGame.cs",
+    "Hash": "D14B76AC297ADC5CEAE59C411DA413695107FFAB50937F58C4ABF94D0B15130C"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\QuestManager.cs",
+    "Hash": "E8729CCB359403AF49CA279B1FAB54CA7F5CD9DA2FBD51E00A94AC0563F9EA92"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\StoryStateManager.cs",
+    "Hash": "C81DDBA901771756A1639A82CE3846FB1EED30FB913B1983FF0A8341A0AD13DD"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\Antialiasing.cs",
+    "Hash": "586EB31510D856376AB385DD6FF8F78C02A44E8D1CEC5480C70B2CC1DCC8E680"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\Bloom.cs",
+    "Hash": "D9C967459F57174B9171697568C66D8F6D00A07249060B3E3AED991693172308"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\BloomAndFlares.cs",
+    "Hash": "9B26918BAD3D80957DC59EE2062A31CE11BFF31C0538578A4A6E9701D749EE97"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\BloomOptimized.cs",
+    "Hash": "2D01369C1903FA140B1A53073ACD310906EC728FDC8E07F5128A79BDD55016C3"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\Blur.cs",
+    "Hash": "1F915220FC01B5D58085D61D9FF6471DD553DEAE5F0F4CC02DBA6D288755CA24"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\BlurOptimized.cs",
+    "Hash": "E5B62C494D0C4D06F243331668769DECF59181EDE3C1C717192BA540D931113A"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\CameraMotionBlur.cs",
+    "Hash": "DA8B3A3488F6F182970547191FD5B1AC569DEC04E4F6BF535FB7F33823985F7F"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\ColorCorrectionCurves.cs",
+    "Hash": "A179322E70F8A9D0A642705EBB8F80D2E4BAE4A3F8559B68F64DEFD0CA737C00"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\ColorCorrectionLookup.cs",
+    "Hash": "B6D32ECBDE690C01CAE40154B6A1C1FE44F46D901CED606DDF520CF043155BB0"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\ColorCorrectionRamp.cs",
+    "Hash": "F59D085F639C05B657947F18589402114CCA77A089E3954FA2FDAD063A400B68"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\ContrastEnhance.cs",
+    "Hash": "FB3FFA444994C3FBA41DE8FEDFCC6717371831BD410C6F8F3DAF1048B35A0B59"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\ContrastStretch.cs",
+    "Hash": "781A5129FA4649ECBCAE3FD725B364680A5C83B3D2E5AC54775DE18E2BAC8176"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\CreaseShading.cs",
+    "Hash": "9D185DB9066DDDE121D80789B78BC73235A7F94C44E89E4BF2E1E6FA44926060"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\DepthOfField.cs",
+    "Hash": "5536A19EF0CB745BD8F3DECC4E1EA7E4ED069A9BBF28DDDA3C1B5477D53684EF"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\DepthOfFieldDeprecated.cs",
+    "Hash": "50735DC0E62533E5DF4A28ACDE1ABBE627A8C293E520947D921B3F08883208CA"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\EdgeDetection.cs",
+    "Hash": "D05427E40B959C51BE1943F9936DCD348DEBFB61FFC698F65B113F5C4814DDFF"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\Fisheye.cs",
+    "Hash": "54E31954E60116E8FDED7BA62D870BC7A0FCB38AC6B0BC1DEE9C4525D024E0B2"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\GlobalFog.cs",
+    "Hash": "D682852C1F176B165FC3D6B8C7A39FCB0190003F09CF0BD795AF771D9BECFEB3"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\Grayscale.cs",
+    "Hash": "4970798B851D8BC75AA632163670AF8890B1D40309665D3F014B54D6AD1DC663"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\ImageEffectBase.cs",
+    "Hash": "C950C01EB3643E60C97990FAA98F6A85358428148AC5B61395D945131F530E47"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\ImageEffects.cs",
+    "Hash": "71CE832A006D1CA3610AD69FE9DACEAD7CBB3316931853DEFF8FAF7FB5550D70"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\MotionBlur.cs",
+    "Hash": "85207B0C38DB865EB9CAD48618AB4DB06B16CD2DDCFFBE91B2A516D0F4386FA7"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\NoiseAndGrain.cs",
+    "Hash": "0EBD0BC6AD09DDBED16B5399576706EB855BB1332F79DABA1F06D4CF6749ECF9"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\NoiseAndScratches.cs",
+    "Hash": "DE194E9C73F02760265B2A43484337F3708D42616E972E347E1E8A3CD47B6047"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\PostEffectsBase.cs",
+    "Hash": "5D4CF8FE79FE6BA4C19FD07E39D4801CA137EF4FE1B3A0B7F393865052911E21"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\PostEffectsHelper.cs",
+    "Hash": "637A9432BB37D2C1A77AE749B1E7B84BD9CB8C27F120EDC0533C2C0D38F5F590"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\Quads.cs",
+    "Hash": "1D4757754BA47D447C76B419DA68E0B6E836A11EB4A88E2F26FADBA5B9D78AFE"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\ScreenOverlay.cs",
+    "Hash": "3C9E77155B6751B4E45E1C8E947AD26C982A270D43BE0E26BE19386C7EEAF43C"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\ScreenSpaceAmbientObscurance.cs",
+    "Hash": "5BB78CCA6121AF2CB69A2E51586CF0DC8EB4590E68D9A580FCF7421FAC9DBFBC"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\ScreenSpaceAmbientOcclusion.cs",
+    "Hash": "AF164E809C0069239B5D1F185DC13C0F9F60219BE3E255CC6E99F07E251DCCA9"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\SepiaTone.cs",
+    "Hash": "48A3F94C3850CAE5BDAB5F4A55AFFABB4E4A26911ABED943A59B74F8C781E13D"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\SunShafts.cs",
+    "Hash": "DDAA589A4658973EAA645E8CE15029CD80BDDD89C58355521BDD8D3546249F16"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\TiltShift.cs",
+    "Hash": "3698CC63925067CC538AA5E80465CAC0C5EEB86082D4584FF984E4C19AC4ADE1"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\Tonemapping.cs",
+    "Hash": "E8E8B77756AA2799F6B2D7677218ECB34A2169B784BA9B9AF68990DF53702BE0"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\Triangles.cs",
+    "Hash": "4790FD53F06512A9BB059484C292FF480B974290B26D0404F7650E84BF972D29"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\Twirl.cs",
+    "Hash": "E7636439004ABA2FE53314A4E98D8145905BEA429D85DBA6FE55FE91BABE5CB7"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\VignetteAndChromaticAberration.cs",
+    "Hash": "F3FC0C9E2100AE518B818D368024F26309C8549203A105361E2449F377106C30"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Free_Rocks\\Standard Assets\\Effects\\ImageEffects\\Scripts\\Vortex.cs",
+    "Hash": "D96FEE1FF1FEEA9B9514E5FE755945F6E0E3964F826A8F739BD96BB7994C551B"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\hangdong\\CaveAreaVolumeTrigger.cs",
+    "Hash": "EE74BB8E2B6DBA33D31D40507C6CEBA804B0A222949BFF89C37FA02A5A7AAE63"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\hangdong\\CaveExitTrigger.cs",
+    "Hash": "3322FF25D1C69A352A711C2A2A846BE0D88015E25805E09AE2B83697F189103D"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\hangdong\\CaveFadeTeleport.cs",
+    "Hash": "2B6EECC02290427490CC63255B306BD4384DD442BCCCDC7CEFAB8849430049B9"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\hangdong\\CaveLightingController.cs",
+    "Hash": "9F7F0B934EA2D9831271C09949D957C66D3F06ADC1A96B4FBA2AEAFB7741F68D"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\hangdong\\CaveTeleportTrigger.cs",
+    "Hash": "7132F276034298B0C4A3C4DC28012A0F3145EA246256BABEBCB82533F25E17D7"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\ithappy\\AnimalAI.cs",
+    "Hash": "E548DB695CFEC7E66D6B8C7DD1BFA94DAF4BB0506071F5EA5A42A94E73F3DE06"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\ithappy\\EnemyAI.cs",
+    "Hash": "FF946A84C1F4C5B649E0CD2592C21084812AC0CACFD3055A9777C25C3CCFA283"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Medieval_house_lite\\Scripts\\Fire_effect\\LightFlickerEffect.cs",
+    "Hash": "F5286891FD02490380C07E10F6C5BA553217EFF0CC8AE90AA0282BCA28014033"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\PlayerHealth.cs",
+    "Hash": "E941DBA9C5B6907B173912C43BCAF411190780D427800B3708ADBFBFC596C428"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\chimdaibang\\DaiBangBatCoc.cs",
+    "Hash": "0C99CC18F860C865C753F4260443743E13E77C94756F0064FD4A3B985116C11B"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\chimdaibang\\EagleBossAI.cs",
+    "Hash": "16304BA155C777D5280040BF25B0135F457563E2436CB0A81D3D0BF229252C24"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\chằn tinh\\ChanTinhAI.cs",
+    "Hash": "2B2FA208870A0F87388448AF3D2C4C0EFE7D0BC8504CBD425FEAC161607B5603"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\chằn tinh\\ChanTinhAttack.cs",
+    "Hash": "079B2F0555671315BE806D6B0B5A6D84CDC6CA01FF1416A3F2EF8121FB2FC3F9"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\chằn tinh\\ChanTinhHeadManager.cs",
+    "Hash": "98378E2C7F031851887087F8EA302FE531BD17A240B09E28FD123B83DEF479E3"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\chằn tinh\\MauChanTinh.cs",
+    "Hash": "DDAF764E89D286E6F7F405D0BA92F8AAC1B71D3A3A8B0784252768022F8DCD4A"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\chằn tinh\\ThanhMauXoay.cs",
+    "Hash": "B50B62366EE66CC1413487FF3496C193FCBD01E77B8EC72A0355789739473AF9"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\lythong\\LyThongInteraction.cs",
+    "Hash": "2C2FC749D94D6BD34B60064A1E80CA216D8F112D044D45B8E89D3D1EC639B1F2"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\thachsanh\\hanhdong\\chay\\PlayerMovement.cs",
+    "Hash": "58B33BCBF0F7549EDEE4FAE9FF5E96823710720B589B3DF887267224A884FA0E"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\thachsanh\\hanhdong\\chém\\PlayerCut.cs",
+    "Hash": "74315F4347B6468CB1FBDB36046095CCCEBC85B23AAADCE5B325E26965BB5378"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\nhanvat\\thachsanh\\hanhdong\\đá\\PlayerKick.cs",
+    "Hash": "D83C3811310BBB7A4E9E5B6D6ADE9DBABF4FC2DF4274AD8D6F9678CF8DD8713D"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\phongcanh\\cay\\TreeHealth.cs",
+    "Hash": "70E732371F136F32F5D5F12E98162109EE324E4E68E167375D1D6A766EABBB0F"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Toby Fredson\\The Toby Foliage Engine\\(TTFE)_Core\\Resources\\(TTFE) GLOBAL CONTROLLER\\Scripts\\TobyConstants.cs",
+    "Hash": "483B5E45A6F207B9EA44B34BBAD56A69156874FF7709EC6AF99721FA8DE36F3A"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Toby Fredson\\The Toby Foliage Engine\\(TTFE)_Core\\Resources\\(TTFE) GLOBAL CONTROLLER\\Scripts\\TobyGlobalShadersController.cs",
+    "Hash": "EFA9BA0545CF9117EC88F12E16D1216610796EFEB23A45D6641EA88D33CE67A4"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Toby Fredson\\The Toby Foliage Engine\\(TTFE)_Core\\Resources\\(TTFE) GLOBAL CONTROLLER\\Scripts\\TobyShaderValuesModel.cs",
+    "Hash": "88FE9C3F4F7F4765C79FCED88A46EBE4387E2FB32E17106D814BB49117C70B89"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Toby Fredson\\The Toby Foliage Engine\\(TTFE)_Demo\\Scripts\\ExtendedFlycam.cs",
+    "Hash": "BDCF9E65AC4B8F3765D2844478541661D6E1E003DAA63D13DB307ED62E12E2B5"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\Toby Fredson\\The Toby Foliage Engine\\(TTFE)_Demo\\Scripts\\FPSController.cs",
+    "Hash": "B16AF56C7B48ADCC08A7312A220F1C67843D3D94483B47B43CFB38E3A33050CD"
+  },
+  {
+    "Path": "C:\\Users\\Admin\\source\\repos\\PRU-Project\\Assets\\TutorialInfo\\Readme.cs",
+    "Hash": "6C1D741BCCB431EF270AA99BEA9498ABD5F17191DDB022834F82582C13AA8D64"
+  }
+]

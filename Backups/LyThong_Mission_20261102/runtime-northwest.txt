@@ -1,0 +1,11 @@
+Runtime test uses existing public quest events and simulated movement keys; no scene save.
+Initial quest=1 NPC active=False player=(96.46, 0.00, 92.28)
+Quest 2 activated through original CompleteQuestOne; target=LyThong position=(91.25, 0.39, 78.07)
+Route corners=(96.46, 0.11, 92.28);(91.00, 0.37, 86.33);(87.83, 0.54, 81.00);(88.17, 0.37, 80.00);(88.83, 0.79, 80.00);(91.23, 0.87, 80.06)
+Interaction detected at player=(88.56, 0.08, 79.70) distance=3.159121
+Quest=3 dialoguePanel=DialoguePanel speaker=THẠCH SANH: content="Chào huynh! Sao huynh lại nằm ngủ giữa chốn rừng thiêng nước độc thế này?"
+Enter advanced to speaker=LÝ THÔNG: content="Ây da... ta đi bán rượu ngang qua, mệt quá nên thiếp đi mất. Cảm ơn chú em đã đánh thức! Mà nhìn chú em sức vóc quả là hơn người!"
+NPC standing model count=1; created by existing interaction code
+PASS quest activation, natural movement to trigger range, dialogue, Enter advance. Stopped before chapter transition.
+
+PlayerPrefs unchanged=True

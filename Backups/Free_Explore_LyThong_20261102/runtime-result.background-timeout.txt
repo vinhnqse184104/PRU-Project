@@ -1,0 +1,5 @@
+PASS initial objective=2, existing NPC active, no automatic dialogue, counters=0, original spawn retained; saved later-chapter flag did not block Chapter 1.
+PASS Start button unlocks game and displays full top-left objective.
+TIMEOUT phase=1 player=(96.46, 0.00, 92.28)
+
+Original story PlayerPrefs restored=True

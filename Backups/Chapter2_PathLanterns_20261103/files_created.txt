@@ -1,0 +1,16 @@
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\LanternAmberEmission.mat
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\LanternAmberEmission.mat.meta
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\LanternEmission.shader
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\LanternEmission.shader.meta
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\LanternIron.mat
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\LanternIron.mat.meta
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\LanternWeatheredTimber.mat
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\LanternWeatheredTimber.mat.meta
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\PorchLanternRoof.asset
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\PorchLanternRoof.asset.meta
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\PostLanternRoof.asset
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\PostLanternRoof.asset.meta
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\VillagePathLantern.prefab
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\VillagePathLantern.prefab.meta
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\VillagePorchLantern.prefab
+C:\Users\Admin\source\repos\PRU-Project\Assets\Chapter2PathLanterns\VillagePorchLantern.prefab.meta

@@ -1,0 +1,74 @@
+[
+  {
+    "Name": ".meta",
+    "Count": 4186
+  },
+  {
+    "Name": ".prefab",
+    "Count": 1310
+  },
+  {
+    "Name": ".png",
+    "Count": 845
+  },
+  {
+    "Name": ".fbx",
+    "Count": 685
+  },
+  {
+    "Name": ".mat",
+    "Count": 383
+  },
+  {
+    "Name": ".shader",
+    "Count": 154
+  },
+  {
+    "Name": ".cs",
+    "Count": 114
+  },
+  {
+    "Name": ".asset",
+    "Count": 63
+  },
+  {
+    "Name": ".mp3",
+    "Count": 55
+  },
+  {
+    "Name": ".hlsl",
+    "Count": 53
+  },
+  {
+    "Name": ".exr",
+    "Count": 35
+  },
+  {
+    "Name": ".unity",
+    "Count": 22
+  },
+  {
+    "Name": ".anim",
+    "Count": 21
+  },
+  {
+    "Name": ".txt",
+    "Count": 15
+  },
+  {
+    "Name": ".controller",
+    "Count": 14
+  },
+  {
+    "Name": ".tif",
+    "Count": 13
+  },
+  {
+    "Name": ".psd",
+    "Count": 11
+  },
+  {
+    "Name": ".terrainlayer",
+    "Count": 9
+  }
+]

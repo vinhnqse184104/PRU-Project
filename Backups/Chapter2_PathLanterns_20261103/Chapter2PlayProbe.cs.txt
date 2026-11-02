@@ -1,0 +1,30 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.SceneManagement;
+[InitializeOnLoad]
+public static class Chapter2PlayProbe {
+ static string[] keys={"PRU_ChanTinhDefeated","PRU_HasChanTinhHead","PRU_Chapter2Returned","PRU_ReturnDialogueDone","PRU_Chapter4Reached","PRU_LyThongReturnedAsOfficial"};
+ static bool ready;static double start;static Vector3 first;static float maxMove;static bool bg;static int errors;static StringBuilder logs=new StringBuilder();
+ static Chapter2PlayProbe(){EditorApplication.update+=Tick;EditorApplication.playModeStateChanged+=State;Application.logMessageReceived+=Log;}
+ static void Log(string m,string stack,LogType type){if(SessionState.GetBool("CH2_probe",false)&&(type==LogType.Error||type==LogType.Exception||type==LogType.Assert)){errors++;if(logs.Length<12000)logs.AppendLine(type+": "+m);}}
+ public static void Begin(){errors=0;logs=new StringBuilder();ready=false;maxMove=0;if(EditorApplication.isPlaying)throw new Exception("Stop existing Play first");EditorSceneManager.OpenScene(Chapter2EnvironmentTool.ScenePath);foreach(var k in keys){SessionState.SetInt("CH2_prev_"+k,PlayerPrefs.HasKey(k)?PlayerPrefs.GetInt(k):-777);PlayerPrefs.SetInt(k,0);}PlayerPrefs.Save();SessionState.SetBool("CH2_probe",true);EditorApplication.isPlaying=true;}
+ static void State(PlayModeStateChange s){if(s==PlayModeStateChange.EnteredEditMode&&SessionState.GetBool("CH2_probe",false)){foreach(var k in keys){int v=SessionState.GetInt("CH2_prev_"+k,-777);if(v==-777)PlayerPrefs.DeleteKey(k);else PlayerPrefs.SetInt(k,v);}PlayerPrefs.Save();SessionState.SetBool("CH2_probe",false);}}
+ static void Tick(){if(!SessionState.GetBool("CH2_probe",false)||!EditorApplication.isPlaying||EditorApplication.isCompiling)return;EditorApplication.isPaused=false;
+  var g=UnityEngine.Object.FindAnyObjectByType<LyThongGuide>();if(!g)return;
+  if(!ready){ready=true;start=EditorApplication.timeSinceStartup;first=g.transform.position;bg=Application.runInBackground;Application.runInBackground=true;logs.AppendLine("Start NPC="+first+" player="+(g.thachSanh?g.thachSanh.position.ToString():"null"));}
+  maxMove=Mathf.Max(maxMove,Vector3.Distance(first,g.transform.position));
+  if(g.currentState==LyThongGuide.CutsceneState.MotherDialogue||EditorApplication.timeSinceStartup-start>120){
+   var agent=g.GetComponent<NavMeshAgent>();logs.AppendLine("State="+g.currentState+" NPC="+g.transform.position+" moved="+maxMove+" path="+agent.pathStatus+" remaining="+agent.remainingDistance+" dialogueVisible="+(g.dialoguePanel&&g.dialoguePanel.activeInHierarchy)+" errors="+errors);
+   File.WriteAllText(Chapter2EnvironmentTool.Output+"play_test.txt",logs.ToString());if(Camera.main)Chapter2EnvironmentTool.Capture(Camera.main,"GameView_arrival");Application.runInBackground=bg;SessionState.SetBool("CH2_done",true);EditorApplication.isPlaying=false;ready=false;
+  }
+ }
+ public static void Verify(){var scene=SceneManager.GetActiveScene();var t=UnityEngine.Object.FindAnyObjectByType<Terrain>();var old=AssetDatabase.LoadAssetAtPath<TerrainData>("Assets/TerrainData_b2421e0b-39b9-4f52-b5c8-c91b43d9cf78.asset");var a=old.GetHeights(0,0,old.heightmapResolution,old.heightmapResolution);var b=t.terrainData.GetHeights(0,0,old.heightmapResolution,old.heightmapResolution);bool same=true;for(int z=0;z<a.GetLength(0);z++)for(int x=0;x<a.GetLength(1);x++)if(a[z,x]!=b[z,x])same=false;var root=scene.GetRootGameObjects().Single(x=>x.name=="Chapter2_Environment_Enhancement");var guide=UnityEngine.Object.FindAnyObjectByType<LyThongGuide>();var path=new NavMeshPath();NavMesh.CalculatePath(guide.transform.position,guide.homePoint.position,NavMesh.AllAreas,path);
+ var report="Scene="+scene.path+"\nRootCount="+scene.GetRootGameObjects().Count(x=>x.name==root.name)+"\nAddedColliders="+root.GetComponentsInChildren<Collider>(true).Length+"\nAddedGameplayScripts="+root.GetComponentsInChildren<MonoBehaviour>(true).Length+"\nHeightmapIdentical="+same+"\nTreeInstancesPreserved="+(old.treeInstanceCount==t.terrainData.treeInstanceCount)+"\nNavMeshRoute="+path.status+" "+string.Join(";",path.corners.Select(x=>x.ToString("F3")))+"\nMissingMaterials="+root.GetComponentsInChildren<Renderer>(true).Sum(r=>r.sharedMaterials.Count(m=>!m))+"\n";File.WriteAllText(Chapter2EnvironmentTool.Output+"verification.txt",report);}
+}
+

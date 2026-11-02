@@ -1,0 +1,24 @@
+PathLantern_Left_01 position=(99.625, 0.224, 83.953) routeDistance=4.4 corridorClearance>=2.4m
+PathLantern_Right_01 position=(93.169, 0.264, 84.978) routeDistance=5.1 corridorClearance>=2.4m
+PathLantern_Left_02 position=(98.370, 0.195, 78.750) routeDistance=9.75 corridorClearance>=2.4m
+PathLantern_Right_02 position=(91.624, 0.226, 79.854) routeDistance=10.45 corridorClearance>=2.4m
+PathLantern_Left_03 position=(96.825, 0.182, 73.626) routeDistance=15.1 corridorClearance>=2.4m
+PathLantern_Right_03 position=(90.369, 0.211, 74.651) routeDistance=15.8 corridorClearance>=2.4m
+PathLantern_Left_04 position=(95.727, 0.147, 69.002) routeDistance=19.85 corridorClearance>=2.4m
+PathLantern_Right_04 position=(88.981, 0.167, 70.106) routeDistance=20.55 corridorClearance>=2.4m
+PathLantern_Left_05 position=(94.183, 0.198, 63.878) routeDistance=25.2 corridorClearance>=2.4m
+PathLantern_Right_05 position=(87.726, 0.201, 64.903) routeDistance=25.9 corridorClearance>=2.4m
+PathLantern_Left_06 position=(92.927, 0.288, 58.675) routeDistance=30.55 corridorClearance>=2.4m
+PathLantern_Right_06 position=(86.181, 0.292, 59.779) routeDistance=31.25 corridorClearance>=2.4m
+PathLantern_Left_07 position=(91.540, 0.386, 54.130) routeDistance=35.3 corridorClearance>=2.4m
+PathLantern_Right_07 position=(85.083, 0.413, 55.155) routeDistance=36 corridorClearance>=2.4m
+PathLantern_Left_08 position=(90.284, 0.383, 48.927) routeDistance=40.65 corridorClearance>=2.4m
+PathLantern_Right_08 position=(83.538, 0.414, 50.030) routeDistance=41.35 corridorClearance>=2.4m
+PathLantern_Left_09 position=(88.740, 0.485, 43.802) routeDistance=46 corridorClearance>=2.4m
+PathLantern_Right_09 position=(82.283, 0.516, 44.828) routeDistance=46.7 corridorClearance>=2.4m
+PathLantern_Left_10 position=(87.642, 0.385, 39.179) routeDistance=50.75 corridorClearance>=2.4m
+PathLantern_Right_10 position=(80.895, 0.463, 40.282) routeDistance=51.45 corridorClearance>=2.4m
+PathLantern_Left_11 position=(86.097, 0.262, 34.054) routeDistance=56.1 corridorClearance>=2.4m
+PathLantern_Right_11 position=(79.640, 0.306, 35.080) routeDistance=56.8 corridorClearance>=2.4m
+Posts=22 Porch=2 NewColliders=0 ShadowCastingLights=0
+

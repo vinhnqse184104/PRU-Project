@@ -570,6 +570,11 @@ public class GioiThieuCotTruyen : MonoBehaviour
 
         // Khôi phục Time.timeScale = 1 và khóa chuột cho gameplay
         Time.timeScale = 1f;
+        if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name == "RungThachSanh")
+        {
+            QuestManager forestQuest = Object.FindAnyObjectByType<QuestManager>();
+            if (forestQuest != null) forestQuest.OnForestGameplayStarted();
+        }
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 

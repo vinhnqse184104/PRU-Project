@@ -55,6 +55,15 @@ public class QuestManager : MonoBehaviour
 
     void Start()
     {
+        if (IsForestExplorationScene)
+        {
+            currentQuest = 2;
+            isTransitioning = false;
+            if (lyThongNPC != null) lyThongNPC.SetActive(true);
+            ConfigureForestObjective();
+            if (questText != null) questText.gameObject.SetActive(false);
+            return;
+        }
         if (StoryStateManager.LyThongReturnedAsOfficial)
         {
             if (questText != null) questText.gameObject.SetActive(false);
@@ -68,6 +77,45 @@ public class QuestManager : MonoBehaviour
             lyThongNPC.SetActive(false);
         }
         UpdateQuestUI();
+    }
+
+    private bool IsForestExplorationScene => SceneManager.GetActiveScene().name == "RungThachSanh";
+    private bool forestGameplayStarted;
+    public bool IsForestGameplayStarted => IsForestExplorationScene && forestGameplayStarted;
+    private float forestHintRemaining;
+
+    private void ConfigureForestObjective()
+    {
+        if (questText == null) return;
+        var rect = questText.rectTransform;
+        rect.anchorMin = rect.anchorMax = new Vector2(0f, 1f);
+        rect.pivot = new Vector2(0f, 1f);
+        rect.anchoredPosition = new Vector2(24f, -24f);
+        rect.sizeDelta = new Vector2(480f, 100f);
+        rect.localScale = Vector3.one;
+        questText.fontSize = 22f;
+        questText.enableAutoSizing = false;
+        questText.alignment = TextAlignmentOptions.TopLeft;
+        questText.raycastTarget = false;
+        questText.color = Color.white;
+    }
+
+    // Called by the existing intro button after movement and gameplay UI are unlocked.
+    public void OnForestGameplayStarted()
+    {
+        if (!IsForestExplorationScene || currentQuest != 2) return;
+        forestGameplayStarted = true;
+        forestHintRemaining = 6f;
+        ConfigureForestObjective();
+        if (questText != null) questText.gameObject.SetActive(true);
+        UpdateQuestUI();
+    }
+
+    void Update()
+    {
+        if (!IsForestExplorationScene || !forestGameplayStarted || currentQuest != 2 || forestHintRemaining <= 0f) return;
+        forestHintRemaining -= Time.deltaTime;
+        if (forestHintRemaining <= 0f) UpdateQuestUI();
     }
 
     public void AddKill(string animalName)
@@ -88,6 +136,16 @@ public class QuestManager : MonoBehaviour
     void UpdateQuestUI()
     {
         if (questText == null || isTransitioning) return;
+
+        if (IsForestExplorationScene && currentQuest == 2)
+        {
+            if (!forestGameplayStarted) return;
+            questText.text = forestHintRemaining > 0f
+                ? "Nhiệm vụ: Hãy khám phá khu rừng và tìm Lý Thông dưới gốc cây đa."
+                : "Mục tiêu: Tìm Lý Thông";
+            questText.color = Color.white;
+            return;
+        }
 
         if (currentQuest == 1)
         {
@@ -134,7 +192,7 @@ public class QuestManager : MonoBehaviour
 
     public void MeetLyThong()
     {
-        if (currentQuest == 2)
+        if (currentQuest == 2 && (!IsForestExplorationScene || forestGameplayStarted))
         {
             currentQuest = 3;
             StartCoroutine(KichBanHoiThoai());

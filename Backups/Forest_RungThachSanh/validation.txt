@@ -1,0 +1,5 @@
+Scene loaded successfully; missing scripts in scene=0
+New decorations=15; renderers=23
+New mesh/material references resolved. New component whitelist passed. All new renderer AABB corners inside existing fixed convex scenery colliders. NavMesh build exclusion passed.
+
+Provenance: geometry checks above ran in source/PRU-Project before transfer. For source/repos/PRU-Project: all 669 existing scene blocks preserved, 29 referenced assets plus Terrain/NavMesh matched, fixed scenery collider anchors matched, and the active Unity editor reloaded the scene successfully. See REPORT.md for limitations and existing Console messages.

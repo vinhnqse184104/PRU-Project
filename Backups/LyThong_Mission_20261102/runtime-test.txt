@@ -1,0 +1,8 @@
+Runtime test uses existing public quest events and simulated movement keys; no scene save.
+Initial quest=1 NPC active=False player=(96.46, 0.00, 92.28)
+Quest 2 activated through original CompleteQuestOne; target=LyThong position=(91.25, 0.39, 78.07)
+Requested approach direction=90 degrees
+Route corners=(96.46, 0.11, 92.28);(100.00, 0.21, 84.83);(100.67, 0.62, 81.50);(100.33, 0.46, 80.67);(98.67, 0.46, 78.67);(98.17, 0.46, 78.17);(93.33, 1.04, 78.17);(93.26, 1.02, 78.13)
+TIMEOUT
+
+PlayerPrefs unchanged=True

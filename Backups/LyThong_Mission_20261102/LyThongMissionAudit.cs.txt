@@ -1,0 +1,105 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Reflection;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.SceneManagement;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
+
+// Temporary, editor-only validation. Never saves a scene or changes gameplay source.
+[InitializeOnLoad]
+public static class LyThongMissionAudit
+{
+    const string Folder="Backups/LyThong_Mission_20261102";
+    static StringBuilder report=new StringBuilder();
+    static double start,phaseTime;
+    static int phase;
+    static QuestManager quest;
+    static LyThongInteraction npc;
+    static Transform player;
+    static Vector3[] route;
+    static int waypoint;
+    static string firstLine;
+    static readonly string[] keys={"PRU_ChanTinhDefeated","PRU_HasChanTinhHead","PRU_Chapter2Returned","PRU_ReturnDialogueDone","PRU_Chapter4Reached","PRU_LyThongReturnedAsOfficial"};
+    static string prefs;
+    static bool running;
+    static LyThongMissionAudit(){EditorApplication.update+=Poll;EditorApplication.playModeStateChanged+=State;}
+    static string Prefs()=>string.Join(";",keys.Select(k=>k+":"+PlayerPrefs.HasKey(k)+":"+PlayerPrefs.GetInt(k,0)));
+    static object Field(object obj,string name)=>obj.GetType().GetField(name,BindingFlags.Instance|BindingFlags.NonPublic|BindingFlags.Public).GetValue(obj);
+    static void Poll()
+    {
+        if(EditorApplication.isCompiling||EditorApplication.isUpdating)return;
+        var request=Folder+"/request.txt";
+        if(File.Exists(request)){var cmd=File.ReadAllText(request).Trim();File.Delete(request);try{if(cmd=="audit")Audit();if(cmd.StartsWith("test")){int angle=cmd.Length>4?int.Parse(cmd.Substring(4)):0;SessionState.SetInt("LyThongTestAngle",angle);StartTest();}}catch(Exception e){File.WriteAllText(Folder+"/error.txt",e.ToString());}}
+        if(running&&EditorApplication.isPlaying){try{Tick();}catch(Exception e){Finish("FAIL "+e);}}
+    }
+    public static void Audit()
+    {
+        Directory.CreateDirectory(Folder);var scene=SceneManager.GetActiveScene();if(scene.path!="Assets/Scenes/RungThachSanh.unity")throw new Exception("Wrong scene");
+        var roots=scene.GetRootGameObjects();var n=roots.Single(x=>x.name=="LyThong");var tree=roots.Single(x=>x.name=="cayda");var p=roots.Single(x=>x.name=="thachsanh");var q=roots.SelectMany(x=>x.GetComponentsInChildren<QuestManager>(true)).Single();var interaction=n.GetComponent<LyThongInteraction>();
+        var b=new StringBuilder();b.AppendLine("PROJECT "+Application.dataPath);b.AppendLine("SCENE "+scene.path+" dirty="+scene.isDirty+" playing="+EditorApplication.isPlaying);
+        foreach(var obj in new[]{n,tree,p,q.gameObject}){b.AppendLine("OBJECT "+obj.name+" id="+GlobalObjectId.GetGlobalObjectIdSlow(obj)+" position="+obj.transform.position.ToString("F4")+" rotation="+obj.transform.eulerAngles.ToString("F4")+" scale="+obj.transform.localScale.ToString("F4")+" activeSelf="+obj.activeSelf);foreach(var c in obj.GetComponents<Collider>())b.AppendLine("COLLIDER "+c.GetType().Name+" enabled="+c.enabled+" trigger="+c.isTrigger+" bounds="+c.bounds);}
+        b.AppendLine("LYTHONG_ROOT_COUNT="+roots.Count(x=>x.name=="LyThong"));
+        b.AppendLine("INTERACTION "+EditorJsonUtility.ToJson(interaction,true));b.AppendLine("QUEST "+EditorJsonUtility.ToJson(q,true));
+        b.AppendLine("quest.lyThongNPC==LyThong: "+(q.lyThongNPC==n));b.AppendLine("interaction.questManager correct: "+(interaction.questManager==q));
+        var navStart=p.transform.position;bool startOk=NavMesh.SamplePosition(navStart,out var startHit,2,NavMesh.AllAreas);b.AppendLine("NAV start="+startOk+" "+startHit.position);
+        for(int i=0;i<8;i++){float angle=i*Mathf.PI/4;var direction=new Vector3(Mathf.Sin(angle),0,Mathf.Cos(angle));var goal=n.transform.position+direction*2.3f;bool sampled=NavMesh.SamplePosition(goal,out var hit,1.2f,NavMesh.AllAreas);var path=new NavMeshPath();bool solved=startOk&&sampled&&NavMesh.CalculatePath(startHit.position,hit.position,NavMesh.AllAreas,path);b.AppendLine("APPROACH degrees="+(i*45)+" sample="+sampled+" point="+hit.position+" path="+(solved?path.status.ToString():"NOT_FOUND")+" corners="+path.corners.Length+" distanceToNPC="+Vector3.Distance(hit.position,n.transform.position));}
+        var enhancement=roots.FirstOrDefault(x=>x.name=="Forest_Environment_Enhancement");if(enhancement){float nearest=float.MaxValue;string nearestName="";int obstruct=0;foreach(var r in enhancement.GetComponentsInChildren<MeshRenderer>()){var closest=r.bounds.ClosestPoint(n.transform.position);float d=Vector3.Distance(closest,n.transform.position);if(d<nearest){nearest=d;nearestName=r.name;}if(d<interaction.triggerDistance+1)obstruct++;}b.AppendLine("ENV nearest renderer bounds distance to LyThong="+nearest+" renderer="+nearestName+" overlapping protected interaction margin="+obstruct);b.AppendLine("ENV colliders="+enhancement.GetComponentsInChildren<Collider>(true).Length);}
+        File.WriteAllText(Folder+"/scene-audit.txt",b.ToString());Debug.Log("LYTHONG_AUDIT_OK");
+    }
+    static void StartTest()
+    {
+        if(EditorApplication.isPlaying)throw new Exception("Exit Play before test");if(SceneManager.GetActiveScene().isDirty)throw new Exception("Unsaved scene changes; test stopped");
+        Audit();if(StoryStateManager.LyThongReturnedAsOfficial)throw new Exception("Saved story progress disables Chapter 1. Test stopped without resetting PlayerPrefs.");
+        prefs=Prefs();SessionState.SetString("LyThongTestPrefs",prefs);SessionState.SetBool("LyThongTestPending",true);EditorApplication.isPaused=false;EditorApplication.isPlaying=true;
+    }
+    static void State(PlayModeStateChange state)
+    {
+        if(state==PlayModeStateChange.EnteredPlayMode&&SessionState.GetBool("LyThongTestPending",false)){SessionState.SetBool("LyThongTestPending",false);running=true;phase=0;start=EditorApplication.timeSinceStartup;phaseTime=start;report=new StringBuilder("Runtime test uses existing public quest events and simulated movement keys; no scene save.\n");prefs=SessionState.GetString("LyThongTestPrefs","");}
+        if(state==PlayModeStateChange.EnteredEditMode){running=false;if(Keyboard.current!=null)InputSystem.QueueStateEvent(Keyboard.current,new KeyboardState());if(File.Exists(Folder+"/runtime-test.txt"))File.AppendAllText(Folder+"/runtime-test.txt","\nPlayerPrefs unchanged="+(prefs==Prefs()));}
+    }
+    static void Input(params Key[] buttons){if(Keyboard.current==null)throw new Exception("No keyboard input device");InputSystem.QueueStateEvent(Keyboard.current,new KeyboardState(buttons));}
+    static void Tick()
+    {
+        double now=EditorApplication.timeSinceStartup;if(now-start>65){Finish("TIMEOUT");return;}
+        if(phase==0)
+        {
+            if(now-phaseTime<1)return;
+            quest=UnityEngine.Object.FindAnyObjectByType<QuestManager>();npc=SceneManager.GetActiveScene().GetRootGameObjects().Single(x=>x.name=="LyThong").GetComponent<LyThongInteraction>();player=SceneManager.GetActiveScene().GetRootGameObjects().Single(x=>x.name=="thachsanh").transform;
+            var intro=UnityEngine.Object.FindAnyObjectByType<GioiThieuCotTruyen>();if(intro)intro.BamNutBatDau();
+            report.AppendLine("Initial quest="+Field(quest,"currentQuest")+" NPC active="+npc.gameObject.activeInHierarchy+" player="+player.position);
+            for(int i=quest.woodCollected;i<quest.woodRequired;i++)quest.CollectWood();
+            foreach(var entry in new[]{new object[]{"Chicken",quest.chickenKilled,quest.chickenRequired},new object[]{"Deer",quest.deerKilled,quest.deerRequired},new object[]{"Horse",quest.horseKilled,quest.horseRequired},new object[]{"Tiger",quest.tigerKilled,quest.tigerRequired}})for(int i=(int)entry[1];i<(int)entry[2];i++)quest.AddKill((string)entry[0]);
+            phase=1;phaseTime=now;return;
+        }
+        if(phase==1)
+        {
+            if(now-phaseTime<3.5)return;
+            if((int)Field(quest,"currentQuest")!=2||!npc.gameObject.activeInHierarchy){if(now-phaseTime<20)return;throw new Exception("Quest 2 not ready: quest="+Field(quest,"currentQuest")+" transition="+Field(quest,"isTransitioning")+" questText="+(quest.questText!=null)+" timeScale="+Time.timeScale+" paused="+EditorApplication.isPaused+" time="+Time.time+" counts="+quest.woodCollected+","+quest.chickenKilled+","+quest.deerKilled+","+quest.horseKilled+","+quest.tigerKilled); }report.AppendLine("Quest 2 activated through original CompleteQuestOne; target="+quest.lyThongNPC.name+" position="+npc.transform.position);
+            int angle=SessionState.GetInt("LyThongTestAngle",0);float radians=angle*Mathf.Deg2Rad;var goal=npc.transform.position+new Vector3(Mathf.Sin(radians),0,Mathf.Cos(radians))*2.2f;report.AppendLine("Requested approach direction="+angle+" degrees");
+            if(!NavMesh.SamplePosition(player.position,out var a,2,NavMesh.AllAreas)||!NavMesh.SamplePosition(goal,out var b,2,NavMesh.AllAreas))throw new Exception("No NavMesh approach point");var path=new NavMeshPath();if(!NavMesh.CalculatePath(a.position,b.position,NavMesh.AllAreas,path)||path.status!=NavMeshPathStatus.PathComplete)throw new Exception("No complete approach path");route=path.corners;waypoint=1;report.AppendLine("Route corners="+string.Join(";",route.Select(x=>x.ToString("F2"))));phase=2;phaseTime=now;
+        }
+        if(phase==2)
+        {
+            if((bool)Field(npc,"isMet")){Input();report.AppendLine("Interaction detected at player="+player.position+" distance="+Vector3.Distance(player.position,npc.transform.position));phase=3;phaseTime=now;return;}
+            if(waypoint>=route.Length){Input();if(now-phaseTime>25)throw new Exception("Reached approach path but no interaction");return;}
+            var delta=route[waypoint]-player.position;delta.y=0;if(delta.magnitude<.45f){waypoint++;return;}
+            var cam=Camera.main;var forward=cam.transform.forward;forward.y=0;forward.Normalize();var right=cam.transform.right;right.y=0;right.Normalize();float x=Vector3.Dot(delta.normalized,right),z=Vector3.Dot(delta.normalized,forward);var buttons=new List<Key>();if(x>.28f)buttons.Add(Key.D);if(x<-.28f)buttons.Add(Key.A);if(z>.28f)buttons.Add(Key.W);if(z<-.28f)buttons.Add(Key.S);Input(buttons.ToArray());return;
+        }
+        if(phase==3)
+        {
+            Input();if(now-phaseTime<3)return;
+            if((int)Field(quest,"currentQuest")!=3||!(bool)Field(quest,"isDialogueActive")){if(now-phaseTime<15)return;throw new Exception("Dialogue/quest transition failed");}if(!quest.dialoguePanel||!quest.dialoguePanel.activeInHierarchy)throw new Exception("Dialogue panel inactive");
+            firstLine=quest.contentText.text;report.AppendLine("Quest="+Field(quest,"currentQuest")+" dialoguePanel="+quest.dialoguePanel.name+" speaker="+quest.speakerText.text+" content="+firstLine);Input(Key.Enter);phase=4;phaseTime=now;return;
+        }
+        if(phase==4){if(now-phaseTime<.12)return;Input();phase=5;phaseTime=now;return;}
+        if(phase==5){Input();if(now-phaseTime<.5)return;if(firstLine==quest.contentText.text)throw new Exception("Enter did not advance dialogue");report.AppendLine("Enter advanced to speaker="+quest.speakerText.text+" content="+quest.contentText.text);report.AppendLine("NPC standing model count="+npc.GetComponentsInChildren<Transform>(true).Count(x=>x.name=="LyThong_StandingModel")+"; created by existing interaction code");ScreenCapture.CaptureScreenshot(Folder+"/dialogue-play.png");phase=6;phaseTime=now;return;}
+        if(phase==6&&now-phaseTime>.5)Finish("PASS quest activation, natural movement to trigger range, dialogue, Enter advance. Stopped before chapter transition.");
+    }
+    static void Finish(string result){Input();report.AppendLine(result);File.WriteAllText(Folder+"/runtime-test.txt",report.ToString());running=false;EditorApplication.isPlaying=false;Debug.Log("LYTHONG_TEST "+result);}
+}

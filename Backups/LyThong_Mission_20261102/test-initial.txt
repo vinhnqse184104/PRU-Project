@@ -1,0 +1,7 @@
+Runtime test uses existing public quest events and simulated movement keys; no scene save.
+Initial quest=1 NPC active=False player=(96.46, 0.00, 92.28)
+FAIL System.Exception: Quest 2 or NPC activation failed
+  at LyThongMissionAudit.Tick () [0x0088f] in C:\Users\Admin\source\repos\PRU-Project\Assets\Editor\LyThongMissionAudit.cs:103 
+  at LyThongMissionAudit.Poll () [0x00076] in C:\Users\Admin\source\repos\PRU-Project\Assets\Editor\LyThongMissionAudit.cs:39 
+
+PlayerPrefs unchanged=True

@@ -1,0 +1,14 @@
+{
+  "project": "C:/Users/Admin/source/repos/PRU-Project/",
+  "changedGameplayScripts": [
+    "Assets/QuestManager.cs",
+    "Assets/GioiThieuCotTruyen.cs",
+    "Assets/Chapter1NewGameHandler.cs"
+  ],
+  "sceneBefore": "a41186d02de58ce47a4c9b38d314430bfc8232188f96576c7f5dc9a89cf44750",
+  "sceneAfter": "a41186d02de58ce47a4c9b38d314430bfc8232188f96576c7f5dc9a89cf44750",
+  "sceneUnchanged": true,
+  "storyStateManagerUnchanged": true,
+  "originalDialogueAndChapterTransitionUnchanged": true,
+  "oldCollectionAndKillDataRetained": true
+}

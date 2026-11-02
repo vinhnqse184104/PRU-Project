@@ -1,0 +1,279 @@
+PROJECT C:/Users/Admin/source/repos/PRU-Project/Assets
+SCENE Assets/Scenes/Chapter2_LyThong.unity dirty=False
+ROOT Main Camera pos=(0.000, 1.000, -10.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+CAM Main Camera enabled=True pos=(0.00, 1.00, -10.00) rot=(0.00, 0.00, 0.00) fov=60
+ROOT Directional Light pos=(0.000, 3.000, 0.000) rot=(340.00, 320.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT thachsanh pos=(97.640, 0.330, 89.050) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL thachsanh CapsuleCollider trigger=False bounds=Center: (97.64, 1.13, 89.05), Extents: (0.25, 0.80, 0.25)
+COL thachsanh CharacterController trigger=False bounds=Center: (97.64, 0.23, 89.05), Extents: (0.25, 0.25, 0.25)
+ROOT Terrain pos=(0.000, 0.000, 0.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL Terrain TerrainCollider trigger=False bounds=Center: (75.00, 5.55, 75.00), Extents: (75.00, 5.55, 75.00)
+TERRAIN Assets/TerrainData_b2421e0b-39b9-4f52-b5c8-c91b43d9cf78.asset size=(150.00, 50.00, 150.00) layers=Assets/Toby Fredson/The Toby Foliage Engine/(TTFE)_Demo/Terrains/Trerrain Layers/TTFE-LightScene_Demo_Layers/TSLightDemo Layer_2.terrainlayer material=Packages/com.unity.render-pipelines.universal/Runtime/Materials/TerrainLit.mat
+ROOT Chicken_001 pos=(80.244, 1.110, 102.890) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL Chicken_001 CapsuleCollider trigger=False bounds=Center: (80.24, 1.11, 102.89), Extents: (0.30, 0.50, 0.30)
+ROOT Chicken_001 (1) pos=(81.900, 2.040, 192.100) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL Chicken_001 (1) CapsuleCollider trigger=False bounds=Center: (81.90, 2.04, 192.10), Extents: (0.30, 0.50, 0.30)
+ROOT Chicken_001 (2) pos=(80.244, 1.240, 103.690) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL Chicken_001 (2) CapsuleCollider trigger=False bounds=Center: (80.24, 1.24, 103.69), Extents: (0.30, 0.50, 0.30)
+ROOT Chicken_001 (3) pos=(104.400, 1.800, 125.100) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL Chicken_001 (3) CapsuleCollider trigger=False bounds=Center: (104.40, 1.80, 125.10), Extents: (0.30, 0.50, 0.30)
+ROOT medieval_house_lite_v2 (1) pos=(84.570, 0.250, 25.480) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL medieval_house_lite_v2 (1)/chimney_outside_size1.001 MeshCollider trigger=False bounds=Center: (80.49, 3.48, 24.08), Extents: (0.93, 3.24, 0.55)
+COL medieval_house_lite_v2 (1)/floor_rock_2x3m.001 MeshCollider trigger=False bounds=Center: (84.94, 0.42, 25.06), Extents: (1.50, 0.17, 1.00)
+COL medieval_house_lite_v2 (1)/floor_rock_2x3m MeshCollider trigger=False bounds=Center: (81.94, 0.42, 25.06), Extents: (1.50, 0.17, 1.00)
+COL medieval_house_lite_v2 (1)/floor_rock_2x3m (1) MeshCollider trigger=False bounds=Center: (81.94, 0.42, 27.06), Extents: (1.50, 0.17, 1.00)
+COL medieval_house_lite_v2 (1)/floor_rock_2x3m (2) MeshCollider trigger=False bounds=Center: (84.94, 0.42, 27.06), Extents: (1.50, 0.17, 1.00)
+COL medieval_house_lite_v2 (1)/floor_rock_2x3m (3) MeshCollider trigger=False bounds=Center: (84.94, 0.42, 29.06), Extents: (1.50, 0.17, 1.00)
+COL medieval_house_lite_v2 (1)/floor_rock_4x1m MeshCollider trigger=False bounds=Center: (79.94, 0.42, 26.06), Extents: (0.50, 0.17, 2.00)
+COL medieval_house_lite_v2 (1)/ladder.002 MeshCollider trigger=False bounds=Center: (84.10, 2.22, 24.98), Extents: (0.49, 1.59, 0.32)
+COL medieval_house_lite_v2 (1)/lamppost.010 MeshCollider trigger=False bounds=Center: (82.44, 2.79, 28.27), Extents: (0.06, 0.33, 0.22)
+COL medieval_house_lite_v2 (1)/roof_dolmer_wide2_1.002 MeshCollider trigger=False bounds=Center: (82.44, 4.92, 26.07), Extents: (1.00, 1.36, 2.20)
+COL medieval_house_lite_v2 (1)/roof_intersection_wide_1_2.001 MeshCollider trigger=False bounds=Center: (85.04, 4.76, 25.97), Extents: (1.60, 1.19, 2.10)
+COL medieval_house_lite_v2 (1)/roof_structure_wide1_2.001 MeshCollider trigger=False bounds=Center: (84.94, 4.71, 28.10), Extents: (1.40, 1.08, 0.17)
+COL medieval_house_lite_v2 (1)/roof_structure_wide1_2 MeshCollider trigger=False bounds=Center: (84.94, 4.71, 29.02), Extents: (1.40, 1.08, 0.17)
+COL medieval_house_lite_v2 (1)/roof_structure_wide1_2 (1) MeshCollider trigger=False bounds=Center: (84.94, 4.71, 29.87), Extents: (1.40, 1.08, 0.17)
+COL medieval_house_lite_v2 (1)/roof_structure_wide1_2 (2) MeshCollider trigger=False bounds=Center: (83.39, 4.71, 26.08), Extents: (0.17, 1.08, 1.40)
+COL medieval_house_lite_v2 (1)/roof_structure_wide1_2 (3) MeshCollider trigger=False bounds=Center: (79.70, 4.71, 26.08), Extents: (0.17, 1.08, 1.40)
+COL medieval_house_lite_v2 (1)/roof_structure_wide1_2 (4) MeshCollider trigger=False bounds=Center: (81.50, 4.71, 26.08), Extents: (0.17, 1.08, 1.40)
+COL medieval_house_lite_v2 (1)/roof_structure_wide1_2 (5) MeshCollider trigger=False bounds=Center: (84.94, 4.71, 26.05), Extents: (1.40, 1.08, 0.17)
+COL medieval_house_lite_v2 (1)/roof_wide1_3.002 MeshCollider trigger=False bounds=Center: (84.94, 4.76, 29.06), Extents: (1.70, 1.19, 1.00)
+COL medieval_house_lite_v2 (1)/roof_wide1_end.005 MeshCollider trigger=False bounds=Center: (84.92, 4.77, 30.40), Extents: (1.76, 1.26, 0.45)
+COL medieval_house_lite_v2 (1)/roof_wide2_3.001 MeshCollider trigger=False bounds=Center: (80.44, 4.76, 26.07), Extents: (1.00, 1.19, 2.20)
+COL medieval_house_lite_v2 (1)/roof_wide2_end.001 MeshCollider trigger=False bounds=Center: (79.11, 4.76, 26.07), Extents: (0.45, 1.26, 2.26)
+COL medieval_house_lite_v2 (1)/sign_board2.001 MeshCollider trigger=False bounds=Center: (79.57, 3.09, 28.59), Extents: (0.11, 0.41, 0.65)
+COL medieval_house_lite_v2 (1)/steps2.002 MeshCollider trigger=False bounds=Center: (81.94, 0.48, 28.45), Extents: (0.50, 0.26, 0.49)
+COL medieval_house_lite_v2 (1)/wall_wood_1m_2.014 MeshCollider trigger=False bounds=Center: (81.93, 2.30, 24.12), Extents: (0.50, 1.50, 0.07)
+COL medieval_house_lite_v2 (1)/wall_wood_1m_2 MeshCollider trigger=False bounds=Center: (82.94, 2.13, 27.99), Extents: (0.50, 1.50, 0.07)
+COL medieval_house_lite_v2 (1)/wall_wood_1m_2 (1) MeshCollider trigger=False bounds=Center: (83.94, 2.13, 29.99), Extents: (0.50, 1.50, 0.07)
+COL medieval_house_lite_v2 (1)/wall_wood_2m_1.009 MeshCollider trigger=False bounds=Center: (85.44, 2.13, 24.12), Extents: (1.00, 1.50, 0.07)
+COL medieval_house_lite_v2 (1)/wall_wood_2m_2.004 MeshCollider trigger=False bounds=Center: (86.38, 2.13, 29.06), Extents: (0.07, 1.50, 1.00)
+COL medieval_house_lite_v2 (1)/wall_wood_2m_2 MeshCollider trigger=False bounds=Center: (86.38, 2.13, 25.06), Extents: (0.07, 1.50, 1.00)
+COL medieval_house_lite_v2 (1)/wall_wood_2m_2 (1) MeshCollider trigger=False bounds=Center: (80.44, 2.13, 24.12), Extents: (1.00, 1.50, 0.07)
+COL medieval_house_lite_v2 (1)/wall_wood_2m_2 (2) MeshCollider trigger=False bounds=Center: (79.51, 2.13, 27.06), Extents: (0.07, 1.50, 1.00)
+COL medieval_house_lite_v2 (1)/wall_wood_2m_2 (3) MeshCollider trigger=False bounds=Center: (83.51, 2.13, 29.06), Extents: (0.07, 1.50, 1.00)
+COL medieval_house_lite_v2 (1)/wall_wood_2m_4.005 MeshCollider trigger=False bounds=Center: (86.38, 2.13, 27.06), Extents: (0.07, 1.50, 1.00)
+COL medieval_house_lite_v2 (1)/wall_wood_2m_4 MeshCollider trigger=False bounds=Center: (83.44, 2.13, 24.12), Extents: (1.00, 1.50, 0.07)
+COL medieval_house_lite_v2 (1)/wall_wood_2m_4 (1) MeshCollider trigger=False bounds=Center: (79.51, 2.13, 25.06), Extents: (0.07, 1.50, 1.00)
+COL medieval_house_lite_v2 (1)/wall_wood_2m_window.004 MeshCollider trigger=False bounds=Center: (80.44, 2.13, 27.99), Extents: (1.00, 1.50, 0.07)
+COL medieval_house_lite_v2 (1)/wall_wood_2m_window MeshCollider trigger=False bounds=Center: (85.44, 2.13, 29.99), Extents: (1.00, 1.50, 0.07)
+COL medieval_house_lite_v2 (1)/wall_wood_door1.004 MeshCollider trigger=False bounds=Center: (81.95, 1.73, 27.95), Extents: (0.34, 0.92, 0.04)
+COL medieval_house_lite_v2 (1)/wall_wood_door1.004 BoxCollider trigger=True bounds=Center: (81.93, 1.73, 27.95), Extents: (0.36, 0.92, 0.07)
+COL medieval_house_lite_v2 (1)/wall_wood_door1.004/DoorTrigger BoxCollider trigger=True bounds=Center: (81.47, 1.91, 27.93), Extents: (1.00, 1.25, 1.00)
+COL medieval_house_lite_v2 (1)/wooden_floor_2x3m.001 MeshCollider trigger=False bounds=Center: (81.94, 3.68, 25.05), Extents: (1.50, 0.02, 1.00)
+COL medieval_house_lite_v2 (1)/wooden_floor_2x3m MeshCollider trigger=False bounds=Center: (81.94, 3.68, 27.06), Extents: (1.50, 0.02, 1.00)
+COL medieval_house_lite_v2 (1)/wooden_floor_2x3m (1) MeshCollider trigger=False bounds=Center: (81.94, 0.61, 25.06), Extents: (1.50, 0.02, 1.00)
+COL medieval_house_lite_v2 (1)/wooden_floor_2x3m (2) MeshCollider trigger=False bounds=Center: (81.94, 0.61, 27.06), Extents: (1.50, 0.02, 1.00)
+COL medieval_house_lite_v2 (1)/wooden_floor_2x3m (3) MeshCollider trigger=False bounds=Center: (84.94, 0.61, 27.06), Extents: (1.50, 0.02, 1.00)
+COL medieval_house_lite_v2 (1)/wooden_floor_2x3m (4) MeshCollider trigger=False bounds=Center: (84.94, 0.61, 25.06), Extents: (1.50, 0.02, 1.00)
+COL medieval_house_lite_v2 (1)/wooden_floor_2x3m (5) MeshCollider trigger=False bounds=Center: (84.94, 0.61, 29.06), Extents: (1.50, 0.02, 1.00)
+COL medieval_house_lite_v2 (1)/wooden_floor_4x1m.001 MeshCollider trigger=False bounds=Center: (79.94, 3.68, 26.06), Extents: (0.50, 0.02, 2.00)
+COL medieval_house_lite_v2 (1)/wooden_floor_4x1m MeshCollider trigger=False bounds=Center: (79.94, 0.61, 26.06), Extents: (0.50, 0.02, 2.00)
+COL medieval_house_lite_v2 (1)/wooden_post_column_size1.079 MeshCollider trigger=False bounds=Center: (83.54, 1.96, 29.94), Extents: (0.15, 1.70, 0.15)
+COL medieval_house_lite_v2 (1)/wooden_post_column_size1 MeshCollider trigger=False bounds=Center: (86.33, 1.96, 29.94), Extents: (0.15, 1.70, 0.15)
+COL medieval_house_lite_v2 (1)/wooden_post_column_size1 (1) MeshCollider trigger=False bounds=Center: (86.34, 1.96, 24.18), Extents: (0.15, 1.70, 0.15)
+COL medieval_house_lite_v2 (1)/wooden_post_column_size1 (2) MeshCollider trigger=False bounds=Center: (79.56, 1.96, 24.18), Extents: (0.15, 1.70, 0.15)
+COL medieval_house_lite_v2 (1)/wooden_post_column_size1 (3) MeshCollider trigger=False bounds=Center: (79.56, 1.96, 27.94), Extents: (0.15, 1.70, 0.15)
+COL medieval_house_lite_v2 (1)/wooden_post_column_size1 (4) MeshCollider trigger=False bounds=Center: (83.52, 1.96, 27.98), Extents: (0.15, 1.70, 0.15)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long.100 MeshCollider trigger=False bounds=Center: (83.52, 0.60, 27.04), Extents: (0.13, 0.10, 2.94)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long MeshCollider trigger=False bounds=Center: (80.44, 0.56, 26.07), Extents: (0.09, 0.10, 1.90)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long (1) MeshCollider trigger=False bounds=Center: (82.93, 0.60, 27.97), Extents: (3.34, 0.10, 0.09)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long (2) MeshCollider trigger=False bounds=Center: (86.35, 0.59, 27.04), Extents: (0.11, 0.10, 2.84)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long (3) MeshCollider trigger=False bounds=Center: (82.93, 0.60, 24.14), Extents: (3.34, 0.10, 0.09)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long (4) MeshCollider trigger=False bounds=Center: (79.54, 0.59, 26.07), Extents: (0.11, 0.06, 1.90)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long (5) MeshCollider trigger=False bounds=Center: (84.94, 3.63, 28.09), Extents: (1.40, 0.10, 0.09)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long (6) MeshCollider trigger=False bounds=Center: (84.94, 3.63, 29.84), Extents: (1.40, 0.10, 0.09)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long (7) MeshCollider trigger=False bounds=Center: (83.54, 3.64, 26.98), Extents: (0.09, 0.10, 2.88)
+COL medieval_house_lite_v2 (1)/LyThongHomePoint MeshCollider trigger=False bounds=Center: (86.32, 3.64, 27.10), Extents: (0.09, 0.10, 2.98)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long (9) MeshCollider trigger=False bounds=Center: (82.92, 3.68, 24.24), Extents: (3.44, 0.16, 0.11)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long (10) MeshCollider trigger=False bounds=Center: (79.65, 3.64, 26.07), Extents: (0.09, 0.10, 1.94)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long (11) MeshCollider trigger=False bounds=Center: (80.46, 3.64, 26.07), Extents: (0.09, 0.10, 1.90)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_long (12) MeshCollider trigger=False bounds=Center: (82.96, 3.62, 26.06), Extents: (3.41, 0.10, 0.09)
+COL medieval_house_lite_v2 (1)/wooden_post_horizontal_small.003 MeshCollider trigger=False bounds=Center: (84.94, 0.59, 29.97), Extents: (1.36, 0.12, 0.11)
+RENDER medieval_house_lite_v2 (1)/chimney_outside_size1.001 bounds=Center: (80.50, 3.49, 24.25), Extents: (0.93, 3.25, 0.74) materials=Assets/Medieval_house_lite/Materials/rock2.mat;Assets/Medieval_house_lite/Materials/firewood.mat;Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/floor_rock_2x3m.001 bounds=Center: (84.94, 0.42, 25.06), Extents: (1.50, 0.17, 1.00) materials=Assets/Medieval_house_lite/Materials/rock2.mat
+RENDER medieval_house_lite_v2 (1)/floor_rock_2x3m bounds=Center: (81.94, 0.42, 25.06), Extents: (1.50, 0.17, 1.00) materials=Assets/Medieval_house_lite/Materials/rock2.mat
+RENDER medieval_house_lite_v2 (1)/floor_rock_2x3m (1) bounds=Center: (81.94, 0.42, 27.06), Extents: (1.50, 0.17, 1.00) materials=Assets/Medieval_house_lite/Materials/rock2.mat
+RENDER medieval_house_lite_v2 (1)/floor_rock_2x3m (2) bounds=Center: (84.94, 0.42, 27.06), Extents: (1.50, 0.17, 1.00) materials=Assets/Medieval_house_lite/Materials/rock2.mat
+RENDER medieval_house_lite_v2 (1)/floor_rock_2x3m (3) bounds=Center: (84.94, 0.42, 29.06), Extents: (1.50, 0.17, 1.00) materials=Assets/Medieval_house_lite/Materials/rock2.mat
+RENDER medieval_house_lite_v2 (1)/floor_rock_4x1m bounds=Center: (79.94, 0.42, 26.06), Extents: (0.50, 0.17, 2.00) materials=Assets/Medieval_house_lite/Materials/rock2.mat
+RENDER medieval_house_lite_v2 (1)/ladder.002 bounds=Center: (84.10, 2.22, 24.98), Extents: (0.49, 1.59, 0.32) materials=Assets/Medieval_house_lite/Materials/wood1.mat
+RENDER medieval_house_lite_v2 (1)/lamppost.010 bounds=Center: (82.44, 2.79, 28.26), Extents: (0.06, 0.32, 0.22) materials=Assets/Medieval_house_lite/Materials/wood2.mat;Assets/Medieval_house_lite/Materials/metals.mat;Assets/Medieval_house_lite/Materials/wood3.mat
+RENDER medieval_house_lite_v2 (1)/roof_dolmer_wide2_1.002 bounds=Center: (82.44, 4.90, 26.07), Extents: (1.00, 1.37, 2.20) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/interior_roof.mat;Assets/Medieval_house_lite/Materials/wood2.mat;Assets/Medieval_house_lite/Materials/roof.mat;Assets/Medieval_house_lite/Materials/concrete.mat;Assets/Medieval_house_lite/Materials/glass.mat
+RENDER medieval_house_lite_v2 (1)/roof_intersection_wide_1_2.001 bounds=Center: (85.04, 4.75, 25.97), Extents: (1.60, 1.21, 2.10) materials=Assets/Medieval_house_lite/Materials/roof.mat;Assets/Medieval_house_lite/Materials/wood2.mat;Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/interior_roof.mat
+RENDER medieval_house_lite_v2 (1)/roof_structure_wide1_2.001 bounds=Center: (84.94, 4.72, 28.10), Extents: (1.40, 1.07, 0.17) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/roof_structure_wide1_2 bounds=Center: (84.94, 4.72, 29.02), Extents: (1.40, 1.07, 0.17) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/roof_structure_wide1_2 (1) bounds=Center: (84.94, 4.72, 29.87), Extents: (1.40, 1.07, 0.17) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/roof_structure_wide1_2 (2) bounds=Center: (83.39, 4.71, 26.08), Extents: (0.17, 1.07, 1.87) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/roof_structure_wide1_2 (3) bounds=Center: (79.70, 4.71, 26.08), Extents: (0.17, 1.07, 1.87) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/roof_structure_wide1_2 (4) bounds=Center: (81.50, 4.71, 26.08), Extents: (0.17, 1.07, 1.87) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/roof_structure_wide1_2 (5) bounds=Center: (84.94, 4.72, 26.05), Extents: (1.40, 1.07, 0.17) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/roof_wide1_3.002 bounds=Center: (84.94, 4.76, 29.06), Extents: (1.70, 1.19, 1.00) materials=Assets/Medieval_house_lite/Materials/roof.mat;Assets/Medieval_house_lite/Materials/wood2.mat;Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/interior_roof.mat
+RENDER medieval_house_lite_v2 (1)/roof_wide1_end.005 bounds=Center: (84.92, 4.77, 30.40), Extents: (1.76, 1.26, 0.45) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/roof_wide2_3.001 bounds=Center: (80.44, 4.76, 26.07), Extents: (1.00, 1.19, 2.20) materials=Assets/Medieval_house_lite/Materials/roof.mat;Assets/Medieval_house_lite/Materials/wood2.mat;Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/interior_roof.mat
+RENDER medieval_house_lite_v2 (1)/roof_wide2_end.001 bounds=Center: (79.11, 4.77, 26.07), Extents: (0.45, 1.26, 2.26) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/sign_board2.001 bounds=Center: (79.57, 3.09, 28.59), Extents: (0.11, 0.41, 0.65) materials=Assets/Medieval_house_lite/Materials/wood2.mat;Assets/Medieval_house_lite/Materials/metals.mat;Assets/Medieval_house_lite/Materials/labels.mat
+RENDER medieval_house_lite_v2 (1)/steps2.002 bounds=Center: (81.94, 0.48, 28.35), Extents: (0.50, 0.26, 0.31) materials=Assets/Medieval_house_lite/Materials/wood1.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_1m_2.014 bounds=Center: (81.93, 2.30, 24.12), Extents: (0.50, 1.50, 0.07) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_1m_2 bounds=Center: (82.94, 2.13, 27.99), Extents: (0.50, 1.50, 0.07) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_1m_2 (1) bounds=Center: (83.94, 2.13, 29.99), Extents: (0.50, 1.50, 0.07) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_2m_1.009 bounds=Center: (85.44, 2.13, 24.12), Extents: (1.00, 1.50, 0.07) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_2m_2.004 bounds=Center: (86.38, 2.13, 29.06), Extents: (0.07, 1.50, 1.00) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_2m_2 bounds=Center: (86.38, 2.13, 25.06), Extents: (0.07, 1.50, 1.00) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_2m_2 (1) bounds=Center: (80.44, 2.13, 24.12), Extents: (1.00, 1.50, 0.07) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_2m_2 (2) bounds=Center: (79.51, 2.13, 27.06), Extents: (0.07, 1.50, 1.00) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_2m_2 (3) bounds=Center: (83.51, 2.13, 29.06), Extents: (0.07, 1.50, 1.00) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_2m_4.005 bounds=Center: (86.38, 2.13, 27.06), Extents: (0.07, 1.50, 1.00) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_2m_4 bounds=Center: (83.44, 2.13, 24.12), Extents: (1.00, 1.50, 0.07) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_2m_4 (1) bounds=Center: (79.51, 2.13, 25.06), Extents: (0.07, 1.50, 1.00) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_2m_window.004 bounds=Center: (80.44, 2.13, 27.99), Extents: (1.00, 1.50, 0.07) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/wood2.mat;Assets/Medieval_house_lite/Materials/glass.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_2m_window bounds=Center: (85.44, 2.13, 29.99), Extents: (1.00, 1.50, 0.07) materials=Assets/Medieval_house_lite/Materials/wood3.mat;Assets/Medieval_house_lite/Materials/wood2.mat;Assets/Medieval_house_lite/Materials/glass.mat;Assets/Medieval_house_lite/Materials/concrete.mat
+RENDER medieval_house_lite_v2 (1)/wall_wood_door1.004 bounds=Center: (81.93, 1.73, 27.95), Extents: (0.36, 0.92, 0.07) materials=Assets/Medieval_house_lite/Materials/doors.mat;Assets/Medieval_house_lite/Materials/metals.mat;Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_floor_2x3m.001 bounds=Center: (81.94, 3.68, 25.05), Extents: (1.50, 0.03, 1.00) materials=Assets/Medieval_house_lite/Materials/floor.mat
+RENDER medieval_house_lite_v2 (1)/wooden_floor_2x3m bounds=Center: (81.94, 3.68, 27.06), Extents: (1.50, 0.03, 1.00) materials=Assets/Medieval_house_lite/Materials/floor.mat
+RENDER medieval_house_lite_v2 (1)/wooden_floor_2x3m (1) bounds=Center: (81.94, 0.61, 25.06), Extents: (1.50, 0.03, 1.00) materials=Assets/Medieval_house_lite/Materials/floor.mat
+RENDER medieval_house_lite_v2 (1)/wooden_floor_2x3m (2) bounds=Center: (81.94, 0.61, 27.06), Extents: (1.50, 0.03, 1.00) materials=Assets/Medieval_house_lite/Materials/floor.mat
+RENDER medieval_house_lite_v2 (1)/wooden_floor_2x3m (3) bounds=Center: (84.94, 0.61, 27.06), Extents: (1.50, 0.03, 1.00) materials=Assets/Medieval_house_lite/Materials/floor.mat
+RENDER medieval_house_lite_v2 (1)/wooden_floor_2x3m (4) bounds=Center: (84.94, 0.61, 25.06), Extents: (1.50, 0.03, 1.00) materials=Assets/Medieval_house_lite/Materials/floor.mat
+RENDER medieval_house_lite_v2 (1)/wooden_floor_2x3m (5) bounds=Center: (84.94, 0.61, 29.06), Extents: (1.50, 0.03, 1.00) materials=Assets/Medieval_house_lite/Materials/floor.mat
+RENDER medieval_house_lite_v2 (1)/wooden_floor_4x1m.001 bounds=Center: (79.94, 3.68, 26.06), Extents: (0.50, 0.03, 2.00) materials=Assets/Medieval_house_lite/Materials/floor.mat
+RENDER medieval_house_lite_v2 (1)/wooden_floor_4x1m bounds=Center: (79.94, 0.61, 26.06), Extents: (0.50, 0.03, 2.00) materials=Assets/Medieval_house_lite/Materials/floor.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_column_size1.079 bounds=Center: (83.54, 1.96, 29.94), Extents: (0.15, 1.71, 0.15) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_column_size1 bounds=Center: (86.33, 1.96, 29.94), Extents: (0.15, 1.71, 0.15) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_column_size1 (1) bounds=Center: (86.34, 1.96, 24.18), Extents: (0.15, 1.71, 0.15) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_column_size1 (2) bounds=Center: (79.56, 1.96, 24.18), Extents: (0.15, 1.71, 0.15) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_column_size1 (3) bounds=Center: (79.56, 1.96, 27.94), Extents: (0.15, 1.71, 0.15) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_column_size1 (4) bounds=Center: (83.52, 1.96, 27.98), Extents: (0.15, 1.71, 0.15) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long.100 bounds=Center: (83.52, 0.60, 27.04), Extents: (0.13, 0.10, 2.94) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long bounds=Center: (80.44, 0.56, 26.07), Extents: (0.09, 0.10, 1.90) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long (1) bounds=Center: (82.93, 0.60, 27.97), Extents: (3.34, 0.10, 0.09) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long (2) bounds=Center: (86.35, 0.59, 27.04), Extents: (0.11, 0.10, 2.84) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long (3) bounds=Center: (82.93, 0.60, 24.14), Extents: (3.34, 0.10, 0.09) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long (4) bounds=Center: (79.54, 0.59, 26.07), Extents: (0.11, 0.06, 1.90) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long (5) bounds=Center: (84.94, 3.63, 28.09), Extents: (1.40, 0.10, 0.09) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long (6) bounds=Center: (84.94, 3.63, 29.84), Extents: (1.40, 0.10, 0.09) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long (7) bounds=Center: (83.54, 3.64, 26.98), Extents: (0.09, 0.10, 2.88) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/LyThongHomePoint bounds=Center: (86.32, 3.64, 27.10), Extents: (0.09, 0.10, 2.98) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long (9) bounds=Center: (82.92, 3.68, 24.24), Extents: (3.44, 0.16, 0.11) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long (10) bounds=Center: (79.65, 3.64, 26.07), Extents: (0.09, 0.10, 1.94) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long (11) bounds=Center: (80.46, 3.64, 26.07), Extents: (0.09, 0.10, 1.90) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_long (12) bounds=Center: (82.96, 3.62, 26.06), Extents: (3.41, 0.10, 0.09) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+RENDER medieval_house_lite_v2 (1)/wooden_post_horizontal_small.003 bounds=Center: (84.94, 0.59, 29.97), Extents: (1.36, 0.12, 0.11) materials=Assets/Medieval_house_lite/Materials/wood2.mat
+ROOT House_1_URP pos=(113.400, 0.700, 76.094) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL House_1_URP MeshCollider trigger=False bounds=Center: (113.42, 3.07, 76.10), Extents: (2.14, 2.42, 2.42)
+RENDER House_1_URP bounds=Center: (113.42, 3.07, 76.10), Extents: (2.14, 2.42, 2.42) materials=Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_1_Roof_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_1_Wall_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_1_Plank_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_1_Door_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_1_Smoker_URP.mat
+ROOT House_4_URP pos=(124.650, 0.630, 86.980) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL House_4_URP MeshCollider trigger=False bounds=Center: (124.56, 5.19, 86.84), Extents: (5.70, 4.57, 3.82)
+RENDER House_4_URP bounds=Center: (124.56, 5.19, 86.84), Extents: (5.70, 4.57, 3.82) materials=Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_4_Plank_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_4_Wall_2_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_4_Door_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_4_Wall_1_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_4_Smoker_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_4_Roof_2_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_4_Roof_URP.mat
+ROOT House_10_URP pos=(66.740, 0.670, 66.580) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL House_10_URP MeshCollider trigger=False bounds=Center: (66.62, 6.59, 66.26), Extents: (3.01, 5.97, 4.54)
+RENDER House_10_URP bounds=Center: (66.62, 6.59, 66.26), Extents: (3.01, 5.97, 4.54) materials=Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_10_Stone_Wall_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_10_Wall_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_10_Door_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_10_Window_Roof_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_10_Smoker_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_10_Plank_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_10_Glass_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_10_Roof_URP.mat
+ROOT Stump_A_URP pos=(115.319, 0.502, 83.373) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Stump_A_URP (1) pos=(110.630, 1.002, 74.530) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Wooden_Barrel_URP pos=(85.133, 0.488, 90.716) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT House_8_URP pos=(55.300, 0.841, 27.200) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL House_8_URP MeshCollider trigger=False bounds=Center: (55.50, 4.70, 27.15), Extents: (6.13, 3.86, 4.49)
+RENDER House_8_URP bounds=Center: (55.50, 4.70, 27.15), Extents: (6.13, 3.86, 4.49) materials=Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Wall_1_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Wall_2_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Plank_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Wall_3_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Wall_4_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Concrete_Wall_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Door_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Roof_5_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Roof_1_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Roof_4_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Roof_2_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Roof_3_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_8_Glass_URP.mat
+ROOT House_6_URP pos=(112.300, 0.523, 26.600) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL House_6_URP MeshCollider trigger=False bounds=Center: (112.28, 6.13, 26.16), Extents: (4.30, 5.65, 4.89)
+RENDER House_6_URP bounds=Center: (112.28, 6.13, 26.16), Extents: (4.30, 5.65, 4.89) materials=Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Roof_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Smoker_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Door_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_WindowPlank_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Plank_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Plank_2_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Wall_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Stonewall_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Glass_URP.mat
+ROOT Blacksmith_URP pos=(39.030, 0.370, 67.020) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL Blacksmith_URP MeshCollider trigger=False bounds=Center: (40.36, 4.05, 66.86), Extents: (5.76, 3.65, 5.10)
+ROOT House_6_URP (1) pos=(93.923, 0.578, 35.219) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL House_6_URP (1) MeshCollider trigger=False bounds=Center: (93.90, 6.19, 34.78), Extents: (4.30, 5.65, 4.89)
+RENDER House_6_URP (1) bounds=Center: (93.90, 6.19, 34.78), Extents: (4.30, 5.65, 4.89) materials=Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Roof_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Smoker_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Door_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_WindowPlank_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Plank_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Plank_2_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Wall_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Stonewall_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Glass_URP.mat
+ROOT Tavern_URP (1) pos=(135.358, 0.386, 34.198) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT WindMill_URP pos=(65.909, 0.948, 45.778) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL WindMill_URP MeshCollider trigger=False bounds=Center: (65.98, 6.93, 44.64), Extents: (4.60, 5.99, 3.01)
+ROOT Wooden_Tub_URP pos=(87.190, 0.583, 37.098) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Pot_2_URP pos=(89.500, -13.230, 103.580) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Wooden_Cart_URP pos=(115.009, 0.381, 89.089) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Hammer_URP pos=(72.806, 0.642, 88.868) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT House_1_URP (2) pos=(41.800, 1.406, 48.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL House_1_URP (2) MeshCollider trigger=False bounds=Center: (41.82, 3.78, 48.00), Extents: (2.14, 2.42, 2.42)
+RENDER House_1_URP (2) bounds=Center: (41.82, 3.78, 48.00), Extents: (2.14, 2.42, 2.42) materials=Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_1_Roof_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_1_Wall_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_1_Plank_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_1_Door_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_1_Smoker_URP.mat
+ROOT House_6_URP (2) pos=(100.980, 0.660, 51.200) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL House_6_URP (2) MeshCollider trigger=False bounds=Center: (100.96, 6.27, 50.76), Extents: (4.30, 5.65, 4.89)
+RENDER House_6_URP (2) bounds=Center: (100.96, 6.27, 50.76), Extents: (4.30, 5.65, 4.89) materials=Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Roof_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Smoker_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Door_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_WindowPlank_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Plank_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Plank_2_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Wall_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Stonewall_URP.mat;Assets/MyDreamGameStudio/Medieval Village Pack Vol.1/Materials/URP/House_6_Glass_URP.mat
+ROOT Stump_A_URP (2) pos=(154.297, 0.276, 43.669) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT WindMill_URP (1) pos=(147.790, 0.456, 20.081) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Navigation pos=(82.972, 0.911, 77.746) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Meshy_AI_The_Wayfarer_Sage_biped_Animation_01a0d469-8153-7436-8709-d393703fc126_withSkin pos=(97.640, 0.330, 89.050) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Grass_Single_C2 pos=(119.661, 0.333, 41.270) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Meshy_AI_Elder_Master_Stance_biped_Animation_01a0d44b-3352-70aa-af88-28f245645f42_withSkin pos=(81.980, 0.267, 31.290) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT ThachSanhBed pos=(2.200, 0.100, 1.500) rot=(0.00, 90.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+COL ThachSanhBed/BedFrame BoxCollider trigger=False bounds=Center: (2.20, 0.30, 1.50), Extents: (1.10, 0.13, 0.65)
+COL ThachSanhBed/Headboard BoxCollider trigger=False bounds=Center: (3.25, 0.65, 1.50), Extents: (0.06, 0.38, 0.68)
+COL ThachSanhBed/BedLeg_1 BoxCollider trigger=False bounds=Center: (1.22, 0.15, 2.08), Extents: (0.07, 0.20, 0.07)
+COL ThachSanhBed/BedLeg_2 BoxCollider trigger=False bounds=Center: (1.22, 0.15, 0.92), Extents: (0.07, 0.20, 0.07)
+COL ThachSanhBed/BedLeg_3 BoxCollider trigger=False bounds=Center: (3.18, 0.15, 2.08), Extents: (0.07, 0.20, 0.07)
+COL ThachSanhBed/BedLeg_4 BoxCollider trigger=False bounds=Center: (3.18, 0.15, 0.92), Extents: (0.07, 0.20, 0.07)
+COL ThachSanhBed/StrawMattress BoxCollider trigger=False bounds=Center: (2.15, 0.48, 1.50), Extents: (1.03, 0.09, 0.61)
+COL ThachSanhBed/BedSleepTrigger BoxCollider trigger=True bounds=Center: (2.20, 0.10, 1.50), Extents: (1.50, 1.00, 1.25)
+ROOT DiemThachSanhVaoNha pos=(81.750, 1.030, 25.380) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT CamTrongNha pos=(84.902, 3.586, 27.366) rot=(25.00, 260.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+CAM CamTrongNha enabled=True pos=(84.90, 3.59, 27.37) rot=(25.00, 260.00, 0.00) fov=60
+ROOT Chapter2Manager pos=(2.200, 0.100, 1.500) rot=(0.00, 90.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Chapter2_DialogueCanvas pos=(562.600, 200.900, 0.000) rot=(0.00, 0.00, 0.00) scale=(0.47, 0.47, 0.47) active=True
+ROOT EventSystem pos=(0.000, 0.000, 0.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Chapter2OfficialReturnManager pos=(0.000, 0.000, 0.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT LyThong_OfficialReturnPoint pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Mother_InsidePoint pos=(82.000, 0.250, 25.000) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Mother_DoorPoint pos=(81.980, 0.232, 29.500) rot=(0.00, 0.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT Chapter2_OfficialReturnCamera pos=(78.000, 1.450, 31.800) rot=(6.00, 112.00, 0.00) scale=(1.00, 1.00, 1.00) active=True
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+ROOT LyThong_Official pos=(81.980, 0.232, 31.290) rot=(0.00, 180.00, 0.00) scale=(1.00, 1.00, 1.00) active=False
+GUIDE Meshy_AI_The_Wayfarer_Sage_biped_Animation_01a0d469-8153-7436-8709-d393703fc126_withSkin home=(81.98, 0.27, 31.29) mother=NULL light=null
+WAYPOINT Meshy_AI_Elder_Master_Stance_biped_Animation_01a0d44b-3352-70aa-af88-28f245645f42_withSkin (81.98, 0.27, 31.29)
+WAYPOINT DiemThachSanhVaoNha (81.75, 1.03, 25.38)
+NAV_GUIDE PathComplete (97.640, 0.361, 89.050);(81.980, 0.286, 31.290)

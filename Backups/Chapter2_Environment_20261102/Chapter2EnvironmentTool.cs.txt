@@ -1,0 +1,47 @@
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using UnityEditor;
+using UnityEditor.SceneManagement;
+using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.SceneManagement;
+
+[InitializeOnLoad]
+public static class Chapter2EnvironmentTool
+{
+    public const string Output="Backups/Chapter2_Environment_20261102/";
+    public const string ScenePath="Assets/Scenes/Chapter2_LyThong.unity";
+    static Chapter2EnvironmentTool(){EditorApplication.update+=Poll;}
+    static void Poll(){if(EditorApplication.isCompiling||EditorApplication.isUpdating)return;var file=Output+"request.txt";if(!File.Exists(file))return;try{var cmd=File.ReadAllText(file).Trim();File.Delete(file);if(cmd=="audit")Audit();if(cmd=="capture")CaptureAll("current");if(cmd=="build")Chapter2VillageBuilder.Build();if(cmd=="refine")Chapter2VillageBuilder.Refine();if(cmd=="test")Chapter2PlayProbe.Begin();if(cmd=="verify")Chapter2PlayProbe.Verify();if(cmd=="preview")Chapter2VillageBuilder.Preview();if(cmd=="open")EditorSceneManager.OpenScene(ScenePath);}catch(Exception e){File.WriteAllText(Output+"error.txt",e.ToString());Debug.LogException(e);}}
+    public static void Audit()
+    {
+        if(EditorApplication.isPlaying)throw new Exception("Exit Play before scene audit");if(SceneManager.GetActiveScene().isDirty)throw new Exception("Unsaved scene; not opening another scene");
+        var scene=EditorSceneManager.OpenScene(ScenePath);var text=new StringBuilder("PROJECT "+Application.dataPath+"\nSCENE "+scene.path+" dirty="+scene.isDirty+"\n");
+        foreach(var root in scene.GetRootGameObjects())
+        {
+            text.AppendLine("ROOT "+root.name+" pos="+root.transform.position.ToString("F3")+" rot="+root.transform.eulerAngles+" scale="+root.transform.localScale+" active="+root.activeSelf);
+            foreach(var c in root.GetComponentsInChildren<Collider>(true))text.AppendLine("COL "+PathOf(c.transform)+" "+c.GetType().Name+" trigger="+c.isTrigger+" bounds="+c.bounds);
+            foreach(var r in root.GetComponentsInChildren<MeshRenderer>(true))if(root.name.ToLower().Contains("house")||root.name.ToLower().Contains("nha"))text.AppendLine("RENDER "+PathOf(r.transform)+" bounds="+r.bounds+" materials="+string.Join(";",r.sharedMaterials.Select(m=>m?AssetDatabase.GetAssetPath(m):"MISSING")));
+            foreach(var cam in root.GetComponentsInChildren<Camera>(true))text.AppendLine("CAM "+PathOf(cam.transform)+" enabled="+cam.enabled+" pos="+cam.transform.position+" rot="+cam.transform.eulerAngles+" fov="+cam.fieldOfView);
+            foreach(var t in root.GetComponentsInChildren<Terrain>(true))text.AppendLine("TERRAIN "+AssetDatabase.GetAssetPath(t.terrainData)+" size="+t.terrainData.size+" layers="+string.Join(";",t.terrainData.terrainLayers.Select(x=>AssetDatabase.GetAssetPath(x)))+" material="+AssetDatabase.GetAssetPath(t.materialTemplate));
+        }
+        foreach(var guide in scene.GetRootGameObjects().SelectMany(x=>x.GetComponentsInChildren<LyThongGuide>(true)))
+        {
+            text.AppendLine("GUIDE "+PathOf(guide.transform)+" home="+(guide.homePoint?guide.homePoint.position.ToString():"NULL")+" mother="+(guide.motherNPC?guide.motherNPC.position.ToString():"NULL")+" light="+guide.directionalLight);
+            foreach(var p in new[]{guide.homePoint,guide.motherInsidePoint,guide.lyThongInsidePoint,guide.thachSanhInsidePoint})if(p)text.AppendLine("WAYPOINT "+PathOf(p)+" "+p.position);
+            var path=new NavMeshPath();if(guide.homePoint&&NavMesh.CalculatePath(guide.transform.position,guide.homePoint.position,NavMesh.AllAreas,path))text.AppendLine("NAV_GUIDE "+path.status+" "+string.Join(";",path.corners.Select(x=>x.ToString("F3"))));
+        }
+        File.WriteAllText(Output+"audit.txt",text.ToString());CaptureAll("before");Debug.Log("CH2_ENV_AUDIT_OK");
+    }
+    static string PathOf(Transform t)=>t.parent?PathOf(t.parent)+"/"+t.name:t.name;
+    public static void CaptureAll(string suffix)
+    {
+        var scene=SceneManager.GetActiveScene();foreach(var c in scene.GetRootGameObjects().SelectMany(x=>x.GetComponentsInChildren<Camera>()).Where(x=>x.enabled))Capture(c,c.name.Replace(" ","_")+"_"+suffix);
+    }
+    public static void Capture(Camera camera,string name)
+    {
+        ShaderUtil.allowAsyncCompilation=false;var rt=new RenderTexture(1600,900,24,RenderTextureFormat.ARGB32);rt.Create();var old=camera.targetTexture;var active=RenderTexture.active;camera.targetTexture=rt;for(int i=0;i<4;i++)camera.Render();RenderTexture.active=rt;var tex=new Texture2D(1600,900,TextureFormat.RGB24,false);tex.ReadPixels(new Rect(0,0,1600,900),0,0);tex.Apply();File.WriteAllBytes(Output+name+".png",tex.EncodeToPNG());camera.targetTexture=old;RenderTexture.active=active;UnityEngine.Object.DestroyImmediate(tex);rt.Release();UnityEngine.Object.DestroyImmediate(rt);
+    }
+}

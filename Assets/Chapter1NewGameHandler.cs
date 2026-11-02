@@ -63,61 +63,16 @@ public class Chapter1NewGameHandler : MonoBehaviour
     /// <summary>
     /// Bắt đầu lượt chơi mới từ Chapter 1:
     /// - Xóa đúng 4 PlayerPrefs của cốt truyện (không dùng DeleteAll).
-    /// - Đặt lại vị trí Thạch Sanh về SpawnPoint ban đầu của Chapter 1.
-    /// - Đặt lại nhiệm vụ mở đầu (QuestManager) đốn củi và săn thú.
+    /// - Khôi phục các nhân vật theo Transform gốc đã lưu trong Scene.
+    /// - Nạp lại Chapter 1 với mục tiêu tự do tìm Lý Thông.
     /// - Gỡ bỏ vật phẩm đầu Chằn Tinh nếu có.
     /// </summary>
     public void StartNewGameFromChapter1()
     {
-        // 1. Reset trạng thái cốt truyện
+        // Keep the existing explicit New Game reset; a normal scene start never clears saves.
         StoryStateManager.StartNewGame();
-
-        // 2. Reset QuestManager
-        QuestManager qm = Object.FindAnyObjectByType<QuestManager>();
-        if (qm != null)
-        {
-            qm.woodCollected = 0;
-            qm.chickenKilled = 0;
-            qm.deerKilled = 0;
-            qm.horseKilled = 0;
-            qm.tigerKilled = 0;
-            if (qm.lyThongNPC != null)
-            {
-                qm.lyThongNPC.SetActive(false);
-            }
-            qm.SendMessage("UpdateQuestUI", SendMessageOptions.DontRequireReceiver);
-        }
-
-        // 3. Gỡ bỏ vật phẩm chiến lợi phẩm
-        PlayerTrophyHolder trophyHolder = Object.FindAnyObjectByType<PlayerTrophyHolder>();
-        if (trophyHolder != null)
-        {
-            trophyHolder.RemoveTrophy();
-        }
-
-        // 4. Đặt lại vị trí Thạch Sanh về điểm xuất phát gốc của Chapter 1
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null)
-        {
-            PlayerMovement pm = Object.FindAnyObjectByType<PlayerMovement>();
-            if (pm != null) player = pm.gameObject;
-        }
-
-        if (player != null)
-        {
-            CharacterController cc = player.GetComponent<CharacterController>();
-            if (cc != null) cc.enabled = false;
-
-            player.transform.position = new Vector3(96.46f, -0.035f, 92.28f);
-            player.transform.rotation = Quaternion.identity;
-            Physics.SyncTransforms();
-
-            if (cc != null) cc.enabled = true;
-        }
-
-        statusMessage = "ĐÃ BẮT ĐẦU LƯỢT CHƠI MỚI! Tiến trình nhiệm vụ đã được đặt lại ban đầu.";
-        messageTimer = 4.0f;
-        Debug.Log("[Chapter1NewGameHandler] Đã chủ động bắt đầu lượt chơi mới (New Game) thành công từ Chapter 1.");
+        // Reload also resets LyThongInteraction.isMet and its standing model without moving NPCs in code.
+        SceneManager.LoadScene("RungThachSanh");
     }
 
     void OnGUI()
@@ -135,6 +90,8 @@ public class Chapter1NewGameHandler : MonoBehaviour
         // Nếu còn lưu tiến trình cũ từ Chapter 2 hoặc 3 (ví dụ do chạy test trước đó)
         if (StoryStateManager.HasSavedProgress)
         {
+            QuestManager forestQuest = Object.FindAnyObjectByType<QuestManager>();
+            if (forestQuest != null && forestQuest.IsForestGameplayStarted) return;
             GUI.color = new Color(1f, 0.9f, 0.3f, 1f);
             Rect warningBox = new Rect(15f, 15f, 360f, 75f);
             GUI.Box(warningBox, "⚠️ PHÁT HIỆN DỮ LIỆU TỪ LƯỢT CHƠI TRƯỚC\nNhấn [F1] hoặc bấm nút bên dưới để\nBắt đầu chơi mới (Reset tiến trình)");
